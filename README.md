@@ -1,87 +1,87 @@
 <div align="center">
 
-  <img src="https://github.com/rain-lei.png?size=180" width="128" height="128" alt="rain 的 GitHub 头像" />
+  <img src="https://github.com/rain-lei.png?size=240" width="132" height="132" alt="rain 的 GitHub 头像" />
 
-  # rain
+  # 你好，我是 rain 👋
 
-  **student developer · open-source learner · quiet builder**
+  ### 写代码，也记录生活
 
-  I write code, keep notes, and build small things that make the web feel a little more human.
+  正在学习如何把一个想法，慢慢做成真正有人愿意使用的东西。
 
-  [![Blog](https://img.shields.io/badge/blog-rain--lei.github.io-cdf45b?style=flat-square&labelColor=191a18&color=cdf45b&logo=readme&logoColor=191a18)](https://github.com/rain-lei/rain-lei)
-  [![Email](https://img.shields.io/badge/email-contact-cdf45b?style=flat-square&labelColor=191a18&color=cdf45b&logo=maildotru&logoColor=191a18)](mailto:rain__lei@outlook.com)
-  [![GitHub](https://img.shields.io/badge/github-rain--lei-cdf45b?style=flat-square&labelColor=191a18&color=cdf45b&logo=github&logoColor=white)](https://github.com/rain-lei)
+  [个人博客](https://github.com/rain-lei/rain-lei)　·　[我的仓库](https://github.com/rain-lei?tab=repositories)　·　[联系我](mailto:rain__lei@outlook.com)
 
 </div>
 
 <br />
 
-## A little about me
+## 关于我
 
-```text
-01  I am learning how software becomes something people can feel.
-02  I like clean interfaces, useful tools, and thoughtful documentation.
-03  I am currently turning class notes, experiments, and side projects into a public garden.
-```
+我是一名软件工程学习者，喜欢把复杂的问题拆开，把有趣的想法做出来。
 
-## What I am exploring
+我关心的不只是“能不能运行”，也关心：
 
-| area | current thread |
-| --- | --- |
-| `BUILD` | full-stack web apps, APIs, and small developer tools |
-| `LEARN` | software engineering fundamentals and better engineering habits |
-| `DESIGN` | calm interfaces, readable information, and digital gardens |
-| `SHARE` | open-source notes, friend links, and experiments in public |
+- 页面是不是足够清晰、舒服
+- 代码是不是容易理解和维护
+- 一个小工具能不能真正节省别人的时间
+- 学到的东西，能不能留下来并帮助到别人
 
-## The toolbox
-
-![JavaScript](https://img.shields.io/badge/JavaScript-191a18?style=flat-square&logo=javascript&logoColor=cdf45b)
-![Node.js](https://img.shields.io/badge/Node.js-191a18?style=flat-square&logo=node.js&logoColor=cdf45b)
-![Python](https://img.shields.io/badge/Python-191a18?style=flat-square&logo=python&logoColor=cdf45b)
-![HTML](https://img.shields.io/badge/HTML-191a18?style=flat-square&logo=html5&logoColor=cdf45b)
-![CSS](https://img.shields.io/badge/CSS-191a18?style=flat-square&logo=css3&logoColor=cdf45b)
-![Git](https://img.shields.io/badge/Git-191a18?style=flat-square&logo=git&logoColor=cdf45b)
-![Docker](https://img.shields.io/badge/Docker-191a18?style=flat-square&logo=docker&logoColor=cdf45b)
-![SQLite](https://img.shields.io/badge/SQLite-191a18?style=flat-square&logo=sqlite&logoColor=cdf45b)
-
-## Featured corner
+## 最近在做什么
 
 <table>
   <tr>
-    <td width="50%" valign="top">
-      <h3>rain-lei</h3>
-      <p>This profile repository — a small public index of what I am learning, building, and curious about.</p>
-      <a href="https://github.com/rain-lei/rain-lei">open repository ↗</a>
+    <td width="33%" valign="top">
+      <h3>🌱 正在学习</h3>
+      <p>软件工程基础、后端 API、数据库设计，以及更可靠的工程习惯。</p>
     </td>
-    <td width="50%" valign="top">
-      <h3>personal blog</h3>
-      <p>A quiet place for code notes, project logs, interface experiments, and the occasional long thought.</p>
-      <a href="https://github.com/rain-lei/rain-lei">visit the source ↗</a>
+    <td width="33%" valign="top">
+      <h3>🛠 正在构建</h3>
+      <p>个人博客、开发者工具和一些把日常问题变简单的小项目。</p>
+    </td>
+    <td width="33%" valign="top">
+      <h3>✍️ 正在记录</h3>
+      <p>项目笔记、踩坑过程、界面灵感，以及偶尔冒出来的好问题。</p>
     </td>
   </tr>
 </table>
 
-## A small signal from GitHub
+## 我的工具箱
+
+![JavaScript](https://img.shields.io/badge/JavaScript-222222?style=flat-square&logo=javascript&logoColor=f7df1e)
+![Node.js](https://img.shields.io/badge/Node.js-222222?style=flat-square&logo=node.js&logoColor=68a063)
+![Python](https://img.shields.io/badge/Python-222222?style=flat-square&logo=python&logoColor=3776ab)
+![HTML](https://img.shields.io/badge/HTML-222222?style=flat-square&logo=html5&logoColor=e34f26)
+![CSS](https://img.shields.io/badge/CSS-222222?style=flat-square&logo=css3&logoColor=1572b6)
+![Git](https://img.shields.io/badge/Git-222222?style=flat-square&logo=git&logoColor=f05032)
+![Docker](https://img.shields.io/badge/Docker-222222?style=flat-square&logo=docker&logoColor=2496ed)
+![SQLite](https://img.shields.io/badge/SQLite-222222?style=flat-square&logo=sqlite&logoColor=003b57)
+
+## 我的数字角落
+
+| 项目 | 介绍 |
+| --- | --- |
+| [个人博客](https://github.com/rain-lei/rain-lei) | 写文章、放项目日志，也展示最近的友链和仓库 |
+| [全部公开仓库](https://github.com/rain-lei?tab=repositories) | 正在学习、尝试和维护的各种小项目 |
+| [友链计划](FRIEND_LINKS.md) | 欢迎通过 Pull Request 分享你的网站 |
+
+## GitHub 活跃记录
 
 <div align="center">
 
-  <img height="165" src="https://github-readme-stats.vercel.app/api?username=rain-lei&show_icons=true&hide_border=true&rank_icon=github&theme=transparent&title_color=191a18&text_color=77766f&icon_color=7c9b35" alt="rain 的 GitHub 统计" />
-  <img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=rain-lei&layout=compact&hide_border=true&theme=transparent&title_color=191a18&text_color=77766f" alt="rain 常用语言" />
+  <img height="165" src="https://github-readme-stats.vercel.app/api?username=rain-lei&show_icons=true&hide_border=true&rank_icon=github&theme=transparent&title_color=222222&text_color=666666&icon_color=6d8d2e" alt="rain 的 GitHub 统计" />
+  <img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=rain-lei&layout=compact&hide_border=true&theme=transparent&title_color=222222&text_color=666666" alt="rain 常用语言" />
 
 </div>
 
-## Friend links
+## 交换一个好问题
 
-想把你的网站放进博客的友链陈列？请查看 [友链 PR 规范](FRIEND_LINKS.md)，按 `friend-links.json` 的格式提交一个 Pull Request。
-
-## Say hello
-
-如果你也在学习、做项目，或者只是想交换一个好问题，欢迎来信：
+如果你也在学习、做项目，或者想申请友链，欢迎联系我：
 
 **[rain__lei@outlook.com](mailto:rain__lei@outlook.com)**
+
+友链申请请先阅读 [友链 PR 规范](FRIEND_LINKS.md)，按 `friend-links.json` 的格式提交即可。
 
 <br />
 
 <div align="center">
-  <sub>made with curiosity · updated when there is something worth sharing</sub>
+  <sub>保持好奇，持续构建。</sub>
 </div>
