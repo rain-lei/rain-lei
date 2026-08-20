@@ -8,6 +8,14 @@
       "description": "代码、项目与最近的仓库",
       "sort_order": 0,
       "enabled": true
+    },
+    {
+      "name": "HYHY · Growth Archive",
+      "url": "https://hyhyhyyy.github.io/MyBlog/",
+      "avatar": "https://www.rainlei.xyz/uploads/friend-links/hyhy-growth-archive.jpg",
+      "description": "以新野兽派视觉呈现音乐剧、文学与影视收藏",
+      "sort_order": 10,
+      "enabled": true
     }
   ]
 }

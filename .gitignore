@@ -7,4 +7,5 @@ data/*.sqlite
 data/*.sqlite-*
 data/
 *.log
+.firecrawl/
 .DS_Store
