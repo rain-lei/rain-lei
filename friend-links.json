@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "links": [
+    {
+      "name": "rain-lei · GitHub",
+      "url": "https://github.com/rain-lei",
+      "avatar": "https://github.com/rain-lei.png?size=160",
+      "description": "代码、项目与最近的仓库",
+      "sort_order": 0,
+      "enabled": true
+    }
+  ]
+}

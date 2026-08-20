@@ -1,207 +1,84 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  
-  
-  <title>Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:locale" content="en_US">
-<meta property="article:author" content="John Doe">
-<meta name="twitter:card" content="summary">
-  
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
-
-  
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
-
-  
-  
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
-
-<meta name="generator" content="Hexo 8.1.1"></head>
-
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
-      </div>
-    </div>
-  </div>
-</header>
-
-      <div class="outer">
-        <section id="main">
-  
-    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2026/01/24/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2026-01-24T02:23:37.561Z" itemprop="datePublished">2026-01-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2026/01/24/hello-world/">Hello World</a>
-    </h1>
-  
-
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="rain 的个人博客，记录代码、技术实践与日常生活。" />
+    <title>rain · 个人博客</title>
+    <link rel="icon" href="https://github.com/rain-lei.png?size=64" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="friend-links.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="site-header">
+        <a class="brand" href="index.html" aria-label="返回首页">
+          <img class="brand-mark brand-avatar" src="https://github.com/rain-lei.png?size=96" alt="rain 的 GitHub 头像" />
+          <span class="brand-copy"><strong data-setting="siteName">rain</strong><em>personal notes</em></span>
+        </a>
+        <nav class="desktop-nav" aria-label="主导航">
+          <a class="is-active" href="#top">首页</a>
+          <a href="#essays">文章</a>
+          <a href="#about">关于我</a>
+        </nav>
+        <div class="header-actions">
+          <button class="icon-btn" id="searchOpen" aria-label="搜索文章" title="搜索文章">⌕</button>
+          <button class="icon-btn" id="themeToggle" aria-label="切换深浅色模式" title="切换深浅色模式"><span id="themeIcon">☼</span></button>
+          <button class="menu-btn" id="menuToggle" aria-label="打开菜单" aria-expanded="false">☰</button>
+        </div>
       </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2026/01/24/hello-world/" data-id="cuidZJXOyNPMpU8ogMIioZxjf" data-title="Hello World" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">January 2026</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2026/01/24/hello-world/">Hello World</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
+      <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+        <a href="#top">首页</a><a href="#essays">文章</a><a href="#about">关于我</a>
       </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+
+      <main id="top">
+        <section class="hero-section reveal">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="eyebrow-dot"></span>独立创作者 · remote</p>
+            <h1>写代码，<br /><span>也写下成长。</span></h1>
+            <p class="hero-intro" data-setting="intro">这里是 rain 的个人角落。记录代码、项目实践和日常生活里遇见的问题，也分享那些值得反复思考的小事。</p>
+            <div class="hero-meta"><span>持续更新</span><span class="meta-line"></span><span>NOW / ONGOING</span></div>
+            <a class="text-link" href="#essays">从最近的文章开始 <span>↗</span></a>
+          </div>
+          <div class="hero-art" aria-label="抽象的纸张与光影插画">
+            <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+            <div class="art-card art-card-back"></div>
+            <div class="art-card art-card-main"><span class="art-kicker">FIELD NOTES</span><strong>观察<br />与练习</strong><span class="art-index">No. 028</span></div>
+            <span class="art-caption">A quiet place<br />for loud ideas.</span>
+          </div>
+        </section>
+
+        <section class="ticker" aria-label="博客标签">
+          <div class="ticker-track"><span>PRODUCT THINKING</span><i>✳</i><span>DESIGN &amp; CULTURE</span><i>✳</i><span>CONSCIOUS LIVING</span><i>✳</i><span>PRODUCT THINKING</span><i>✳</i><span>DESIGN &amp; CULTURE</span></div>
+        </section>
+
+        <section class="content-section" id="essays">
+          <div class="section-heading reveal"><div><p class="eyebrow">精选文章 / SELECTED ESSAYS</p><h2>最近写了什么</h2></div><a class="text-link" href="#all-posts">查看全部 <span>↗</span></a></div>
+          <div class="category-bar reveal" role="toolbar" aria-label="文章分类">
+            <button class="filter-chip is-selected" data-filter="all">全部 <span>06</span></button>
+            <button class="filter-chip" data-filter="product">产品思考 <span>02</span></button>
+            <button class="filter-chip" data-filter="design">设计与文化 <span>02</span></button>
+            <button class="filter-chip" data-filter="life">有意识生活 <span>02</span></button>
+          </div>
+          <div class="post-grid" id="postGrid"></div>
+        </section>
+
+        <section class="split-section" id="about">
+          <div class="about-panel reveal"><img src="https://github.com/rain-lei.png?size=160" alt="rain 的 GitHub 头像" loading="lazy" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:1px solid var(--line);margin-bottom:24px" /><p class="eyebrow">关于我 / ABOUT</p><h2>你好，我是<br /><span>rain。</span></h2><p>一名正在学习软件工程的学生，也是一位喜欢把想法写下来、把问题拆开来解决的独立创作者。</p><a class="text-link" href="mailto:rain__lei@outlook.com">和我交流 <span>↗</span></a><a class="text-link about-github" href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer">查看 GitHub <span>↗</span></a></div>
+          <div class="reading-panel reveal"><div class="panel-top"><p class="eyebrow">最近的仓库 / RECENT REPOS</p><span class="panel-count">03</span></div><div class="reading-list" id="githubRepos"><div class="reading-item"><span class="reading-no">01</span><div><strong>正在同步 GitHub…</strong><small>rain-lei · public repositories</small></div><span class="reading-arrow">↗</span></div></div></div>
+        </section>
+
+        <section class="newsletter-section reveal" id="contact"><div class="newsletter-copy"><p class="eyebrow">联系我 / CONTACT ME</p><h2>有事，<br /><em>写信给我。</em></h2><p>如果你想聊聊软件、项目、开源，或者只是交换一个好问题，欢迎联系我。</p><a class="text-link" href="mailto:rain__lei@outlook.com">rain__lei@outlook.com <span>↗</span></a></div><div class="newsletter-form"><p class="eyebrow">友链接口 / FRIEND LINKS</p><div class="friend-links-grid" id="friendLinksGrid"><a class="friend-link-card" href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer"><img src="https://github.com/rain-lei.png?size=96" alt="rain-lei" loading="lazy"/><span><strong>rain-lei · GitHub</strong><small>代码、项目与最近的仓库</small></span><b>↗</b></a></div></div></section>
+      </main>
+
+      <footer class="site-footer"><div class="footer-brand"><img class="brand-mark brand-avatar" src="https://github.com/rain-lei.png?size=64" alt="rain 的 GitHub 头像" /><span>© 2026 RAIN</span></div><div class="footer-links"><a data-setting="siteEmail" href="mailto:rain__lei@outlook.com">rain__lei@outlook.com</a><a href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer">GitHub</a><a href="#">RSS</a><a href="admin.html">管理</a></div><span class="footer-note">Built with curiosity.</span></footer>
     </div>
-  </div>
-</footer>
 
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
-
-
-
-  
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
-  </div>
-</body>
+    <div class="search-modal" id="searchModal" aria-hidden="true"><div class="search-backdrop" id="searchClose"></div><div class="search-dialog" role="dialog" aria-modal="true" aria-labelledby="searchTitle"><div class="search-header"><p class="eyebrow" id="searchTitle">搜索文章</p><button class="icon-btn" id="searchCloseBtn" aria-label="关闭搜索">×</button></div><div class="search-input-wrap"><span>⌕</span><input id="searchInput" type="search" placeholder="输入关键词，例如：注意力" autocomplete="off" /></div><div class="search-results" id="searchResults"><p class="search-empty">输入关键词，找到一篇想读的文章。</p></div></div></div>
+    <script src="data.js"></script><script src="app.js"></script><script src="github.js"></script><script src="friend-links.js"></script>
+  </body>
 </html>
