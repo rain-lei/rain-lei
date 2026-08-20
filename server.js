@@ -1,20 +1,646 @@
-const http=require('node:http'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
-const {DatabaseSync}=require('node:sqlite');const seedPosts=require('./data.js');
-const PORT=Number(process.env.PORT||8080),DB_PATH=process.env.DB_PATH||path.join(__dirname,'data','blog.sqlite'),ADMIN_USER=process.env.ADMIN_USER||'admin',ADMIN_PASSWORD=process.env.ADMIN_PASSWORD,ROOT=__dirname,sessions=new Map();
-if(!ADMIN_PASSWORD){console.error('Missing ADMIN_PASSWORD. Set it in .env or the process environment before starting the server.');process.exit(1);}
-fs.mkdirSync(path.dirname(DB_PATH),{recursive:true});const db=new DatabaseSync(DB_PATH);db.exec(`PRAGMA journal_mode=WAL;CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT,username TEXT NOT NULL UNIQUE,password_hash TEXT NOT NULL,created_at TEXT NOT NULL);CREATE TABLE IF NOT EXISTS posts(id TEXT PRIMARY KEY,category TEXT NOT NULL,category_label TEXT NOT NULL,date TEXT NOT NULL,read_time TEXT NOT NULL,title TEXT NOT NULL,excerpt TEXT NOT NULL,featured INTEGER NOT NULL DEFAULT 0,accent TEXT NOT NULL DEFAULT 'sunset',body_json TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'published',created_at TEXT NOT NULL,updated_at TEXT NOT NULL);CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT NOT NULL);`);
-const now=()=>new Date().toISOString();const slugify=v=>String(v||'').toLowerCase().trim().replace(/[^a-z0-9\u4e00-\u9fff]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80)||`post-${Date.now()}`;const hashPassword=(p,s=crypto.randomBytes(16).toString('hex'))=>`${s}:${crypto.scryptSync(String(p),s,64).toString('hex')}`;function verifyPassword(p,stored){const [s,e]=String(stored||'').split(':');if(!s||!e)return false;const a=crypto.scryptSync(String(p),s,64).toString('hex');return crypto.timingSafeEqual(Buffer.from(a),Buffer.from(e));}const safeJson=(v,f)=>{try{return JSON.parse(v);}catch(_){return f;}};const serializePost=r=>({...r,featured:Boolean(r.featured),body:safeJson(r.body_json,[]),read:r.read_time});const publicPosts=()=>db.prepare("SELECT * FROM posts WHERE status='published' ORDER BY date DESC,updated_at DESC").all().map(serializePost);const adminPosts=()=>db.prepare('SELECT * FROM posts ORDER BY date DESC,updated_at DESC').all().map(serializePost);
-function seed(){if(Number(db.prepare('SELECT COUNT(*) count FROM posts').get().count)===0){const q=db.prepare('INSERT INTO posts(id,category,category_label,date,read_time,title,excerpt,featured,accent,body_json,status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)');for(const p of seedPosts){const t=now();q.run(p.id,p.category,p.categoryLabel,p.date,p.read,p.title,p.excerpt,p.featured?1:0,p.accent,JSON.stringify(p.body||[]),'published',t,t);}}if(Number(db.prepare('SELECT COUNT(*) count FROM users').get().count)===0)db.prepare('INSERT INTO users(username,password_hash,created_at) VALUES(?,?,?)').run(ADMIN_USER,hashPassword(ADMIN_PASSWORD),now());const q=db.prepare('INSERT OR IGNORE INTO settings(key,value) VALUES(?,?)');[['siteName','rain'],['siteEmail','rain__lei@outlook.com'],['intro','这里是 rain 的个人角落。记录代码、项目实践和日常生活里遇见的问题，也分享那些值得反复思考的小事。']].forEach(x=>q.run(...x));}seed();
-function send(res,status,data,headers={}){res.writeHead(status,{'Content-Type':typeof data==='string'?'text/html; charset=utf-8':'application/json; charset=utf-8','Cache-Control':'no-store',...headers});res.end(typeof data==='string'?data:JSON.stringify(data));}function cookies(req){return Object.fromEntries(String(req.headers.cookie||'').split(';').map(x=>x.trim().split('=').map(decodeURIComponent)).filter(x=>x.length===2));}function user(req){const t=cookies(req).blog_session,s=t&&sessions.get(t);if(!s||s.expiresAt<Date.now()){if(t)sessions.delete(t);return null;}return db.prepare('SELECT id,username FROM users WHERE id=?').get(s.userId)||null;}function auth(req,res){const u=user(req);if(!u){send(res,401,{error:'请先登录管理后台'});return null;}return u;}function body(req){return new Promise((resolve,reject)=>{let d='';req.on('data',c=>{d+=c;if(d.length>2000000){req.destroy();reject(new Error('request too large'));}});req.on('end',()=>{try{resolve(d?JSON.parse(d):{});}catch(_){reject(new Error('invalid json'));}});req.on('error',reject);});}const settings=()=>Object.fromEntries(db.prepare('SELECT key,value FROM settings').all().map(x=>[x.key,x.value]));
-function normalize(p,e={}){const title=String(p.title??e.title??'').trim();if(!title)throw Error('标题不能为空');const category=String(p.category??e.category??'life'),labels={product:'产品思考',design:'设计与文化',life:'有意识生活'};const status=['published','draft'].includes(p.status??e.status)?(p.status??e.status):'published';return{id:String(p.id||e.id||slugify(title)),category,categoryLabel:String(p.categoryLabel||e.category_label||labels[category]||'个人随笔'),date:String(p.date||e.date||new Date().toISOString().slice(0,10).replaceAll('-','.')),read_time:String(p.read||p.read_time||e.read_time||'5 min read'),title,excerpt:String(p.excerpt??e.excerpt??''),featured:p.featured===undefined?Number(e.featured||0):(p.featured?1:0),accent:String(p.accent||e.accent||'sunset'),body_json:JSON.stringify(Array.isArray(p.body)?p.body:(Array.isArray(e.body)?e.body:safeJson(e.body_json,[]))),status,updated_at:now()};}
-async function api(req,res,url){const m=req.method,p=url.pathname;try{if(m==='GET'&&p==='/api/posts')return send(res,200,publicPosts());if(m==='GET'&&p==='/api/settings')return send(res,200,settings());if(m==='POST'&&p==='/api/auth/login'){const b=await body(req),u=db.prepare('SELECT id,username,password_hash FROM users WHERE username=?').get(String(b.username||''));if(!u||!verifyPassword(b.password,u.password_hash))return send(res,401,{error:'用户名或密码不正确'});const t=crypto.randomBytes(32).toString('hex');sessions.set(t,{userId:u.id,expiresAt:Date.now()+604800000});return send(res,200,{username:u.username},{'Set-Cookie':`blog_session=${t}; HttpOnly; SameSite=Lax; Path=/; Max-Age=604800`});}if(m==='POST'&&p==='/api/auth/logout'){const t=cookies(req).blog_session;if(t)sessions.delete(t);return send(res,200,{ok:true},{'Set-Cookie':'blog_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0'});}if(m==='GET'&&p==='/api/auth/me')return send(res,200,user(req)?{authenticated:true,username:user(req).username}:{authenticated:false});if(p.startsWith('/api/admin/')){if(!auth(req,res))return;if(m==='GET'&&p==='/api/admin/posts')return send(res,200,adminPosts());if(m==='GET'&&p==='/api/admin/settings')return send(res,200,settings());if(m==='PUT'&&p==='/api/admin/settings'){const b=await body(req),q=db.prepare('INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value');Object.entries(b).forEach(([k,v])=>{if(['siteName','siteEmail','intro'].includes(k))q.run(k,String(v));});return send(res,200,settings());}if(m==='POST'&&p==='/api/admin/posts'){const b=await body(req),x=normalize(b),t=now();db.prepare('INSERT INTO posts(id,category,category_label,date,read_time,title,excerpt,featured,accent,body_json,status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)').run(x.id,x.category,x.categoryLabel,x.date,x.read_time,x.title,x.excerpt,x.featured,x.accent,x.body_json,x.status,t,t);return send(res,201,serializePost(db.prepare('SELECT * FROM posts WHERE id=?').get(x.id)));}const mm=p.match(/^\/api\/admin\/posts\/([^/]+)$/);if(mm&&(m==='PUT'||m==='DELETE')){const id=decodeURIComponent(mm[1]),e=db.prepare('SELECT * FROM posts WHERE id=?').get(id);if(!e)return send(res,404,{error:'文章不存在'});if(m==='DELETE'){db.prepare('DELETE FROM posts WHERE id=?').run(id);return send(res,200,{ok:true});}const x=normalize({...await body(req),id},e);db.prepare('UPDATE posts SET category=?,category_label=?,date=?,read_time=?,title=?,excerpt=?,featured=?,accent=?,body_json=?,status=?,updated_at=? WHERE id=?').run(x.category,x.categoryLabel,x.date,x.read_time,x.title,x.excerpt,x.featured,x.accent,x.body_json,x.status,x.updated_at,id);return send(res,200,serializePost(db.prepare('SELECT * FROM posts WHERE id=?').get(id)));}}return send(res,404,{error:'Not found'});}catch(e){console.error(e);return send(res,400,{error:e.message||'请求失败'});}}
-const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8'};function staticFile(req,res,url){let n=url.pathname==='/'?'/index.html':url.pathname;if(n==='/admin')n='/admin.html';const f=path.resolve(ROOT,'.'+n);if(!f.startsWith(path.resolve(ROOT)))return send(res,403,'Forbidden');fs.stat(f,(e,s)=>{if(e||!s.isFile())return send(res,404,'Not found');res.writeHead(200,{'Content-Type':mime[path.extname(f).toLowerCase()]||'application/octet-stream'});fs.createReadStream(f).pipe(res);});}const server=http.createServer((req,res)=>{const u=new URL(req.url,`http://${req.headers.host||'localhost'}`);if(u.pathname.startsWith('/api/'))return api(req,res,u);return staticFile(req,res,u);});server.listen(PORT,()=>console.log(`Lin Mo blog running at http://localhost:${PORT}`));process.on('SIGINT',()=>{db.close();process.exit(0);});
-const rawStaticFile=staticFile;staticFile=function(req,res,url){if(url.pathname==='/admin.html'){const f=path.resolve(ROOT,'./admin.html');return fs.readFile(f,'utf8',(e,html)=>{if(e)return rawStaticFile(req,res,url);const content=html.replaceAll('林墨','rain').replaceAll('LIN MO','rain').replaceAll('LM','R');send(res,200,content,{'Content-Type':'text/html; charset=utf-8'});});}return rawStaticFile(req,res,url);};
-db.exec(`CREATE TABLE IF NOT EXISTS friend_links(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT NOT NULL,url TEXT NOT NULL UNIQUE,avatar TEXT NOT NULL DEFAULT '',description TEXT NOT NULL DEFAULT '',sort_order INTEGER NOT NULL DEFAULT 0,enabled INTEGER NOT NULL DEFAULT 1,created_at TEXT NOT NULL,updated_at TEXT NOT NULL);`);
-if(Number(db.prepare('SELECT COUNT(*) count FROM friend_links').get().count)===0){const t=now();db.prepare('INSERT INTO friend_links(name,url,avatar,description,sort_order,enabled,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?)').run('rain-lei · GitHub','https://github.com/rain-lei','https://github.com/rain-lei.png?size=160','代码、项目与最近的仓库',0,1,t,t);}
-const listFriendLinks=()=>db.prepare('SELECT id,name,url,avatar,description,sort_order,enabled FROM friend_links WHERE enabled=1 ORDER BY sort_order ASC,id ASC').all().map(x=>({...x,enabled:Boolean(x.enabled)}));
-const listAdminFriendLinks=()=>db.prepare('SELECT id,name,url,avatar,description,sort_order,enabled FROM friend_links ORDER BY sort_order ASC,id ASC').all().map(x=>({...x,enabled:Boolean(x.enabled)}));
-const previousApi=api;api=async function(req,res,url){const m=req.method,p=url.pathname;try{if(m==='GET'&&p==='/api/friend-links')return send(res,200,listFriendLinks());if(p.startsWith('/api/admin/friend-links')){if(!auth(req,res))return;if(m==='GET'&&p==='/api/admin/friend-links')return send(res,200,listAdminFriendLinks());if(m==='POST'&&p==='/api/admin/friend-links'){const b=await body(req),name=String(b.name||'').trim(),linkUrl=String(b.url||'').trim();if(!name||!linkUrl)throw Error('友链名称和网址不能为空');const t=now();db.prepare('INSERT INTO friend_links(name,url,avatar,description,sort_order,enabled,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?)').run(name,linkUrl,String(b.avatar||''),String(b.description||''),Number(b.sort_order||0),b.enabled===false?0:1,t,t);return send(res,201,listAdminFriendLinks());}const match=p.match(/^\/api\/admin\/friend-links\/(\d+)$/);if(match&&(m==='PUT'||m==='DELETE')){const id=Number(match[1]);if(m==='DELETE'){db.prepare('DELETE FROM friend_links WHERE id=?').run(id);return send(res,200,{ok:true});}const b=await body(req),name=String(b.name||'').trim(),linkUrl=String(b.url||'').trim();if(!name||!linkUrl)throw Error('友链名称和网址不能为空');db.prepare('UPDATE friend_links SET name=?,url=?,avatar=?,description=?,sort_order=?,enabled=?,updated_at=? WHERE id=?').run(name,linkUrl,String(b.avatar||''),String(b.description||''),Number(b.sort_order||0),b.enabled===false?0:1,now(),id);return send(res,200,listAdminFriendLinks());}}return previousApi(req,res,url);}catch(e){console.error(e);return send(res,400,{error:e.message||'友链请求失败'});}};
-const rawAdminStatic=staticFile;staticFile=function(req,res,url){if(url.pathname==='/admin.html'){const f=path.resolve(ROOT,'./admin.html');return fs.readFile(f,'utf8',(e,html)=>{if(e)return rawAdminStatic(req,res,url);const content=html.replaceAll('林墨','rain').replaceAll('LIN MO','rain').replaceAll('LM','R').replace('</body>','<script src="admin-friends.js"></script></body>');send(res,200,content,{'Content-Type':'text/html; charset=utf-8'});});}return rawAdminStatic(req,res,url);};
-const apiWithFriendSync=api;api=async function(req,res,url){if(req.method==='POST'&&url.pathname==='/api/admin/friend-links/sync'){if(!auth(req,res))return;try{const source=JSON.parse(fs.readFileSync(path.join(ROOT,'friend-links.json'),'utf8'));const items=Array.isArray(source.links)?source.links:[],q=db.prepare('INSERT INTO friend_links(name,url,avatar,description,sort_order,enabled,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(url) DO UPDATE SET name=excluded.name,avatar=excluded.avatar,description=excluded.description,sort_order=excluded.sort_order,enabled=excluded.enabled,updated_at=excluded.updated_at');const t=now();for(const item of items){if(item.name&&item.url)q.run(String(item.name),String(item.url),String(item.avatar||''),String(item.description||''),Number(item.sort_order||0),item.enabled===false?0:1,t,t);}return send(res,200,{count:items.length,links:listAdminFriendLinks()});}catch(e){return send(res,400,{error:`友链 JSON 导入失败：${e.message}`});}}return apiWithFriendSync(req,res,url);};
-const adminStaticWithSync=staticFile;staticFile=function(req,res,url){if(url.pathname==='/admin.html'){const f=path.resolve(ROOT,'./admin.html');return fs.readFile(f,'utf8',(e,html)=>{if(e)return adminStaticWithSync(req,res,url);const content=html.replaceAll('林墨','rain').replaceAll('LIN MO','rain').replaceAll('LM','R').replace('</body>','<script src="admin-friends.js"></script><script src="admin-pr-sync.js"></script></body>');send(res,200,content,{'Content-Type':'text/html; charset=utf-8'});});}return adminStaticWithSync(req,res,url);};
+const http = require('node:http');
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+const { DatabaseSync } = require('node:sqlite');
+
+const seedPosts = require('./data.js');
+const { estimateReadTime } = require('./markdown.js');
+const { uploadImageToGitHub } = require('./github-media.js');
+
+const ROOT = __dirname;
+const PORT = Number(process.env.PORT || 8080);
+const DB_PATH = process.env.DB_PATH || path.join(ROOT, 'data', 'blog.sqlite');
+const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const sessions = new Map();
+
+if (!ADMIN_PASSWORD) {
+  console.error('Missing ADMIN_PASSWORD. Set it in .env or the process environment before starting the server.');
+  process.exit(1);
+}
+
+fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
+const db = new DatabaseSync(DB_PATH);
+
+const CATEGORY_LABELS = {
+  product: '产品思考',
+  design: '设计与文化',
+  life: '有意识生活',
+};
+
+const THEME_DEFAULTS = {
+  sunset: '落日',
+  blue: '蓝调',
+  green: '青绿',
+  cream: '米白',
+  purple: '紫雾',
+  orange: '橘光',
+};
+
+const THEME_SETTING_DEFAULTS = {
+  themeLabelSunset: THEME_DEFAULTS.sunset,
+  themeLabelBlue: THEME_DEFAULTS.blue,
+  themeLabelGreen: THEME_DEFAULTS.green,
+  themeLabelCream: THEME_DEFAULTS.cream,
+  themeLabelPurple: THEME_DEFAULTS.purple,
+  themeLabelOrange: THEME_DEFAULTS.orange,
+};
+
+const MIME = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.webp': 'image/webp',
+  '.ico': 'image/x-icon',
+};
+
+function now() {
+  return new Date().toISOString();
+}
+
+function slugify(value) {
+  return (
+    String(value || '')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80) || `post-${Date.now()}`
+  );
+}
+
+function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
+  return `${salt}:${crypto.scryptSync(String(password), salt, 64).toString('hex')}`;
+}
+
+function verifyPassword(password, stored) {
+  const [salt, encoded] = String(stored || '').split(':');
+  if (!salt || !encoded) return false;
+  const actual = crypto.scryptSync(String(password), salt, 64).toString('hex');
+  return crypto.timingSafeEqual(Buffer.from(actual), Buffer.from(encoded));
+}
+
+function bodyArrayToMarkdown(body) {
+  if (!Array.isArray(body)) return '';
+  return body.map((part) => String(part ?? '').trim()).filter(Boolean).join('\n\n');
+}
+
+function normalizeMarkdownInput(value) {
+  if (Array.isArray(value)) return bodyArrayToMarkdown(value);
+  if (value == null) return '';
+
+  const raw = String(value).replace(/\r\n?/g, '\n').trim();
+  if (!raw) return '';
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return bodyArrayToMarkdown(parsed);
+    if (parsed && typeof parsed === 'object') {
+      if (typeof parsed.markdown === 'string') {
+        return String(parsed.markdown).replace(/\r\n?/g, '\n').trim();
+      }
+      if (Array.isArray(parsed.body)) return bodyArrayToMarkdown(parsed.body);
+    }
+    if (typeof parsed === 'string') return String(parsed).replace(/\r\n?/g, '\n').trim();
+  } catch (_) {}
+
+  return raw;
+}
+
+function markdownToParagraphs(markdown) {
+  const text = normalizeMarkdownInput(markdown);
+  if (!text) return [];
+  return text.split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean);
+}
+
+function bodyMarkdownToLegacyJson(markdown) {
+  return JSON.stringify(markdownToParagraphs(markdown));
+}
+
+function serializePost(row) {
+  const bodyMarkdown = normalizeMarkdownInput(row.body_markdown ?? row.body_json ?? row.body ?? '');
+  return {
+    ...row,
+    featured: Boolean(row.featured),
+    bodyMarkdown,
+    body: markdownToParagraphs(bodyMarkdown),
+    read: row.read_time,
+  };
+}
+
+function publicPosts() {
+  return db
+    .prepare("SELECT * FROM posts WHERE status='published' ORDER BY date DESC, updated_at DESC")
+    .all()
+    .map(serializePost);
+}
+
+function adminPosts() {
+  return db.prepare('SELECT * FROM posts ORDER BY date DESC, updated_at DESC').all().map(serializePost);
+}
+
+function settings() {
+  return Object.fromEntries(db.prepare('SELECT key, value FROM settings').all().map((row) => [row.key, row.value]));
+}
+
+function tableColumns(table) {
+  return new Set(db.prepare(`PRAGMA table_info(${table})`).all().map((row) => row.name));
+}
+
+function ensureColumn(table, column, definition) {
+  if (!tableColumns(table).has(column)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
+}
+
+function backfillMarkdownColumn() {
+  const rows = db.prepare('SELECT id, body_json, body_markdown FROM posts').all();
+  const update = db.prepare('UPDATE posts SET body_markdown=? WHERE id=?');
+
+  for (const row of rows) {
+    if (normalizeMarkdownInput(row.body_markdown)) continue;
+    const markdown = normalizeMarkdownInput(row.body_json);
+    if (markdown) update.run(markdown, row.id);
+  }
+}
+
+function syncReadTimeColumn() {
+  const rows = db.prepare('SELECT id, body_markdown, read_time FROM posts').all();
+  const update = db.prepare('UPDATE posts SET read_time=? WHERE id=?');
+
+  for (const row of rows) {
+    const bodyMarkdown = normalizeMarkdownInput(row.body_markdown);
+    const readTime = estimateReadTime(bodyMarkdown);
+    if (String(row.read_time || '') !== readTime) {
+      update.run(readTime, row.id);
+    }
+  }
+}
+
+function seed() {
+  if (Number(db.prepare('SELECT COUNT(*) count FROM posts').get().count) === 0) {
+    const insert = db.prepare(
+      'INSERT INTO posts(id, category, category_label, date, read_time, title, excerpt, featured, accent, body_json, body_markdown, status, created_at, updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+    );
+
+    for (const post of seedPosts) {
+      const timestamp = now();
+      const markdown = normalizeMarkdownInput(post.bodyMarkdown ?? post.body ?? '');
+      const readTime = estimateReadTime(markdown);
+      insert.run(
+        post.id,
+        post.category,
+        post.categoryLabel,
+        post.date,
+        readTime,
+        post.title,
+        post.excerpt,
+        post.featured ? 1 : 0,
+        post.accent,
+        bodyMarkdownToLegacyJson(markdown),
+        markdown,
+        'published',
+        timestamp,
+        timestamp
+      );
+    }
+  }
+
+  if (Number(db.prepare('SELECT COUNT(*) count FROM users').get().count) === 0) {
+    db.prepare('INSERT INTO users(username, password_hash, created_at) VALUES(?,?,?)').run(
+      ADMIN_USER,
+      hashPassword(ADMIN_PASSWORD),
+      now()
+    );
+  }
+
+  const ensureSetting = db.prepare('INSERT OR IGNORE INTO settings(key, value) VALUES(?, ?)');
+  [
+    ['siteName', 'rain'],
+    ['siteEmail', 'rain__lei@outlook.com'],
+    ['intro', '这里是 rain 的个人角落。记录代码、项目实践和日常生活里遇见的问题，也分享那些值得反复思考的小事。'],
+    ['themeLabelSunset', THEME_DEFAULTS.sunset],
+    ['themeLabelBlue', THEME_DEFAULTS.blue],
+    ['themeLabelGreen', THEME_DEFAULTS.green],
+    ['themeLabelCream', THEME_DEFAULTS.cream],
+    ['themeLabelPurple', THEME_DEFAULTS.purple],
+    ['themeLabelOrange', THEME_DEFAULTS.orange],
+  ].forEach((entry) => ensureSetting.run(...entry));
+
+  if (Number(db.prepare('SELECT COUNT(*) count FROM friend_links').get().count) === 0) {
+    const timestamp = now();
+    db.prepare(
+      'INSERT INTO friend_links(name, url, avatar, description, sort_order, enabled, created_at, updated_at) VALUES(?,?,?,?,?,?,?,?)'
+    ).run('rain-lei · GitHub', 'https://github.com/rain-lei', 'https://github.com/rain-lei.png?size=160', '代码、项目与最近的仓库', 0, 1, timestamp, timestamp);
+  }
+}
+
+db.exec(`
+  PRAGMA journal_mode=WAL;
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS posts (
+    id TEXT PRIMARY KEY,
+    category TEXT NOT NULL,
+    category_label TEXT NOT NULL,
+    date TEXT NOT NULL,
+    read_time TEXT NOT NULL,
+    title TEXT NOT NULL,
+    excerpt TEXT NOT NULL,
+    featured INTEGER NOT NULL DEFAULT 0,
+    accent TEXT NOT NULL DEFAULT 'sunset',
+    body_json TEXT NOT NULL DEFAULT '',
+    body_markdown TEXT NOT NULL DEFAULT '',
+    status TEXT NOT NULL DEFAULT 'published',
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS friend_links (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    url TEXT NOT NULL UNIQUE,
+    avatar TEXT NOT NULL DEFAULT '',
+    description TEXT NOT NULL DEFAULT '',
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    enabled INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );
+`);
+
+ensureColumn('posts', 'body_markdown', "TEXT NOT NULL DEFAULT ''");
+backfillMarkdownColumn();
+syncReadTimeColumn();
+seed();
+
+function send(res, status, data, headers = {}) {
+  const isString = typeof data === 'string';
+  res.writeHead(status, {
+    'Content-Type': headers['Content-Type'] || (isString ? 'text/plain; charset=utf-8' : 'application/json; charset=utf-8'),
+    'Cache-Control': headers['Cache-Control'] || 'no-store',
+    ...headers,
+  });
+  res.end(isString ? data : JSON.stringify(data));
+}
+
+function cookieMap(req) {
+  return Object.fromEntries(
+    String(req.headers.cookie || '')
+      .split(';')
+      .map((item) => item.trim().split('=').map(decodeURIComponent))
+      .filter((item) => item.length === 2)
+  );
+}
+
+function user(req) {
+  const token = cookieMap(req).blog_session;
+  const session = token && sessions.get(token);
+  if (!session || session.expiresAt < Date.now()) {
+    if (token) sessions.delete(token);
+    return null;
+  }
+  return db.prepare('SELECT id, username FROM users WHERE id=?').get(session.userId) || null;
+}
+
+function auth(req, res) {
+  const current = user(req);
+  if (!current) {
+    send(res, 401, { error: '请先登录管理后台' });
+    return null;
+  }
+  return current;
+}
+
+function readBody(req, limit = 2_000_000) {
+  return new Promise((resolve, reject) => {
+    let raw = '';
+    req.on('data', (chunk) => {
+      raw += chunk;
+      if (raw.length > limit) {
+        const error = new Error('请求体过大');
+        error.statusCode = 413;
+        req.destroy();
+        reject(error);
+      }
+    });
+    req.on('end', () => {
+      try {
+        resolve(raw ? JSON.parse(raw) : {});
+      } catch (_) {
+        reject(new Error('invalid json'));
+      }
+    });
+    req.on('error', reject);
+  });
+}
+
+function normalizePostPayload(payload, existing = {}) {
+  const title = String(payload.title ?? existing.title ?? '').trim();
+  if (!title) throw Error('标题不能为空');
+
+  const category = String(payload.category ?? existing.category ?? 'life');
+  const status = ['published', 'draft'].includes(payload.status ?? existing.status)
+    ? String(payload.status ?? existing.status)
+    : 'published';
+  const bodyMarkdown = normalizeMarkdownInput(
+    payload.bodyMarkdown ?? payload.body ?? existing.body_markdown ?? existing.body_json ?? existing.body ?? ''
+  );
+  const readTime = estimateReadTime(bodyMarkdown);
+
+  return {
+    id: String(payload.id || existing.id || slugify(title)),
+    category,
+    category_label: String(payload.categoryLabel ?? existing.category_label ?? CATEGORY_LABELS[category] ?? '个人随笔'),
+    date: String(payload.date ?? existing.date ?? new Date().toISOString().slice(0, 10).replaceAll('-', '.')),
+    read_time: readTime,
+    title,
+    excerpt: String(payload.excerpt ?? existing.excerpt ?? ''),
+    featured: payload.featured === undefined ? Number(existing.featured || 0) : payload.featured ? 1 : 0,
+    accent: String(payload.accent ?? existing.accent ?? 'sunset'),
+    body_json: bodyMarkdownToLegacyJson(bodyMarkdown),
+    body_markdown: bodyMarkdown,
+    status,
+    updated_at: now(),
+  };
+}
+
+async function handleApi(req, res, url) {
+  const method = req.method;
+  const pathname = url.pathname;
+
+  try {
+    if (method === 'GET' && pathname === '/api/posts') return send(res, 200, publicPosts());
+    if (method === 'GET' && pathname === '/api/settings') return send(res, 200, settings());
+
+    if (method === 'POST' && pathname === '/api/auth/login') {
+      const body = await readBody(req);
+      const account = db
+        .prepare('SELECT id, username, password_hash FROM users WHERE username=?')
+        .get(String(body.username || ''));
+      if (!account || !verifyPassword(body.password, account.password_hash)) {
+        return send(res, 401, { error: '用户名或密码不正确' });
+      }
+
+      const token = crypto.randomBytes(32).toString('hex');
+      sessions.set(token, { userId: account.id, expiresAt: Date.now() + 604800000 });
+      return send(
+        res,
+        200,
+        { username: account.username },
+        {
+          'Set-Cookie': `blog_session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=604800`,
+        }
+      );
+    }
+
+    if (method === 'POST' && pathname === '/api/auth/logout') {
+      const token = cookieMap(req).blog_session;
+      if (token) sessions.delete(token);
+      return send(
+        res,
+        200,
+        { ok: true },
+        {
+          'Set-Cookie': 'blog_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0',
+        }
+      );
+    }
+
+    if (method === 'GET' && pathname === '/api/auth/me') {
+      const current = user(req);
+      return send(res, 200, current ? { authenticated: true, username: current.username } : { authenticated: false });
+    }
+
+    if (!pathname.startsWith('/api/admin/')) return send(res, 404, { error: 'Not found' });
+    if (!auth(req, res)) return;
+
+    if (method === 'GET' && pathname === '/api/admin/posts') return send(res, 200, adminPosts());
+    if (method === 'GET' && pathname === '/api/admin/settings') return send(res, 200, settings());
+
+    if (method === 'PUT' && pathname === '/api/admin/settings') {
+      const body = await readBody(req);
+      const updater = db.prepare(
+        'INSERT INTO settings(key, value) VALUES(?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value'
+      );
+      for (const [key, value] of Object.entries(body)) {
+        if (['siteName', 'siteEmail', 'intro'].includes(key)) {
+          updater.run(key, String(value).trim());
+        } else if (key in THEME_SETTING_DEFAULTS) {
+          updater.run(key, String(value).trim() || THEME_SETTING_DEFAULTS[key]);
+        }
+      }
+      return send(res, 200, settings());
+    }
+
+    if (method === 'POST' && pathname === '/api/admin/uploads/image') {
+      const body = await readBody(req, 20_000_000);
+      const result = await uploadImageToGitHub({
+        filename: String(body.filename || body.name || 'image'),
+        dataUrl: String(body.dataUrl || body.content || ''),
+      });
+      return send(res, 201, result);
+    }
+
+    if (method === 'POST' && pathname === '/api/admin/posts') {
+      const body = await readBody(req);
+      const post = normalizePostPayload(body);
+      const createdAt = now();
+      db.prepare(
+        'INSERT INTO posts(id, category, category_label, date, read_time, title, excerpt, featured, accent, body_json, body_markdown, status, created_at, updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+      ).run(
+        post.id,
+        post.category,
+        post.category_label,
+        post.date,
+        post.read_time,
+        post.title,
+        post.excerpt,
+        post.featured,
+        post.accent,
+        post.body_json,
+        post.body_markdown,
+        post.status,
+        createdAt,
+        createdAt
+      );
+      return send(res, 201, serializePost(db.prepare('SELECT * FROM posts WHERE id=?').get(post.id)));
+    }
+
+    const postMatch = pathname.match(/^\/api\/admin\/posts\/([^/]+)$/);
+    if (postMatch && (method === 'PUT' || method === 'DELETE')) {
+      const id = decodeURIComponent(postMatch[1]);
+      const existing = db.prepare('SELECT * FROM posts WHERE id=?').get(id);
+      if (!existing) return send(res, 404, { error: '文章不存在' });
+
+      if (method === 'DELETE') {
+        db.prepare('DELETE FROM posts WHERE id=?').run(id);
+        return send(res, 200, { ok: true });
+      }
+
+      const body = await readBody(req);
+      const post = normalizePostPayload({ ...body, id }, existing);
+      db.prepare(
+        'UPDATE posts SET category=?, category_label=?, date=?, read_time=?, title=?, excerpt=?, featured=?, accent=?, body_json=?, body_markdown=?, status=?, updated_at=? WHERE id=?'
+      ).run(
+        post.category,
+        post.category_label,
+        post.date,
+        post.read_time,
+        post.title,
+        post.excerpt,
+        post.featured,
+        post.accent,
+        post.body_json,
+        post.body_markdown,
+        post.status,
+        post.updated_at,
+        id
+      );
+      return send(res, 200, serializePost(db.prepare('SELECT * FROM posts WHERE id=?').get(id)));
+    }
+
+    if (method === 'GET' && pathname === '/api/admin/friend-links') {
+      return send(res, 200, listAdminFriendLinks());
+    }
+
+    if (method === 'POST' && pathname === '/api/admin/friend-links') {
+      const body = await readBody(req);
+      const name = String(body.name || '').trim();
+      const urlValue = String(body.url || '').trim();
+      if (!name || !urlValue) throw Error('友链名称和网址不能为空');
+
+      const timestamp = now();
+      db.prepare(
+        'INSERT INTO friend_links(name, url, avatar, description, sort_order, enabled, created_at, updated_at) VALUES(?,?,?,?,?,?,?,?)'
+      ).run(
+        name,
+        urlValue,
+        String(body.avatar || ''),
+        String(body.description || ''),
+        Number(body.sort_order || 0),
+        body.enabled === false ? 0 : 1,
+        timestamp,
+        timestamp
+      );
+      return send(res, 201, listAdminFriendLinks());
+    }
+
+    const friendMatch = pathname.match(/^\/api\/admin\/friend-links\/(\d+)$/);
+    if (friendMatch && (method === 'PUT' || method === 'DELETE')) {
+      const id = Number(friendMatch[1]);
+      if (method === 'DELETE') {
+        db.prepare('DELETE FROM friend_links WHERE id=?').run(id);
+        return send(res, 200, { ok: true });
+      }
+
+      const body = await readBody(req);
+      const name = String(body.name || '').trim();
+      const urlValue = String(body.url || '').trim();
+      if (!name || !urlValue) throw Error('友链名称和网址不能为空');
+      db.prepare(
+        'UPDATE friend_links SET name=?, url=?, avatar=?, description=?, sort_order=?, enabled=?, updated_at=? WHERE id=?'
+      ).run(
+        name,
+        urlValue,
+        String(body.avatar || ''),
+        String(body.description || ''),
+        Number(body.sort_order || 0),
+        body.enabled === false ? 0 : 1,
+        now(),
+        id
+      );
+      return send(res, 200, listAdminFriendLinks());
+    }
+
+    if (method === 'POST' && pathname === '/api/admin/friend-links/sync') {
+      const source = JSON.parse(fs.readFileSync(path.join(ROOT, 'friend-links.json'), 'utf8'));
+      const items = Array.isArray(source.links) ? source.links : [];
+      const upsert = db.prepare(
+        'INSERT INTO friend_links(name, url, avatar, description, sort_order, enabled, created_at, updated_at) VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(url) DO UPDATE SET name=excluded.name, avatar=excluded.avatar, description=excluded.description, sort_order=excluded.sort_order, enabled=excluded.enabled, updated_at=excluded.updated_at'
+      );
+      const timestamp = now();
+      for (const item of items) {
+        if (item.name && item.url) {
+          upsert.run(
+            String(item.name),
+            String(item.url),
+            String(item.avatar || ''),
+            String(item.description || ''),
+            Number(item.sort_order || 0),
+            item.enabled === false ? 0 : 1,
+            timestamp,
+            timestamp
+          );
+        }
+      }
+      return send(res, 200, { count: items.length, links: listAdminFriendLinks() });
+    }
+
+    return send(res, 404, { error: 'Not found' });
+  } catch (error) {
+    console.error(error);
+    const status = Number(error.statusCode || error.status || 400);
+    return send(res, status >= 400 && status < 600 ? status : 400, { error: error.message || '请求失败' });
+  }
+}
+
+function listFriendLinks() {
+  return db
+    .prepare('SELECT id, name, url, avatar, description, sort_order, enabled FROM friend_links WHERE enabled=1 ORDER BY sort_order ASC, id ASC')
+    .all()
+    .map((row) => ({ ...row, enabled: Boolean(row.enabled) }));
+}
+
+function listAdminFriendLinks() {
+  return db
+    .prepare('SELECT id, name, url, avatar, description, sort_order, enabled FROM friend_links ORDER BY sort_order ASC, id ASC')
+    .all()
+    .map((row) => ({ ...row, enabled: Boolean(row.enabled) }));
+}
+
+function staticFile(req, res, url) {
+  let pathname = url.pathname === '/' ? '/index.html' : url.pathname;
+  if (pathname === '/admin') pathname = '/admin.html';
+
+  const filePath = path.resolve(ROOT, `.${pathname}`);
+  if (!filePath.startsWith(path.resolve(ROOT))) {
+    return send(res, 403, 'Forbidden');
+  }
+
+  fs.stat(filePath, (statError, stat) => {
+    if (statError || !stat.isFile()) return send(res, 404, 'Not found');
+    const type = MIME[path.extname(filePath).toLowerCase()] || 'application/octet-stream';
+    res.writeHead(200, { 'Content-Type': type });
+    fs.createReadStream(filePath).pipe(res);
+  });
+}
+
+const server = http.createServer((req, res) => {
+  const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  if (url.pathname.startsWith('/api/')) return handleApi(req, res, url);
+  return staticFile(req, res, url);
+});
+
+server.listen(PORT, () => {
+  console.log(`rain blog running at http://localhost:${PORT}`);
+});
+
+process.on('SIGINT', () => {
+  db.close();
+  process.exit(0);
+});

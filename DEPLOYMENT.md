@@ -7,12 +7,20 @@
 ```bash
 cp .env.example .env
 # 编辑 .env，至少设置 ADMIN_PASSWORD
+# 如果要使用“上传图片并同步到 GitHub”，再补：
+# GITHUB_UPLOAD_OWNER=rain-lei
+# GITHUB_UPLOAD_REPO=rain-lei
+# GITHUB_UPLOAD_BRANCH=main
+# GITHUB_UPLOAD_PATH=uploads
+# GITHUB_UPLOAD_TOKEN=你的 GitHub token（需要 contents:write 权限）
 npm start
 ```
 
 打开 <http://localhost:8080>，管理后台位于 <http://localhost:8080/admin.html>。
 
 SQLite 数据库默认写入 `data/blog.sqlite`，该目录不会被提交到 Git。
+
+图片上传会在后台直接调用 GitHub Contents API，把文件写入仓库的 `uploads/` 目录；前台 Markdown 里保存的是 GitHub 的稳定图片链接，因此即使服务器后续迁移，图片也不会丢。
 
 ## Docker 部署
 

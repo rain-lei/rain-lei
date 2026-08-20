@@ -1,0 +1,8 @@
+.git
+.github
+.codex
+.env
+data
+node_modules
+*.log
+*.tar

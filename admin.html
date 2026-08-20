@@ -1,1 +1,290 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="robots" content="noindex,nofollow"/><title>管理后台 · 林墨</title><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet"/><link rel="stylesheet" href="admin.css"/></head><body><div id="loginView" class="login-view"><div class="login-card"><div class="admin-mark">LM</div><p class="admin-kicker">LIN MO / ADMIN</p><h1>欢迎回来。</h1><p class="login-note">登录后管理文章与站点设置。</p><form id="loginForm"><label>用户名<input name="username" value="admin" required/></label><label>密码<input name="password" type="password" required/></label><button class="primary-btn" type="submit">登录后台 ↗</button><p id="loginError" class="error-text"></p></form><a class="back-home" href="index.html">← 返回博客</a></div></div><div id="adminView" class="admin-view is-hidden"><aside class="admin-sidebar"><a class="admin-logo" href="index.html"><span class="admin-mark">LM</span><span><strong>LIN MO</strong><small>ADMIN STUDIO</small></span></a><nav><button class="side-link is-active" data-section="overview">总览</button><button class="side-link" data-section="posts">文章管理</button><button class="side-link" data-section="settings">站点设置</button></nav><div class="sidebar-bottom"><a href="index.html" target="_blank">查看博客 ↗</a><button id="logoutBtn">退出登录</button></div></aside><main class="admin-main"><header class="admin-topbar"><div><p class="admin-kicker">DASHBOARD / 2026</p><h2 id="pageTitle">总览</h2></div><div class="top-actions"><span id="currentUser"></span><button id="newPostBtn" class="primary-btn compact">+ 写新文章</button></div></header><section id="overviewSection" class="admin-section"><div class="stat-grid"><div class="stat-card"><span>已发布文章</span><strong id="publishedCount">—</strong><small>PUBLIC POSTS</small></div><div class="stat-card"><span>草稿</span><strong id="draftCount">—</strong><small>IN PROGRESS</small></div><div class="stat-card accent-card"><span>最近更新</span><strong id="latestDate">—</strong><small>LAST UPDATE</small></div></div><div class="overview-grid"><div class="panel"><div class="panel-heading"><div><p class="admin-kicker">QUICK EDIT</p><h3>最近的文章</h3></div><button class="text-btn" data-go="posts">全部文章 ↗</button></div><div id="recentPosts" class="recent-posts"></div></div><div class="panel tip-panel"><p class="admin-kicker">EDITOR'S NOTE</p><h3>保持一点留白。</h3><p>修改会直接保存到 SQLite。设为“已发布”后，前台会自动显示；“草稿”只在后台可见。</p></div></div></section><section id="postsSection" class="admin-section is-hidden"><div class="section-toolbar"><div><p class="admin-kicker">CONTENT / POSTS</p><h3>文章管理</h3></div><button id="newPostBtn2" class="primary-btn compact">+ 新建文章</button></div><div id="postTable" class="post-table"></div></section><section id="settingsSection" class="admin-section is-hidden"><div class="section-toolbar"><div><p class="admin-kicker">CONFIG / SITE</p><h3>站点设置</h3></div></div><form id="settingsForm" class="settings-form panel"><label>站点名称<input name="siteName" required/></label><label>联系邮箱<input name="siteEmail" type="email" required/></label><label>首页简介<textarea name="intro" rows="5" required></textarea></label><div class="form-actions"><span id="settingsMessage" class="success-text"></span><button class="primary-btn compact" type="submit">保存设置</button></div></form></section></main></div><div id="editorModal" class="editor-modal is-hidden"><div class="modal-backdrop" data-close-editor></div><div class="editor-card"><div class="editor-heading"><div><p class="admin-kicker">EDITOR / POST</p><h3 id="editorTitle">写新文章</h3></div><button class="close-btn" data-close-editor>×</button></div><form id="postForm"><input type="hidden" name="id"/><div class="field-grid"><label class="wide">标题<input name="title" required placeholder="输入文章标题"/></label><label>分类<select name="category"><option value="product">产品思考</option><option value="design">设计与文化</option><option value="life">有意识生活</option></select></label><label>分类显示名<input name="categoryLabel"/></label><label>发布日期<input name="date" placeholder="2026.08.20"/></label><label>阅读时长<input name="read" placeholder="6 min read"/></label><label>视觉主题<select name="accent"><option>sunset</option><option>blue</option><option>green</option><option>cream</option><option>purple</option><option>orange</option></select></label><label>状态<select name="status"><option value="published">已发布</option><option value="draft">草稿</option></select></label><label class="wide">摘要<input name="excerpt" required/></label><label class="wide">正文（每段之间空一行）<textarea name="body" rows="10" required></textarea></label></div><div class="form-actions"><span id="editorError" class="error-text"></span><button type="button" class="ghost-btn" data-close-editor>取消</button><button class="primary-btn compact" type="submit">保存文章</button></div></form></div></div><script src="admin.js"></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>管理后台 · rain</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+    <div id="loginView" class="login-view">
+      <div class="login-card">
+        <div class="admin-mark">R</div>
+        <p class="admin-kicker">RAIN / ADMIN</p>
+        <h1>欢迎回来。</h1>
+        <p class="login-note">登录后管理文章、友链与站点设置。</p>
+        <form id="loginForm">
+          <label>
+            用户名
+            <input name="username" value="rain" required />
+          </label>
+          <label>
+            密码
+            <input name="password" type="password" required />
+          </label>
+          <button class="primary-btn" type="submit">登录后台 ↗</button>
+          <p id="loginError" class="error-text"></p>
+        </form>
+        <a class="back-home" href="index.html">← 返回博客</a>
+      </div>
+    </div>
+
+    <div id="adminView" class="admin-view is-hidden">
+      <aside class="admin-sidebar">
+        <a class="admin-logo" href="index.html">
+          <span class="admin-mark">R</span>
+          <span>
+            <strong>RAIN</strong>
+            <small>ADMIN STUDIO</small>
+          </span>
+        </a>
+        <nav>
+          <button class="side-link is-active" data-section="overview">总览</button>
+          <button class="side-link" data-section="posts">文章管理</button>
+          <button class="side-link" data-section="settings">站点设置</button>
+        </nav>
+        <div class="sidebar-bottom">
+          <a href="index.html" target="_blank">查看博客 ↗</a>
+          <button id="logoutBtn">退出登录</button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-topbar">
+          <div>
+            <p class="admin-kicker">DASHBOARD / 2026</p>
+            <h2 id="pageTitle">总览</h2>
+          </div>
+          <div class="top-actions">
+            <span id="currentUser"></span>
+            <button id="newPostBtn" class="primary-btn compact">+ 写新文章</button>
+          </div>
+        </header>
+
+        <section id="overviewSection" class="admin-section">
+          <div class="stat-grid">
+            <div class="stat-card">
+              <span>已发布文章</span>
+              <strong id="publishedCount">—</strong>
+              <small>PUBLIC POSTS</small>
+            </div>
+            <div class="stat-card">
+              <span>草稿</span>
+              <strong id="draftCount">—</strong>
+              <small>IN PROGRESS</small>
+            </div>
+            <div class="stat-card accent-card">
+              <span>最近更新</span>
+              <strong id="latestDate">—</strong>
+              <small>LAST UPDATE</small>
+            </div>
+          </div>
+
+          <div class="overview-grid">
+            <div class="panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="admin-kicker">QUICK EDIT</p>
+                  <h3>最近的文章</h3>
+                </div>
+                <button class="text-btn" data-go="posts">全部文章 ↗</button>
+              </div>
+              <div id="recentPosts" class="recent-posts"></div>
+            </div>
+            <div class="panel tip-panel">
+              <p class="admin-kicker">EDITOR'S NOTE</p>
+              <h3>写 Markdown 就够了。</h3>
+              <p>支持标题、列表、引用、链接、代码块和图片语法。保存后会直接写入 SQLite，前台自动同步。</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="postsSection" class="admin-section is-hidden">
+          <div class="section-toolbar">
+            <div>
+              <p class="admin-kicker">CONTENT / POSTS</p>
+              <h3>文章管理</h3>
+            </div>
+            <button id="newPostBtn2" class="primary-btn compact">+ 新建文章</button>
+          </div>
+          <div id="postTable" class="post-table"></div>
+        </section>
+
+        <section id="settingsSection" class="admin-section is-hidden">
+          <div class="section-toolbar">
+            <div>
+              <p class="admin-kicker">CONFIG / SITE</p>
+              <h3>站点设置</h3>
+            </div>
+          </div>
+          <form id="settingsForm" class="settings-form panel">
+            <label>
+              站点名称
+              <input name="siteName" required />
+            </label>
+            <label>
+              联系邮箱
+              <input name="siteEmail" type="email" required />
+            </label>
+            <label>
+              首页简介
+              <textarea name="intro" rows="5" required></textarea>
+            </label>
+            <div class="theme-settings wide">
+              <div class="theme-settings-head">
+                <div>
+                  <p class="admin-kicker">CONFIG / THEMES</p>
+                  <h4>主题名称</h4>
+                </div>
+                <small>这里只改后台显示名称，不影响前台配色。</small>
+              </div>
+              <div class="theme-name-grid">
+                <label>sunset<input name="themeLabelSunset" /></label>
+                <label>blue<input name="themeLabelBlue" /></label>
+                <label>green<input name="themeLabelGreen" /></label>
+                <label>cream<input name="themeLabelCream" /></label>
+                <label>purple<input name="themeLabelPurple" /></label>
+                <label>orange<input name="themeLabelOrange" /></label>
+              </div>
+            </div>
+            <div class="form-actions">
+              <span id="settingsMessage" class="success-text"></span>
+              <button class="primary-btn compact" type="submit">保存设置</button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <div id="editorModal" class="editor-modal is-hidden">
+      <div class="modal-backdrop" data-close-editor></div>
+      <div class="editor-card">
+        <div class="editor-heading">
+          <div>
+            <p class="admin-kicker">EDITOR / POST</p>
+            <h3 id="editorTitle">写新文章</h3>
+          </div>
+          <button class="close-btn" data-close-editor>×</button>
+        </div>
+        <form id="postForm">
+          <input type="hidden" name="id" />
+          <div class="field-grid">
+            <label class="wide">
+              标题
+              <input name="title" required placeholder="输入文章标题" />
+            </label>
+            <label>
+              分类
+              <select name="category">
+                <option value="product">产品思考</option>
+                <option value="design">设计与文化</option>
+                <option value="life">有意识生活</option>
+              </select>
+            </label>
+            <label>
+              分类显示名
+              <input name="categoryLabel" />
+            </label>
+            <label>
+              发布日期
+              <input name="date" placeholder="2026.08.20" />
+            </label>
+            <label>
+              阅读时长
+              <input name="read" placeholder="自动计算" readonly />
+              <small class="field-hint">由正文内容自动计算，无需手动填写。</small>
+            </label>
+            <label>
+              视觉主题
+              <select name="accent">
+                <option>sunset</option>
+                <option>blue</option>
+                <option>green</option>
+                <option>cream</option>
+                <option>purple</option>
+                <option>orange</option>
+              </select>
+            </label>
+            <label>
+              状态
+              <select name="status">
+                <option value="published">已发布</option>
+                <option value="draft">草稿</option>
+              </select>
+            </label>
+            <label class="wide">
+              摘要
+              <input name="excerpt" required />
+            </label>
+            <label class="wide">
+              正文（Markdown）
+              <textarea
+                name="bodyMarkdown"
+                rows="12"
+                required
+                placeholder="# 标题&#10;&#10;正文段落&#10;&#10;![图片说明](https://example.com/image.jpg)"
+              ></textarea>
+              <small class="field-hint">支持标题、列表、引用、链接、代码块和图片语法 `![alt](url)`。</small>
+            </label>
+            <div class="upload-tools wide">
+              <div class="upload-tools-head">
+                <div>
+                  <p class="admin-kicker">IMAGE / GITHUB SYNC</p>
+                  <strong>上传图片并同步到 GitHub</strong>
+                </div>
+                <small>图片会自动进入仓库，正文里写入可长期访问的链接。</small>
+              </div>
+              <div class="upload-grid">
+                <label>
+                  图片文件
+                  <input id="imageFileInput" type="file" accept="image/*" />
+                </label>
+                <label>
+                  图片说明
+                  <input id="imageAltInput" type="text" placeholder="可留空，默认使用文件名" />
+                </label>
+                <button type="button" id="imageUploadBtn" class="ghost-btn upload-btn">上传并插入</button>
+              </div>
+              <p id="imageUploadMessage" class="upload-message" aria-live="polite"></p>
+            </div>
+            <div class="upload-tools wide">
+              <div class="upload-tools-head">
+                <div>
+                  <p class="admin-kicker">MARKDOWN / IMPORT</p>
+                  <strong>直接导入 Markdown 文件</strong>
+                </div>
+                <small>支持 frontmatter，自动填充标题、摘要、分类和正文。</small>
+              </div>
+              <div class="upload-grid markdown-import-grid">
+                <label class="wide-file">
+                  Markdown 文件
+                  <input id="markdownFileInput" type="file" accept=".md,.markdown,text/markdown,text/plain" />
+                </label>
+                <button type="button" id="markdownImportBtn" class="ghost-btn upload-btn">读取并填充</button>
+              </div>
+              <p id="markdownImportMessage" class="upload-message" aria-live="polite"></p>
+            </div>
+            <div id="postPreview" class="markdown-preview wide" aria-live="polite"></div>
+          </div>
+          <div class="form-actions">
+            <span id="editorError" class="error-text"></span>
+            <button type="button" class="ghost-btn" data-close-editor>取消</button>
+            <button class="primary-btn compact" type="submit">保存文章</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="markdown.js"></script>
+    <script src="admin.js"></script>
+    <script src="admin-friends.js"></script>
+    <script src="admin-pr-sync.js"></script>
+  </body>
+</html>

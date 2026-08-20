@@ -1,26 +1,40 @@
-# Contributing
+# 上线与提交规范
 
-感谢你为 rain 的个人博客提交改进。
+这个仓库只保留可公开的源码、文档和图片，不提交服务器私钥、数据库、缓存或个人信息。
 
-## 本地开发
+## 提交前检查
+
+- 页面或后台能在本地正常打开。
+- `.env`、数据库文件、日志、密钥都没有进入提交。
+- 新增资源有授权，图片、字体、文章都能公开使用。
+- 如果改动了对外展示内容，README 和相关文档已经同步更新。
+
+## 适合提交的内容
+
+- 前端样式、文案、交互和可访问性。
+- 管理后台和 API。
+- 友链：只修改 `friend-links.json`。
+- 文档和部署说明。
+
+## 不要提交的内容
+
+- `.env`、`*.pem`、Token、Cookie、密码。
+- `data/*.sqlite`、`node_modules/`、日志、临时文件。
+- 未授权的图片、字体、文章、品牌素材。
+- 真实姓名、邮箱、手机号等私密信息。
+
+## 推送到 GitHub
 
 ```bash
-cp .env.example .env
-npm start
+git status
+git add <files>
+git commit -m "docs: update readme"
+git pull --rebase origin main
+git push origin main
 ```
 
-Node.js 需要 22.5 或更高版本。数据库会自动创建在 `data/blog.sqlite`，该目录已被 `.gitignore` 忽略。
+## 发布到服务器
 
-## 可以提交什么
+服务器部署使用 Docker + Nginx。源码更新后只替换仓库文件，不把数据库文件提交到 Git。
 
-- 友链申请：修改 `friend-links.json`，使用 `Friend link` PR 模板。
-- 前端改进：说明页面、交互或可访问性变化，并附上截图或复现步骤。
-- API / 后台改进：说明数据库变更、接口变化和迁移方式。
-
-## 不要提交什么
-
-- `.env`、密码、Cookie、API token、数据库文件。
-- 未获得授权的图片、字体文件、文章或品牌素材。
-- 直接修改线上数据库的导出文件。
-
-所有 PR 都需要通过维护者审核后才能合并。
+友链合并后，在后台点击“导入 PR 友链”即可把 `friend-links.json` 同步到 SQLite。
