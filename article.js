@@ -7,13 +7,14 @@
     const response = await fetch('/api/posts');
     if (response.ok) {
       const remote = await response.json();
-      if (Array.isArray(remote) && remote.length) posts = remote;
+      if (Array.isArray(remote)) posts = remote;
     }
   } catch (_) {}
 
   const post = posts.find((item) => item.id === id) || posts[0];
   const root = document.getElementById('articleRoot');
   if (!post || !root) return;
+  const categoryWords = { study: 'LEARN', life: 'LIVE', entertainment: 'PLAY' };
 
   const bodyMarkdown = markdown?.normalizeMarkdownInput(post.bodyMarkdown ?? post.body ?? '') || '';
   const bodyHtml = bodyMarkdown ? markdown.renderMarkdown(bodyMarkdown) : '<p class="article-empty">暂无正文。</p>';
@@ -36,7 +37,7 @@
       </div>
       <div class="article-hero ${post.accent}">
         <span class="visual-label">${post.categoryLabel}</span>
-        <span class="visual-word">${post.category === 'product' ? 'THINK' : post.category === 'design' ? 'FORM' : 'PAUSE'}</span>
+        <span class="visual-word">${categoryWords[post.category] || 'NOTE'}</span>
         <span class="visual-shape"></span>
       </div>
       <div class="article-layout">

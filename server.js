@@ -24,9 +24,15 @@ fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 const db = new DatabaseSync(DB_PATH);
 
 const CATEGORY_LABELS = {
-  product: '产品思考',
-  design: '设计与文化',
-  life: '有意识生活',
+  study: '学习',
+  life: '生活',
+  entertainment: '娱乐',
+};
+
+const CATEGORY_ALIASES = {
+  product: 'study',
+  design: 'entertainment',
+  life: 'life',
 };
 
 const THEME_DEFAULTS = {
@@ -129,6 +135,7 @@ function serializePost(row) {
   return {
     ...row,
     featured: Boolean(row.featured),
+    categoryLabel: row.category_label,
     bodyMarkdown,
     body: markdownToParagraphs(bodyMarkdown),
     read: row.read_time,
@@ -182,6 +189,13 @@ function syncReadTimeColumn() {
       update.run(readTime, row.id);
     }
   }
+}
+
+function migratePostCategories() {
+  const migrate = db.prepare('UPDATE posts SET category=?, category_label=? WHERE category=?');
+  migrate.run('study', CATEGORY_LABELS.study, 'product');
+  migrate.run('entertainment', CATEGORY_LABELS.entertainment, 'design');
+  db.prepare('UPDATE posts SET category_label=? WHERE category=?').run(CATEGORY_LABELS.life, 'life');
 }
 
 function seed() {
@@ -286,6 +300,7 @@ db.exec(`
 ensureColumn('posts', 'body_markdown', "TEXT NOT NULL DEFAULT ''");
 backfillMarkdownColumn();
 syncReadTimeColumn();
+migratePostCategories();
 seed();
 
 function send(res, status, data, headers = {}) {
@@ -353,7 +368,9 @@ function normalizePostPayload(payload, existing = {}) {
   const title = String(payload.title ?? existing.title ?? '').trim();
   if (!title) throw Error('标题不能为空');
 
-  const category = String(payload.category ?? existing.category ?? 'life');
+  const rawCategory = String(payload.category ?? existing.category ?? 'life');
+  const category = CATEGORY_ALIASES[rawCategory]
+    || (Object.prototype.hasOwnProperty.call(CATEGORY_LABELS, rawCategory) ? rawCategory : 'life');
   const status = ['published', 'draft'].includes(payload.status ?? existing.status)
     ? String(payload.status ?? existing.status)
     : 'published';
@@ -365,7 +382,7 @@ function normalizePostPayload(payload, existing = {}) {
   return {
     id: String(payload.id || existing.id || slugify(title)),
     category,
-    category_label: String(payload.categoryLabel ?? existing.category_label ?? CATEGORY_LABELS[category] ?? '个人随笔'),
+    category_label: CATEGORY_LABELS[category],
     date: String(payload.date ?? existing.date ?? new Date().toISOString().slice(0, 10).replaceAll('-', '.')),
     read_time: readTime,
     title,

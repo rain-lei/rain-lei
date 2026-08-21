@@ -15,7 +15,8 @@
   const markdownImportBtn = $('#markdownImportBtn');
   const markdownImportMessage = $('#markdownImportMessage');
 
-  const categoryOptions = new Set(['product', 'design', 'life']);
+  const categoryOptions = new Set(['study', 'life', 'entertainment']);
+  const categoryLabels = { study: '学习', life: '生活', entertainment: '娱乐' };
   const themeLabels = {
     sunset: '落日',
     blue: '蓝调',
@@ -139,13 +140,7 @@
       postForm.category.value = category;
     }
 
-    if (typeof meta.categoryLabel === 'string' && meta.categoryLabel.trim()) {
-      postForm.categoryLabel.value = meta.categoryLabel.trim();
-    } else if (category && !categoryOptions.has(category)) {
-      postForm.categoryLabel.value = category;
-    } else if (postForm.categoryLabel.value) {
-      postForm.categoryLabel.value = postForm.categoryLabel.value;
-    }
+    postForm.categoryLabel.value = categoryLabels[postForm.category.value] || categoryLabels.life;
 
     if (typeof meta.date === 'string' && meta.date.trim()) {
       postForm.date.value = meta.date.trim();
@@ -353,6 +348,8 @@
       postForm.excerpt.value = post.excerpt || '';
       postForm.bodyMarkdown.value = bodyMarkdownOf(post);
     } else {
+      postForm.category.value = 'study';
+      postForm.categoryLabel.value = categoryLabels.study;
       postForm.bodyMarkdown.value = '';
     }
 
@@ -445,6 +442,9 @@
   });
 
   postForm.bodyMarkdown.addEventListener('input', updatePreview);
+  postForm.category.addEventListener('change', () => {
+    postForm.categoryLabel.value = categoryLabels[postForm.category.value] || categoryLabels.life;
+  });
   imageFileInput?.addEventListener('change', () => {
     const file = imageFileInput.files?.[0];
     if (!file) {
