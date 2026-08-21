@@ -1,0 +1,54 @@
+/* Calm interaction feedback for the management interface. */
+:root { --admin-motion: cubic-bezier(.23, 1, .32, 1); }
+
+.side-link {
+  position: relative;
+  border-radius: 8px;
+  transition: background 180ms ease, color 180ms ease, transform 120ms var(--admin-motion);
+}
+
+.side-link:hover { transform: translateX(3px); }
+.side-link:active { transform: scale(.98); }
+.side-link.is-active {
+  border-left: 0;
+  box-shadow: inset 2px 0 0 var(--lime), inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.stat-card,
+.panel {
+  transition: transform 220ms var(--admin-motion), box-shadow 220ms var(--admin-motion), border-color 220ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .stat-card:hover,
+  .panel:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--ink) 18%, var(--line));
+    box-shadow: 0 16px 35px rgba(26, 26, 20, .08);
+  }
+}
+
+.primary-btn,
+.ghost-btn {
+  transition: transform 120ms var(--admin-motion), opacity 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.primary-btn:active,
+.ghost-btn:active { transform: scale(.97); }
+
+.login-card input:focus,
+.settings-form input:focus,
+.settings-form textarea:focus,
+.field-grid input:focus,
+.field-grid textarea:focus,
+.field-grid select:focus {
+  box-shadow: 0 0 0 3px rgba(205, 244, 91, .22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

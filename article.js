@@ -100,6 +100,11 @@
     if (icon) icon.textContent = '☾';
   }
 
+  const header = document.querySelector('.site-header');
+  const updateHeader = () => header?.classList.toggle('is-scrolled', window.scrollY > 18);
+  updateHeader();
+  window.addEventListener('scroll', updateHeader, { passive: true });
+
   document.querySelector('[data-share="copy"]')?.addEventListener('click', async (event) => {
     try {
       await navigator.clipboard.writeText(location.href);
