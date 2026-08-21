@@ -1,15 +1,7 @@
-(async function () {
+(function () {
   const markdown = window.blogMarkdown;
   let posts = window.blogPosts || [];
   const id = new URLSearchParams(location.search).get('id');
-
-  try {
-    const response = await fetch('/api/posts');
-    if (response.ok) {
-      const remote = await response.json();
-      if (Array.isArray(remote)) posts = remote;
-    }
-  } catch (_) {}
 
   const post = posts.find((item) => item.id === id) || posts[0];
   const root = document.getElementById('articleRoot');

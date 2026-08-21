@@ -1,40 +1,35 @@
-# 上线与提交规范
+# 内容与提交规范
 
-这个仓库只保留可公开的源码、文档和图片，不提交服务器私钥、数据库、缓存或个人信息。
+这个仓库是公开静态博客的源码和内容库。Git 提交既是内容历史，也是服务器可回滚的发布版本。
 
-## 提交前检查
+## 写文章
 
-- 页面或后台能在本地正常打开。
-- `.env`、数据库文件、日志、密钥都没有进入提交。
-- 新增资源有授权，图片、字体、文章都能公开使用。
-- 如果改动了对外展示内容，README 和相关文档已经同步更新。
+1. 从 `content/templates/post.md` 复制模板到 `content/posts/`。
+2. 给每篇文章一个稳定、唯一的 `id`；文件名可以使用英文或中文。
+3. 分类只使用 `study`（学习）、`life`（生活）、`entertainment`（娱乐）。
+4. 图片上传到 `uploads/` 后，用 `![说明](/uploads/路径)` 引用。
+5. 提交前执行 `npm run check`，再推送到 `main`。
 
-## 适合提交的内容
+## 适合提交
 
-- 前端样式、文案、交互和可访问性。
-- 管理后台和 API。
-- 友链：只修改 `friend-links.json`。
-- 文档和部署说明。
+- Markdown 文章、公开可用的图片、前端样式和交互。
+- `friend-links.json`、友链文档、部署脚本。
+- 可公开的说明文档。
 
-## 不要提交的内容
+## 不要提交
 
-- `.env`、`*.pem`、Token、Cookie、密码。
-- `data/*.sqlite`、`node_modules/`、日志、临时文件。
-- 未授权的图片、字体、文章、品牌素材。
-- 真实姓名、邮箱、手机号等私密信息。
+- `.env`、`*.pem`、SSH 私钥、Token、Cookie、密码。
+- 数据库、日志、构建产物 `dist/`、`node_modules/`。
+- 未授权的图片、字体、文章或品牌素材。
+- 真实姓名、私人邮箱、手机号、住址等不希望公开的信息。
 
-## 推送到 GitHub
+## 提交前命令
 
 ```bash
+npm run check
 git status
-git add <files>
-git commit -m "docs: update readme"
+git add <明确列出的文件>
+git commit -m "content: add a new post"
 git pull --rebase origin main
 git push origin main
 ```
-
-## 发布到服务器
-
-服务器部署使用 Docker + Nginx。源码更新后只替换仓库文件，不把数据库文件提交到 Git。
-
-友链合并后，在后台点击“导入 PR 友链”即可把 `friend-links.json` 同步到 SQLite。

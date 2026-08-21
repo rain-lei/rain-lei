@@ -8,5 +8,5 @@
     if(!Array.isArray(links)||!links.length)throw Error();
     grid.innerHTML=links.map(link=>`<a class="friend-link-card" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer"><img src="${escapeHtml(link.avatar||favicon(link.url))}" alt="${escapeHtml(link.name)}" loading="lazy" onerror="this.src='${favicon(link.url)}'"/><span><strong>${escapeHtml(link.name)}</strong><small>${escapeHtml(link.description||link.url)}</small></span><b>↗</b></a>`).join('');
   };
-  fetch('/api/friend-links').then(r=>{if(!r.ok)throw Error();return r.json();}).then(render).catch(()=>fetch('/friend-links.json').then(r=>r.json()).then(data=>render(data.links)).catch(()=>{grid.innerHTML=fallback;}));
+  fetch('friend-links.json').then(r=>{if(!r.ok)throw Error();return r.json();}).then(data=>render(data.links)).catch(()=>{grid.innerHTML=fallback;});
 })();

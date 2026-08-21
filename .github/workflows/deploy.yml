@@ -1,0 +1,90 @@
+name: Deploy static blog
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - README.md
+      - CONTRIBUTING.md
+      - DEPLOYMENT.md
+      - FRIEND_LINKS.md
+      - .github/PULL_REQUEST_TEMPLATE/**
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: 发布新版本，或回滚到指定的已存在提交
+        required: true
+        default: deploy
+        type: choice
+        options: [deploy, rollback]
+      target_sha:
+        description: 40 位 Git commit SHA（回滚时必填；手动发布也可填写）
+        required: true
+        type: string
+
+concurrency:
+  group: rain-blog-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy exact static revision
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+      DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+      DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+      OPERATION: ${{ github.event_name == 'workflow_dispatch' && inputs.operation || 'deploy' }}
+      TARGET_SHA: ${{ github.event_name == 'workflow_dispatch' && inputs.target_sha || github.sha }}
+
+    steps:
+      - name: Validate deployment settings
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$DEPLOY_HOST"
+          test -n "$DEPLOY_USER"
+          test -n "$DEPLOY_SSH_KEY"
+          test -n "$DEPLOY_KNOWN_HOSTS"
+          [[ "$OPERATION" == "deploy" || "$OPERATION" == "rollback" ]]
+          [[ "$TARGET_SHA" =~ ^[0-9a-f]{40}$ ]]
+
+      - name: Configure pinned SSH connection
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir -p "$HOME/.ssh"
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$HOME/.ssh/rain-blog-deploy"
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+
+      - name: Deploy with automatic server-side rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh \
+            -i "$HOME/.ssh/rain-blog-deploy" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=15 \
+            "$DEPLOY_USER@$DEPLOY_HOST" \
+            "$OPERATION $TARGET_SHA"
+
+      - name: Verify public static site
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors --max-time 15 https://www.rainlei.xyz/ > /dev/null
+          curl --fail --silent --show-error --retry 5 --retry-delay 3 --retry-all-errors --max-time 15 https://www.rainlei.xyz/admin.html > /dev/null
+
+      - name: Remove temporary private key
+        if: always()
+        shell: bash
+        run: rm -f "$HOME/.ssh/rain-blog-deploy"

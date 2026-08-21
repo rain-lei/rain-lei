@@ -1,6 +1,9 @@
-FROM node:22-alpine
-WORKDIR /app
+FROM node:22-alpine AS build
+WORKDIR /site
 COPY . .
-ENV NODE_ENV=production
-EXPOSE 8080
-CMD ["node", "server.js"]
+RUN node scripts/build-static.js
+
+FROM nginx:1.27-alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /site/dist /usr/share/nginx/html
+EXPOSE 80
