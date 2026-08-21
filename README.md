@@ -11,15 +11,36 @@
 
 ## 精选项目
 
-<p align="center">
-  <a href="https://github.com/rain-lei/vibecodearts"><img width="49%" src="https://opengraph.githubassets.com/rain-profile/rain-lei/vibecodearts" alt="ChronoFlow 仓库预览" /></a>
-  <a href="https://github.com/rain-lei/MarketMirror"><img width="49%" src="https://opengraph.githubassets.com/rain-profile/rain-lei/MarketMirror" alt="MarketMirror 仓库预览" /></a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/rain-lei/ppt_name_replacer"><img width="49%" src="https://opengraph.githubassets.com/rain-profile/rain-lei/ppt_name_replacer" alt="PPT 奖状批量生成工具仓库预览" /></a>
-  <a href="https://github.com/rain-lei/easyxgame"><img width="49%" src="https://opengraph.githubassets.com/rain-profile/rain-lei/easyxgame" alt="EasyX 课程项目仓库预览" /></a>
-</p>
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <h3><a href="https://github.com/rain-lei/vibecodearts">ChronoFlow</a></h3>
+      <p>根据个人精力曲线安排任务的纯前端调度器，数据保存在本地。</p>
+      <p><code>TypeScript</code> <code>React</code> <code>Vite</code> · <a href="https://rain-lei.github.io/vibecodearts/">在线演示 ↗</a></p>
+      <a href="https://github.com/rain-lei/vibecodearts/stargazers"><img src="https://img.shields.io/github/stars/rain-lei/vibecodearts?style=flat-square&label=Star" alt="ChronoFlow Star" /></a>
+    </td>
+    <td width="50%" valign="top">
+      <h3><a href="https://github.com/rain-lei/MarketMirror">MarketMirror</a></h3>
+      <p>面向金融监管研究的多类型投资者市场冲击仿真平台。</p>
+      <p><code>Vue 3</code> <code>FastAPI</code> <code>ECharts</code></p>
+      <a href="https://github.com/rain-lei/MarketMirror/stargazers"><img src="https://img.shields.io/github/stars/rain-lei/MarketMirror?style=flat-square&label=Star" alt="MarketMirror Star" /></a>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3><a href="https://github.com/rain-lei/ppt_name_replacer">PPT 奖状批量生成工具</a></h3>
+      <p>从 Excel 读取姓名并批量生成个性化 PPT，支持命令行和 Web 界面。</p>
+      <p><code>Python</code> <code>Flask</code> <code>python-pptx</code></p>
+      <a href="https://github.com/rain-lei/ppt_name_replacer/stargazers"><img src="https://img.shields.io/github/stars/rain-lei/ppt_name_replacer?style=flat-square&label=Star" alt="PPT 工具 Star" /></a>
+    </td>
+    <td width="50%" valign="top">
+      <h3><a href="https://github.com/rain-lei/easyxgame">EasyX 课程项目</a></h3>
+      <p>面向对象课程作业，以及原创单人闯关游戏《萌泡大作战》。</p>
+      <p><code>C++17</code> <code>EasyX</code> <code>Visual Studio</code></p>
+      <a href="https://github.com/rain-lei/easyxgame/stargazers"><img src="https://img.shields.io/github/stars/rain-lei/easyxgame?style=flat-square&label=Star" alt="EasyX 项目 Star" /></a>
+    </td>
+  </tr>
+</table>
 
 ## 仓库索引
 
