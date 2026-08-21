@@ -12,13 +12,13 @@
 ## 精选项目
 
 <p align="center">
-  <a href="https://github.com/rain-lei/vibecodearts"><img width="49%" src="https://github-readme-stats.vercel.app/api/pin/?username=rain-lei&repo=vibecodearts&hide_border=true&theme=transparent&title_color=222222&text_color=666666&icon_color=6d8d2e" alt="ChronoFlow 仓库卡片" /></a>
-  <a href="https://github.com/rain-lei/MarketMirror"><img width="49%" src="https://github-readme-stats.vercel.app/api/pin/?username=rain-lei&repo=MarketMirror&hide_border=true&theme=transparent&title_color=222222&text_color=666666&icon_color=6d8d2e" alt="MarketMirror 仓库卡片" /></a>
+  <a href="https://github.com/rain-lei/vibecodearts"><img width="49%" src="https://opengraph.githubassets.com/rain-profile/rain-lei/vibecodearts" alt="ChronoFlow 仓库预览" /></a>
+  <a href="https://github.com/rain-lei/MarketMirror"><img width="49%" src="https://opengraph.githubassets.com/rain-profile/rain-lei/MarketMirror" alt="MarketMirror 仓库预览" /></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/rain-lei/ppt_name_replacer"><img width="49%" src="https://github-readme-stats.vercel.app/api/pin/?username=rain-lei&repo=ppt_name_replacer&hide_border=true&theme=transparent&title_color=222222&text_color=666666&icon_color=6d8d2e" alt="PPT 奖状批量生成工具仓库卡片" /></a>
-  <a href="https://github.com/rain-lei/easyxgame"><img width="49%" src="https://github-readme-stats.vercel.app/api/pin/?username=rain-lei&repo=easyxgame&hide_border=true&theme=transparent&title_color=222222&text_color=666666&icon_color=6d8d2e" alt="EasyX 课程项目仓库卡片" /></a>
+  <a href="https://github.com/rain-lei/ppt_name_replacer"><img width="49%" src="https://opengraph.githubassets.com/rain-profile/rain-lei/ppt_name_replacer" alt="PPT 奖状批量生成工具仓库预览" /></a>
+  <a href="https://github.com/rain-lei/easyxgame"><img width="49%" src="https://opengraph.githubassets.com/rain-profile/rain-lei/easyxgame" alt="EasyX 课程项目仓库预览" /></a>
 </p>
 
 ## 仓库索引
@@ -46,8 +46,9 @@
 
 <div align="center">
 
-  <img height="165" src="https://github-readme-stats.vercel.app/api?username=rain-lei&show_icons=true&include_all_commits=true&hide_border=true&rank_icon=github&theme=transparent&title_color=222222&text_color=666666&icon_color=6d8d2e" alt="GitHub 仓库统计" />
-  <img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=rain-lei&layout=compact&langs_count=8&hide_border=true&theme=transparent&title_color=222222&text_color=666666" alt="GitHub 常用语言统计" />
+  <img width="98%" src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=rain-lei&theme=transparent" alt="GitHub 公开活动概览" />
+  <img width="49%" src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=rain-lei&theme=transparent" alt="仓库语言统计" />
+  <img width="49%" src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=rain-lei&theme=transparent" alt="GitHub 仓库统计" />
 
 </div>
 
