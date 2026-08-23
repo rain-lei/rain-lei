@@ -31,6 +31,8 @@
   padding: 70px 0 84px;
 }
 
+.home-page .hero-title-line { white-space: nowrap; }
+
 .home-page .content-section { padding: 100px 0 112px; }
 
 .home-page .section-heading {
@@ -328,6 +330,7 @@
 @media (max-width: 640px) {
   .home-page .site-header.is-scrolled { padding-inline: 0; border-radius: 0; }
   .home-page .hero-section { padding: 54px 0 66px; }
+  .home-page .hero-copy h1 { font-size: 50px; }
   .home-page .content-section { padding: 76px 0 84px; }
   .home-page .section-stat { align-self: flex-start; }
   .home-page .category-bar { padding-top: 13px; }
