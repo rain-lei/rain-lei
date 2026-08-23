@@ -30,9 +30,9 @@ const categoryAliases = {
 const accents = new Set(['sunset', 'blue', 'green', 'cream', 'purple', 'orange']);
 const accentAliases = { '橘光': 'orange' };
 const staticFiles = [
-  'index.html', 'article.html', 'admin.html', 'styles.css', 'motion.css',
-  'friend-links.css', 'home.css', 'static-admin.css', 'app.js', 'article.js', 'markdown.js',
-  'github.js', 'friend-links.js', 'friend-links.json',
+  'index.html', 'articles.html', 'article.html', 'admin.html', 'styles.css', 'motion.css',
+  'friend-links.css', 'home.css', 'site-v2.css', 'static-admin.css', 'app.js', 'site-v2.js',
+  'home-v2.js', 'articles.js', 'article.js', 'markdown.js', 'github.js', 'friend-links.js', 'friend-links.json',
 ];
 
 function copyFile(relativePath) {

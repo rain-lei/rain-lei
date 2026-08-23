@@ -15,7 +15,7 @@
   root.innerHTML = `
     <article class="article-wrap">
       <div class="article-heading reveal is-visible">
-        <a class="back-crumb" href="index.html#essays">文章 / ESSAYS</a>
+        <a class="back-crumb" href="articles.html">文章归档 / ARCHIVE</a>
         <div class="article-meta">
           <span>${post.date}</span>
           <span>${post.read}</span>
@@ -45,8 +45,8 @@
           </div>
           <div class="article-tags">
             <span>标签</span>
-            <a href="index.html#essays">${post.categoryLabel}</a>
-            <a href="index.html#essays">个人随笔</a>
+            <a href="articles.html">${post.categoryLabel}</a>
+            <a href="articles.html">个人随笔</a>
           </div>
         </div>
       </div>
@@ -57,7 +57,7 @@
           <p class="eyebrow">继续阅读 / KEEP READING</p>
           <h2>也许你会喜欢</h2>
         </div>
-        <a class="text-link" href="index.html#essays">全部文章 <span>↗</span></a>
+        <a class="text-link" href="articles.html">全部文章 <span>↗</span></a>
       </div>
       <div class="mini-posts">
         ${posts
@@ -78,24 +78,6 @@
       </div>
     </section>
   `;
-
-  document.getElementById('themeToggle')?.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    localStorage.setItem('linmo-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-    const icon = document.getElementById('themeIcon');
-    if (icon) icon.textContent = document.body.classList.contains('dark') ? '☾' : '☼';
-  });
-
-  if (localStorage.getItem('linmo-theme') === 'dark') {
-    document.body.classList.add('dark');
-    const icon = document.getElementById('themeIcon');
-    if (icon) icon.textContent = '☾';
-  }
-
-  const header = document.querySelector('.site-header');
-  const updateHeader = () => header?.classList.toggle('is-scrolled', window.scrollY > 18);
-  updateHeader();
-  window.addEventListener('scroll', updateHeader, { passive: true });
 
   document.querySelector('[data-share="copy"]')?.addEventListener('click', async (event) => {
     try {

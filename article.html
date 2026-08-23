@@ -13,49 +13,21 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="motion.css" />
+    <link rel="stylesheet" href="site-v2.css" />
   </head>
-  <body class="article-page">
+  <body class="v2 article-page article-v2">
     <div class="site-shell">
-      <header class="site-header">
-        <a class="brand" href="index.html">
-          <img class="brand-mark brand-avatar" src="https://github.com/rain-lei.png?size=96" alt="rain 的 GitHub 头像" />
-          <span class="brand-copy">
-            <strong>rain</strong>
-            <em>personal notes</em>
-          </span>
-        </a>
-        <nav class="desktop-nav">
-          <a href="index.html#top">首页</a>
-          <a class="is-active" href="index.html#essays">文章</a>
-          <a href="index.html#about">关于我</a>
-        </nav>
-        <div class="header-actions">
-          <button class="icon-btn" id="themeToggle" aria-label="切换深浅色模式">
-            <span id="themeIcon">☼</span>
-          </button>
-          <a class="back-link" href="index.html">← 返回首页</a>
-        </div>
-      </header>
+      <header class="v2-header"><a class="v2-brand" href="index.html"><img src="https://github.com/rain-lei.png?size=96" alt="rain 的 GitHub 头像" /><span><strong>rain</strong><small>build · write · learn</small></span></a><nav class="v2-nav" aria-label="主导航"><a href="index.html">首页</a><a class="is-active" href="articles.html">文章</a><a href="index.html#projects">项目</a><a href="index.html#about">关于</a></nav><div class="v2-actions"><a class="v2-github" href="articles.html">全部文章 <span>↗</span></a><button class="v2-icon" id="themeToggle" type="button" aria-label="切换深浅色模式"><span id="themeIcon">◐</span></button><button class="v2-menu" id="menuToggle" type="button" aria-label="打开菜单" aria-expanded="false">菜单</button></div></header>
+      <nav class="v2-mobile-nav" id="mobileNav" aria-hidden="true"><a href="index.html">首页</a><a href="articles.html">文章</a><a href="index.html#projects">项目</a><a href="index.html#about">关于</a></nav>
 
       <main id="articleRoot"></main>
 
-      <footer class="site-footer">
-        <div class="footer-brand">
-          <img class="brand-mark brand-avatar" src="https://github.com/rain-lei.png?size=64" alt="rain 的 GitHub 头像" />
-          <span>© 2026 RAIN</span>
-        </div>
-        <div class="footer-links">
-          <a href="mailto:rain__lei@outlook.com">rain__lei@outlook.com</a>
-          <a href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a href="index.html#contact">联系我</a>
-        </div>
-        <span class="footer-note">Built with curiosity.</span>
-      </footer>
+      <footer class="v2-footer"><div><strong>rain</strong><span>© <b data-year>2026</b></span></div><nav><a href="articles.html">文章</a><a href="index.html#contact">联系</a><a href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer">GitHub</a></nav><span>持续构建，持续记录。</span></footer>
     </div>
 
     <script src="data.js"></script>
     <script src="markdown.js"></script>
+    <script src="site-v2.js"></script>
     <script src="article.js"></script>
   </body>
 </html>
