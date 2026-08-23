@@ -1,6 +1,7 @@
 (function () {
   const posts = window.blogPosts || [];
   const grid = document.getElementById('postGrid');
+  const postCount = document.getElementById('postCount');
   const chips = [...document.querySelectorAll('.filter-chip')];
   const categoryBar = document.querySelector('.category-bar');
   const searchModal = document.getElementById('searchModal');
@@ -101,6 +102,12 @@
     updateCategoryCounts();
     if (!grid) return;
     const visible = filter === 'all' ? posts : posts.filter((post) => post.category === filter);
+    grid.dataset.count = String(visible.length);
+    grid.classList.toggle('is-balanced', visible.length === 2 || visible.length === 4);
+    grid.classList.toggle('is-single', visible.length === 1);
+    if (postCount) {
+      postCount.textContent = `${String(visible.length).padStart(2, '0')} ${visible.length === 1 ? 'ARTICLE' : 'ARTICLES'}`;
+    }
     grid.innerHTML = visible.map(postCard).join('');
     requestAnimationFrame(() => {
       refreshFilterIndicator();
