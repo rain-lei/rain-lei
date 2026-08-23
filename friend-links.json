@@ -16,6 +16,14 @@
       "description": "TOMATOOOOOOOOO!",
       "sort_order": 10,
       "enabled": true
+    },
+    {
+      "name": "区块链组知识库",
+      "url": "https://arisgod1.github.io/BlockChain_Dut/",
+      "avatar": "https://arisgod1.github.io/BlockChain_Dut/generated/assets/site/recruitment-mark.png",
+      "description": "大连理工大学区块链组公开知识库与研究记录",
+      "sort_order": 20,
+      "enabled": true
     }
   ]
 }
