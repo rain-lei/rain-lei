@@ -106,7 +106,7 @@
     grid.classList.toggle('is-balanced', visible.length === 2 || visible.length === 4);
     grid.classList.toggle('is-single', visible.length === 1);
     if (postCount) {
-      postCount.textContent = `${String(visible.length).padStart(2, '0')} ${visible.length === 1 ? 'ARTICLE' : 'ARTICLES'}`;
+      postCount.textContent = `${String(visible.length).padStart(2, '0')} ${visible.length === 1 ? 'NOTE' : 'NOTES'}`;
     }
     grid.innerHTML = visible.map(postCard).join('');
     requestAnimationFrame(() => {

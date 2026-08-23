@@ -1,0 +1,370 @@
+/* Home-only visual system: a quiet field-notes index. */
+.home-page::before {
+  background:
+    radial-gradient(480px circle at 77% 13%, color-mix(in srgb, var(--lime) 12%, transparent), transparent 72%),
+    radial-gradient(560px circle at 7% 58%, rgba(155, 187, 211, .055), transparent 74%);
+  opacity: .58;
+}
+
+.home-page::after {
+  opacity: .1;
+  background-size: 88px 88px;
+  mask-image: linear-gradient(to bottom, #000, transparent 34%);
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent 34%);
+}
+
+.home-page .site-shell { max-width: 1320px; }
+
+.home-page .site-header.is-scrolled {
+  top: 0;
+  padding-inline: 0;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  box-shadow: none;
+}
+
+.home-page .hero-section {
+  max-width: none;
+  grid-template-columns: minmax(0, 1fr) minmax(390px, .8fr);
+  gap: clamp(52px, 8vw, 118px);
+  padding: 70px 0 84px;
+}
+
+.home-page .content-section { padding: 100px 0 112px; }
+
+.home-page .section-heading {
+  margin-bottom: 0;
+  padding-bottom: 25px;
+}
+
+.home-page .section-stat {
+  letter-spacing: .14em;
+  color: var(--muted);
+}
+
+.home-page .category-bar {
+  margin: 0;
+  padding: 18px 0 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.home-page .filter-indicator {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.home-page .filter-chip {
+  border: 0;
+  border-radius: 0;
+  padding: 8px 12px;
+  font: 10px 'DM Mono', monospace;
+  letter-spacing: .04em;
+}
+
+.home-page .post-grid,
+.home-page .post-grid.is-balanced {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  border-left: 1px solid var(--line);
+}
+
+.home-page .post-grid.is-single {
+  max-width: 720px;
+  grid-template-columns: 1fr;
+}
+
+.home-page .post-card {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 26px;
+  min-height: 290px;
+  padding: 35px 32px 38px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  transition: background .28s ease;
+}
+
+.home-page .post-card:hover {
+  transform: none;
+  background: color-mix(in srgb, var(--card) 38%, transparent);
+}
+
+.home-page .post-card.spotlight-surface::before { display: none; }
+
+.home-page .post-visual,
+.home-page .post-grid.is-balanced .post-visual {
+  grid-column: 1;
+  grid-row: 1;
+  width: 58px;
+  height: 100%;
+  min-height: 212px;
+  margin: 0;
+  overflow: hidden;
+  border: 0 !important;
+  border-right: 1px solid var(--line) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.home-page .post-card:hover .post-visual {
+  transform: none;
+  box-shadow: none;
+}
+
+.home-page .post-visual::before,
+.home-page .post-visual::after { display: none; }
+
+.home-page .post-visual .visual-label {
+  top: 0;
+  left: 1px;
+  color: var(--muted);
+  writing-mode: vertical-rl;
+  font-size: 9px;
+  letter-spacing: .14em;
+}
+
+.home-page .post-visual .visual-number {
+  top: auto;
+  right: 18px;
+  bottom: 0;
+  color: var(--muted);
+}
+
+.home-page .post-visual .visual-shape {
+  top: 39px;
+  right: auto;
+  left: 1px;
+  width: 8px;
+  height: 8px;
+  background: var(--lime);
+  transform: none;
+}
+
+.home-page .post-visual .visual-word { display: none; }
+
+.home-page .post-info {
+  grid-column: 2;
+  min-width: 0;
+}
+
+.home-page .post-info .post-meta {
+  order: -1;
+  margin: 0 0 18px;
+  letter-spacing: .05em;
+}
+
+.home-page .post-info h3 {
+  max-width: 480px;
+  margin-bottom: 14px;
+  font-size: clamp(22px, 2.2vw, 29px);
+  line-height: 1.35;
+}
+
+.home-page .post-info p {
+  max-width: 470px;
+  margin-bottom: 22px;
+  line-height: 1.82;
+}
+
+.home-page .post-info .card-link {
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+  font: 500 10px 'DM Mono', monospace;
+  letter-spacing: .05em;
+}
+
+.home-page .split-section {
+  grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+  margin-bottom: 0;
+}
+
+.home-page .about-panel,
+.home-page .reading-panel { padding-top: 82px; padding-bottom: 84px; }
+
+.home-page .about-panel { padding-right: clamp(52px, 6vw, 90px); }
+.home-page .reading-panel { padding-left: clamp(52px, 6vw, 90px); }
+
+.home-page .about-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 0;
+  filter: grayscale(.12);
+}
+
+.home-page .about-status {
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--line);
+  letter-spacing: .06em;
+}
+
+.home-page .github-repo-list {
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+.home-page .github-repo-card {
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 14px;
+  padding: 20px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.home-page .github-repo-card::before {
+  inset: 0 auto 0 0;
+  width: 2px;
+}
+
+.home-page .github-repo-card:hover {
+  padding-left: 10px;
+  transform: none;
+  border-color: var(--line);
+  background: color-mix(in srgb, var(--card) 36%, transparent);
+  box-shadow: none;
+}
+
+.home-page .repo-title-wrap strong { font-size: 17px; }
+
+.home-page .repo-badge {
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+}
+
+.home-page .repo-arrow {
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+}
+
+.home-page .github-repo-card:hover .repo-arrow {
+  transform: translate(2px, -2px);
+  border: 0;
+}
+
+.home-page .repo-all-link { margin-top: 0; padding-top: 18px; }
+
+.home-page .repo-skeleton {
+  height: 112px;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  background: transparent;
+}
+
+.home-page .newsletter-section {
+  grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+  gap: clamp(60px, 10vw, 142px);
+  padding: 94px 0 108px;
+}
+
+.home-page .friend-panel {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.home-page .friend-panel-heading {
+  padding-bottom: 17px;
+  border-bottom: 1px solid var(--line);
+}
+
+.home-page .friend-panel-heading > span {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.home-page .friend-panel-note {
+  margin-top: 17px;
+  max-width: 430px;
+}
+
+.home-page .friend-links-grid {
+  margin-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.home-page .friend-link-card {
+  grid-template-columns: 38px minmax(0, 1fr) 30px;
+  padding: 18px 0;
+}
+
+.home-page .friend-link-card::before { display: none; }
+
+.home-page .friend-link-card:hover {
+  padding-inline: 8px;
+  background: color-mix(in srgb, var(--card) 36%, transparent);
+}
+
+.home-page .friend-link-card img {
+  border-radius: 0;
+  filter: grayscale(.1);
+}
+
+.home-page .friend-link-card:last-child { border-bottom: 1px solid var(--line); }
+
+@media (max-width: 900px) {
+  .home-page .hero-section {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, .74fr);
+    gap: 4vw;
+  }
+
+  .home-page .post-card { min-height: 278px; padding: 30px 24px 33px; }
+  .home-page .post-info h3 { font-size: 22px; }
+}
+
+@media (max-width: 640px) {
+  .home-page .site-header.is-scrolled { padding-inline: 0; border-radius: 0; }
+  .home-page .hero-section { padding: 54px 0 66px; }
+  .home-page .content-section { padding: 76px 0 84px; }
+  .home-page .section-stat { align-self: flex-start; }
+  .home-page .category-bar { padding-top: 13px; }
+
+  .home-page .post-grid,
+  .home-page .post-grid.is-balanced,
+  .home-page .post-grid.is-single {
+    grid-template-columns: 1fr;
+    border-left: 0;
+  }
+
+  .home-page .post-card {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 19px;
+    min-height: 0;
+    padding: 28px 0 31px;
+    border-right: 0;
+  }
+
+  .home-page .post-visual,
+  .home-page .post-grid.is-balanced .post-visual {
+    width: 42px;
+    min-height: 205px;
+  }
+
+  .home-page .post-visual .visual-number { right: 12px; }
+  .home-page .post-info h3 { font-size: 22px; }
+
+  .home-page .split-section { display: block; }
+  .home-page .about-panel,
+  .home-page .reading-panel { padding-right: 0; padding-left: 0; }
+  .home-page .about-avatar { width: 58px; height: 58px; }
+
+  .home-page .newsletter-section {
+    display: block;
+    padding: 72px 0 80px;
+  }
+
+  .home-page .friend-panel { margin-top: 54px; padding: 0; }
+}

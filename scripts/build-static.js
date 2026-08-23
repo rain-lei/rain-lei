@@ -31,7 +31,7 @@ const accents = new Set(['sunset', 'blue', 'green', 'cream', 'purple', 'orange']
 const accentAliases = { '橘光': 'orange' };
 const staticFiles = [
   'index.html', 'article.html', 'admin.html', 'styles.css', 'motion.css',
-  'friend-links.css', 'static-admin.css', 'app.js', 'article.js', 'markdown.js',
+  'friend-links.css', 'home.css', 'static-admin.css', 'app.js', 'article.js', 'markdown.js',
   'github.js', 'friend-links.js', 'friend-links.json',
 ];
 
