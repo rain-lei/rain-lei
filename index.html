@@ -13,7 +13,8 @@
     <link rel="stylesheet" href="motion.css" />
     <link rel="stylesheet" href="friend-links.css" />
   </head>
-  <body>
+  <body class="home-page">
+    <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
     <div class="site-shell">
       <header class="site-header">
         <a class="brand" href="index.html" aria-label="返回首页">
@@ -36,16 +37,20 @@
         <a href="#top">首页</a><a href="#essays">文章</a><a href="#about">关于我</a>
       </div>
 
-      <main id="top">
-        <section class="hero-section reveal">
+      <main>
+        <section class="hero-section reveal" id="top">
           <div class="hero-copy">
             <p class="eyebrow"><span class="eyebrow-dot"></span>独立创作者 · remote</p>
-            <h1>写代码，<br /><span>也写下成长。</span></h1>
+            <h1 class="hero-title" aria-label="写代码，也写下成长。" data-split-text>
+              <span class="hero-title-line"><span data-split-segment>写代码，</span></span>
+              <span class="hero-title-line hero-title-muted"><span data-split-segment>也写下成长。</span></span>
+            </h1>
             <p class="hero-intro" data-setting="intro">这里是 rain 的个人角落。记录代码、项目实践和日常生活里遇见的问题，也分享那些值得反复思考的小事。</p>
             <div class="hero-meta"><span>持续更新</span><span class="meta-line"></span><span>NOW / ONGOING</span></div>
             <a class="text-link" href="#essays">从最近的文章开始 <span>↗</span></a>
           </div>
-          <div class="hero-art" aria-label="抽象的纸张与光影插画">
+          <div class="hero-art spotlight-surface" data-tilt aria-label="抽象的纸张与光影插画">
+            <div class="art-glow" aria-hidden="true"></div>
             <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
             <div class="art-card art-card-back"></div>
             <div class="art-card art-card-main"><span class="art-kicker">FIELD NOTES</span><strong>观察<br />与练习</strong><span class="art-index">No. 028</span></div>
