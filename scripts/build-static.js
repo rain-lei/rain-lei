@@ -6,6 +6,9 @@ const ROOT = path.resolve(__dirname, '..');
 const DIST = path.join(ROOT, 'dist');
 const POSTS_DIR = path.join(ROOT, 'content', 'posts');
 const checkOnly = process.argv.includes('--check');
+const buildVersion = String(process.env.BUILD_VERSION || Date.now().toString(36))
+  .replace(/[^a-zA-Z0-9_-]/g, '')
+  .slice(0, 24);
 
 const categories = {
   study: '学习',
@@ -43,6 +46,17 @@ function copyFile(relativePath) {
 function copyDirectory(source, destination) {
   if (!fs.existsSync(source)) return;
   fs.cpSync(source, destination, { recursive: true });
+}
+
+function versionHtmlAssets(relativePath) {
+  const destination = path.join(DIST, relativePath);
+  let html = fs.readFileSync(destination, 'utf8');
+  html = html.replace(
+    /(\b(?:src|href)=")([^"?#]+\.(?:js|css))(?:\?[^"#]*)?(")/g,
+    (match, prefix, assetPath, suffix) =>
+      /^(?:https?:)?\/\//i.test(assetPath) ? match : `${prefix}${assetPath}?v=${buildVersion}${suffix}`
+  );
+  fs.writeFileSync(destination, html, 'utf8');
 }
 
 function dateForDisplay(value) {
@@ -118,10 +132,11 @@ function build() {
   fs.rmSync(DIST, { recursive: true, force: true });
   fs.mkdirSync(DIST, { recursive: true });
   staticFiles.forEach(copyFile);
+  staticFiles.filter((file) => file.endsWith('.html')).forEach(versionHtmlAssets);
   copyDirectory(path.join(ROOT, 'uploads'), path.join(DIST, 'uploads'));
   const payload = `// 由 scripts/build-static.js 自动生成，请编辑 content/posts 下的 Markdown。\nwindow.blogPosts = ${JSON.stringify(posts, null, 2)};\n`;
   fs.writeFileSync(path.join(DIST, 'data.js'), payload, 'utf8');
-  fs.writeFileSync(path.join(DIST, 'site-manifest.json'), JSON.stringify({ generatedAt: new Date().toISOString(), posts: posts.map(({ bodyMarkdown, ...post }) => post) }, null, 2) + '\n', 'utf8');
+  fs.writeFileSync(path.join(DIST, 'site-manifest.json'), JSON.stringify({ generatedAt: new Date().toISOString(), buildVersion, posts: posts.map(({ bodyMarkdown, ...post }) => post) }, null, 2) + '\n', 'utf8');
   console.log(`已生成静态站点：${posts.length} 篇文章 -> dist/`);
 }
 

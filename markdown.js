@@ -206,6 +206,68 @@
     return rendered.replace(/\u0000(\d+)\u0000/g, (_, index) => tokens[Number(index)] ?? '');
   }
 
+  function splitTableRow(line) {
+    let source = String(line ?? '').trim();
+    if (!source.includes('|')) return [];
+    if (source.startsWith('|')) source = source.slice(1);
+    if (source.endsWith('|') && !source.endsWith('\\|')) source = source.slice(0, -1);
+
+    const cells = [];
+    let cell = '';
+    let escaped = false;
+    let inCode = false;
+
+    for (const char of source) {
+      if (escaped) {
+        cell += char === '|' ? '|' : `\\${char}`;
+        escaped = false;
+        continue;
+      }
+      if (char === '\\') {
+        escaped = true;
+        continue;
+      }
+      if (char === '`') {
+        inCode = !inCode;
+        cell += char;
+        continue;
+      }
+      if (char === '|' && !inCode) {
+        cells.push(cell.trim());
+        cell = '';
+        continue;
+      }
+      cell += char;
+    }
+    if (escaped) cell += '\\';
+    cells.push(cell.trim());
+    return cells;
+  }
+
+  function tableAlignment(cell) {
+    const marker = String(cell ?? '').trim();
+    if (!/^:?-{3,}:?$/.test(marker)) return '';
+    if (marker.startsWith(':') && marker.endsWith(':')) return 'center';
+    if (marker.endsWith(':')) return 'right';
+    return 'left';
+  }
+
+  function renderTable(headerCells, alignmentCells, rows) {
+    const alignments = alignmentCells.map(tableAlignment);
+    const cellClass = (index) => ` class="is-${alignments[index] || 'left'}"`;
+    const header = headerCells
+      .map((cell, index) => `<th scope="col"${cellClass(index)}>${renderInline(cell)}</th>`)
+      .join('');
+    const body = rows
+      .map((row) => {
+        const cells = headerCells.map((_, index) => `<td${cellClass(index)}>${renderInline(row[index] || '')}</td>`);
+        return `<tr>${cells.join('')}</tr>`;
+      })
+      .join('');
+
+    return `<div class="markdown-table-wrap" role="region" aria-label="可横向滚动的表格" tabindex="0"><table><thead><tr>${header}</tr></thead><tbody>${body}</tbody></table></div>`;
+  }
+
   function renderMarkdown(markdown) {
     const source = normalizeMarkdownInput(markdown);
     if (!source) return '';
@@ -259,7 +321,8 @@
       codeLanguage = '';
     };
 
-    for (const line of lines) {
+    for (let lineIndex = 0; lineIndex < lines.length; lineIndex += 1) {
+      const line = lines[lineIndex];
       const trimmed = line.trim();
 
       if (inCode) {
@@ -284,6 +347,31 @@
         flushParagraph();
         flushList();
         flushQuote();
+        continue;
+      }
+
+      const headerCells = splitTableRow(line);
+      const alignmentCells = splitTableRow(lines[lineIndex + 1]);
+      const isTable =
+        headerCells.length >= 2 &&
+        headerCells.length === alignmentCells.length &&
+        alignmentCells.every((cell) => tableAlignment(cell));
+
+      if (isTable) {
+        flushParagraph();
+        flushList();
+        flushQuote();
+
+        const rows = [];
+        let cursor = lineIndex + 2;
+        while (cursor < lines.length && lines[cursor].trim()) {
+          const rowCells = splitTableRow(lines[cursor]);
+          if (rowCells.length < 2) break;
+          rows.push(headerCells.map((_, index) => rowCells[index] || ''));
+          cursor += 1;
+        }
+        blocks.push(renderTable(headerCells, alignmentCells, rows));
+        lineIndex = cursor - 1;
         continue;
       }
 
