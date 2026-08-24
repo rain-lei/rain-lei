@@ -28,9 +28,11 @@
         </div>
       </div>
       <div class="article-hero ${post.accent}">
+        <span class="visual-grid" aria-hidden="true"></span>
         <span class="visual-label">${post.categoryLabel}</span>
         <span class="visual-word">${categoryWords[post.category] || 'NOTE'}</span>
         <span class="visual-shape"></span>
+        <span class="visual-index">RAIN / ARTICLE<br />${post.date}</span>
       </div>
       <div class="article-layout">
         <div class="article-share">

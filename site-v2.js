@@ -19,5 +19,16 @@
   const revealItems = document.querySelectorAll('.v2-reveal');
   if (reduceMotion || !('IntersectionObserver' in window)) revealItems.forEach((item) => item.classList.add('is-visible'));
   else { const observer = new IntersectionObserver((entries) => { entries.forEach((entry) => { if (!entry.isIntersecting) return; entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }); }, { threshold: .08, rootMargin: '0px 0px -5% 0px' }); revealItems.forEach((item) => observer.observe(item)); }
+  const finePointer = window.matchMedia('(pointer:fine)').matches;
+  if (!reduceMotion && finePointer) document.querySelectorAll('[data-art-stage]').forEach((stage) => {
+    stage.addEventListener('pointermove', (event) => {
+      const rect = stage.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width - .5) * 2;
+      const y = ((event.clientY - rect.top) / rect.height - .5) * 2;
+      stage.style.setProperty('--art-x', x.toFixed(3));
+      stage.style.setProperty('--art-y', y.toFixed(3));
+    });
+    stage.addEventListener('pointerleave', () => { stage.style.setProperty('--art-x', 0); stage.style.setProperty('--art-y', 0); });
+  });
   document.querySelectorAll('[data-year]').forEach((element) => { element.textContent = String(new Date().getFullYear()); });
 })();
