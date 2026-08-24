@@ -15,6 +15,7 @@ html { scroll-behavior:smooth; }
 .article-v2 .article-body > h1:first-child { display:none; }
 .archive-item.is-game { background:color-mix(in srgb,var(--acid) 12%,transparent); }
 .archive-item.is-game .archive-item-arrow { background:var(--acid); color:#141412; }
+.archive-item[hidden], .archive-item.is-filtered-out { display:none !important; }
 .game-stage { margin:0 0 76px; padding:28px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); box-shadow:12px 12px 0 var(--coral); }
 .game-stage-head { display:flex; justify-content:space-between; align-items:flex-end; gap:28px; padding-bottom:22px; }
 .game-stage-head .v2-kicker { color:var(--acid); }
