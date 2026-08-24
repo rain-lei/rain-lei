@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+<BaseLayout title="关于 · rain" description="关于 rain：软件工程学习、项目实践与联系方式。" active="about" bodyClass="interior-v2 about-v2">
+  <main class="interior-main">
+    <header class="interior-hero about-hero">
+      <div class="interior-copy v2-reveal">
+        <p class="v2-kicker">ABOUT / PROFILE</p>
+        <h1>保持好奇，<br /><em>持续交付。</em></h1>
+        <p>我是 rain，一名软件工程学生。这里不使用首页锚点拼出“关于”，而是把个人方向、正在做的事和联系方式放在一张完整页面里。</p>
+      </div>
+      <div class="about-portrait v2-reveal" data-art-stage>
+        <span>RAIN / 2026</span>
+        <strong>R.</strong>
+        <img src="https://github.com/rain-lei.png?size=320" alt="rain 的 GitHub 头像" />
+        <small>DALIAN · CN</small>
+      </div>
+    </header>
+
+    <section class="about-story-grid">
+      <article class="about-statement v2-reveal">
+        <p class="v2-kicker">CURRENT FOCUS</p>
+        <h2>把复杂的问题，<br />整理成能继续工作的东西。</h2>
+        <p>关注软件工程、自动化测试、Web 开发和开源实践。除了写代码，也会整理课程资料、部署过程和工具使用方法。</p>
+      </article>
+      <dl class="about-facts v2-reveal">
+        <div><dt>身份</dt><dd>软件工程学生</dd></div>
+        <div><dt>位置</dt><dd>大连，中国</dd></div>
+        <div><dt>方向</dt><dd>Web · Testing · Open Source</dd></div>
+        <div><dt>主页</dt><dd><a href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer">github.com/rain-lei ↗</a></dd></div>
+      </dl>
+    </section>
+
+    <section class="about-values">
+      <div class="interior-section-head v2-reveal"><div><span>01</span><p class="v2-kicker">WHAT I KEEP</p><h2>长期保留的三件事</h2></div></div>
+      <div class="method-grid">
+        <article class="v2-reveal"><small>LEARN</small><h3>学习</h3><p>把课程和文档中的知识真正写进代码，而不是只记住术语。</p></article>
+        <article class="v2-reveal"><small>BUILD</small><h3>构建</h3><p>尽量完成一个可以运行、可以展示、也可以继续迭代的版本。</p></article>
+        <article class="v2-reveal"><small>WRITE</small><h3>记录</h3><p>将值得复用的过程整理成文章，减少下一次从头摸索的成本。</p></article>
+      </div>
+    </section>
+
+    <section class="about-network">
+      <div class="contact-block v2-reveal">
+        <p class="v2-kicker">CONTACT</p>
+        <h2>想交流一个问题？</h2>
+        <p>项目、开源、技术学习，或者一个还没有答案的想法，都可以写信给我。</p>
+        <a class="contact-mail" href="mailto:rain__lei@outlook.com">rain__lei@outlook.com <span>↗</span></a>
+      </div>
+      <div class="links-block v2-reveal">
+        <div class="links-title"><div><p class="v2-kicker">FRIEND LINKS</p><h3>友链</h3></div><span>PR WELCOME</span></div>
+        <div class="friend-links-grid" id="friendLinksGrid"><a class="friend-link-card" href="https://github.com/rain-lei"><img src="https://github.com/rain-lei.png?size=96" alt="rain-lei" /><span><strong>rain-lei · GitHub</strong><small>代码、项目与最近的仓库</small></span><b>↗</b></a></div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

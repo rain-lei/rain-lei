@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+<BaseLayout title="项目 · rain" description="rain 的公开项目、课程实践与持续迭代记录。" active="projects" bodyClass="interior-v2 projects-v2">
+  <main class="interior-main">
+    <header class="interior-hero">
+      <div class="interior-copy v2-reveal">
+        <p class="v2-kicker">PROJECTS / BUILD LOG</p>
+        <h1>项目<br /><em>不是摆设。</em></h1>
+        <p>这里集中展示正在维护和已经完成的公开仓库。首页只保留最近动态，完整项目统一从这一页进入。</p>
+      </div>
+      <div class="interior-poster project-poster v2-reveal" data-art-stage aria-hidden="true">
+        <span>BUILD / 001</span>
+        <strong>MAKE<br />SHIP</strong>
+        <i></i><b>↗</b>
+      </div>
+    </header>
+
+    <section class="project-directory">
+      <div class="interior-section-head v2-reveal">
+        <div><span>01</span><p class="v2-kicker">PUBLIC REPOSITORIES</p><h2>公开仓库</h2></div>
+        <span class="repo-live"><i></i>与 GitHub 同步</span>
+      </div>
+      <div class="project-directory-list v2-reveal">
+        <div class="github-repo-list" data-github-repos data-repo-limit="9">
+          <div class="repo-skeleton"><i></i><span></span><span></span></div>
+          <div class="repo-skeleton"><i></i><span></span><span></span></div>
+        </div>
+        <a class="project-all" href="https://github.com/rain-lei?tab=repositories" target="_blank" rel="noopener noreferrer">在 GitHub 查看全部仓库 <span>↗</span></a>
+      </div>
+    </section>
+
+    <section class="project-method">
+      <div class="interior-section-head v2-reveal"><div><span>02</span><p class="v2-kicker">WORKING METHOD</p><h2>项目如何留下来</h2></div></div>
+      <div class="method-grid">
+        <article class="v2-reveal"><small>01 / CODE</small><h3>代码</h3><p>可运行的实现、清楚的目录，以及能够继续修改的基础。</p></article>
+        <article class="v2-reveal"><small>02 / NOTES</small><h3>记录</h3><p>保留问题、取舍和调试过程，不只留下最终截图。</p></article>
+        <article class="v2-reveal"><small>03 / RELEASE</small><h3>发布</h3><p>能部署的项目尽量提供在线入口，让结果可以直接验证。</p></article>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

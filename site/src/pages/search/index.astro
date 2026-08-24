@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
-<BaseLayout title="全文搜索 · rain" description="搜索 rain 的全部公开文章。" active="articles">
+<BaseLayout title="全文搜索 · rain" description="搜索 rain 的全部公开文章。" active="search">
 <main class="search-page"><p class="v2-kicker">PAGEFIND / FULL TEXT</p><h1>搜索全部内容</h1><label class="search-box"><span>⌕</span><input id="pagefindInput" type="search" placeholder="输入标题、正文或关键词" autofocus /></label><div class="search-results" id="pagefindResults"><p>输入关键词后开始搜索。</p></div></main>
 <script>
 const input=document.getElementById('pagefindInput') as HTMLInputElement;const output=document.getElementById('pagefindResults')!;let timer:number;input?.addEventListener('input',()=>{clearTimeout(timer);timer=window.setTimeout(async()=>{const query=input.value.trim();if(!query){output.innerHTML='<p>输入关键词后开始搜索。</p>';return;}try{const pagefind=await (new Function('return import("/pagefind/pagefind.js")'))();const search=await pagefind.search(query);const results=await Promise.all(search.results.slice(0,20).map((item:any)=>item.data()));output.innerHTML=results.length?results.map((item:any)=>`<a class="search-result" href="${item.url}"><strong>${item.meta.title}</strong><p>${item.excerpt}</p></a>`).join(''):'<p>没有找到相关内容。</p>';}catch{output.innerHTML='<p>搜索索引正在加载，请刷新后重试。</p>';}},180);});
