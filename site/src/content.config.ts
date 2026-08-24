@@ -11,6 +11,10 @@ const posts = defineCollection({
     date: z.coerce.date(),
     status: z.enum(['draft', 'published']).default('published'),
     accent: z.enum(['sunset', 'blue', 'green', 'cream', 'purple', 'orange']).default('blue'),
+    contentType: z.enum(['article', 'game']).default('article'),
+    playUrl: z.string().url().optional(),
+    repository: z.string().url().optional(),
+    tech: z.array(z.string()).default([]),
   }),
 });
 
