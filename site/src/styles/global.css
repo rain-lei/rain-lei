@@ -1,0 +1,15 @@
+@import '../../../styles.css';
+@import '../../../site-v2.css';
+@import '../../../friend-links.css';
+
+html { scroll-behavior:smooth; }
+.search-page { min-height:70vh; padding:70px 0 120px; }
+.search-page h1 { margin:18px 0 28px; font:900 clamp(60px,9vw,120px)/.95 'Noto Serif SC',serif; letter-spacing:-.08em; }
+.search-box { display:flex; gap:12px; max-width:760px; padding:16px 0; border-bottom:2px solid var(--ink); }
+.search-box input { flex:1; border:0; outline:0; background:transparent; color:var(--ink); font-size:18px; }
+.search-results { margin-top:45px; border-top:1px solid var(--line); }
+.search-result { display:block; padding:25px 0; border-bottom:1px solid var(--line); }
+.search-result strong { display:block; font:600 25px 'Noto Serif SC',serif; }
+.search-result p { color:var(--muted); }
+.article-v2 .article-body img { max-width:100%; height:auto; }
+.article-v2 .article-body > h1:first-child { display:none; }

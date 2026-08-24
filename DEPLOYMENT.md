@@ -1,74 +1,56 @@
-# 静态博客发布与回滚
+# Astro 博客发布与回滚
 
-本站使用 **Markdown + 静态页面 + Docker Nginx**。不再运行文章 API、管理后台或 SQLite；GitHub 仓库就是内容后台。
+本站使用 **Astro 5 + TypeScript + Content Collections + Pagefind + Docker Nginx**。生产环境没有业务 API 和数据库；Markdown 是内容事实源，Astro 在构建阶段生成全部页面。
 
-## 内容结构
+## 架构
 
 ```text
-content/posts/       已发布文章（每篇一个 Markdown 文件）
-content/templates/   文章模板
-uploads/             仓库内图片
-friend-links.json    友链数据
-scripts/build-static.js  Markdown 构建为前台数据
+content/posts/*.md
+        ↓ Content Collections + Schema 校验
+Astro 静态页面 + Pagefind 全文索引
+        ↓ Docker 多阶段构建
+Nginx 静态容器（127.0.0.1:8080）
+        ↓ 宿主机 HTTPS 反向代理
+https://www.rainlei.xyz
 ```
 
-文章最小示例：
+主要目录：
 
-```md
----
-title: 标题
-excerpt: 一句话摘要
-category: study # study / life / entertainment
-date: 2026-08-21
-status: published
-accent: blue
----
-
-正文支持图片：![说明](/uploads/2026/example.jpg)
+```text
+content/posts/             文章事实源
+uploads/                   文章图片
+site/src/pages/            Astro 页面与路由
+site/src/layouts/          全站布局
+site/src/content.config.ts 文章 Schema
+site/src/scripts/          浏览器端增强交互
+site/dist/                 构建产物（不提交）
 ```
 
-`status: draft` 的文章不会出现在网站。阅读时长根据正文自动计算。
+## 本地开发
 
-## 本地预览构建
+要求 Node.js 22 及 Corepack：
 
 ```bash
-npm run build
+corepack enable
+corepack prepare pnpm@10.15.1 --activate
+pnpm install
+pnpm check
+pnpm dev
 ```
 
-构建结果在 `dist/`，已被 `.gitignore` 忽略。部署镜像会在 Docker 构建时重新生成它。
+`pnpm check` 会依次执行 Astro 类型检查、内容 Schema 校验、静态构建与 Pagefind 索引生成。
 
-## GitHub → 阿里云自动发布
+## 自动部署
 
-提交推送到 `main` 后，`.github/workflows/deploy.yml` 会：
+1. 代码推送到 `main`；
+2. `Validate Astro blog` 工作流执行类型与构建检查；
+3. 部署工作流通过固定 SSH 主机指纹连接服务器；
+4. 服务器按精确 Commit SHA 获取源码并执行 Docker 多阶段构建；
+5. 新容器在 `127.0.0.1:8080` 通过健康检查后成为当前版本；
+6. 失败时自动恢复上一容器。
 
-1. 使用仅用于发布的受限 SSH 密钥连接服务器；
-2. 把当前完整 commit SHA 传给服务器；
-3. 服务器在 `/opt/rain-blog-releases/<SHA>` 获取该精确版本并构建静态 Nginx 镜像；
-4. 新容器在 `127.0.0.1:8080` 健康检查通过后才确认发布；
-5. 构建或健康检查失败时，自动恢复此前容器；
-6. Action 再检查公开首页与内容工作台。
+旧的 `/articles.html`、`/admin.html` 和 `/article.html?id=...` 会跳转到新的 Astro 路由，已有链接继续可用。
 
-生产服务器会保留最近的 release 目录和 SHA 历史；原来的 `/opt/rain-blog/data` 也会原样保留，但静态版本不再读取它。
+## 隐私
 
-### 必需的 GitHub Secrets
-
-- `DEPLOY_HOST`：服务器公网 IP 或域名。
-- `DEPLOY_USER`：受限用户 `deploy`。
-- `DEPLOY_SSH_KEY`：GitHub Actions 专用私钥。
-- `DEPLOY_KNOWN_HOSTS`：服务器固定 SSH host key。
-
-不要在源码、Issues、日志或文章中放这些值。
-
-## 回滚
-
-打开 GitHub 仓库的 **Actions → Deploy static blog → Run workflow**：
-
-1. `operation` 选 `rollback`；
-2. `target_sha` 填需要恢复的 40 位 commit SHA；
-3. 运行工作流。
-
-它会重新按该 SHA 构建和发布，而不是依赖某个临时容器，因此即使服务器重启后依然可回滚。确认恢复版本正常后，若要让 Git 分支也回到该状态，再另行创建一个正常的 Git 提交；不要使用不理解的强制推送。
-
-## 隐私边界
-
-仓库只提交可公开的文章、图片、样式和部署脚本。不要提交 `.env`、`*.pem`、Token、密码、数据库、缓存、服务器地址中的带签名参数或个人隐私信息。
+不要提交 `.env`、私钥、Token、数据库、日志、服务器密码或个人敏感信息。GitHub Actions 连接信息只存放在仓库 Secrets 中。

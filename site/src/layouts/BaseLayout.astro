@@ -1,0 +1,33 @@
+---
+import '../styles/global.css';
+interface Props { title?:string; description?:string; active?:'home'|'articles'; bodyClass?:string; }
+const { title='rain · 构建与记录', description='rain 的个人主页：软件工程、项目实践与个人文章。', active, bodyClass='' } = Astro.props;
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" href="https://github.com/rain-lei.png?size=64" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet" />
+    <title>{title}</title>
+  </head>
+  <body class={`v2 ${bodyClass}`}>
+    <div class="v2-progress" id="scrollProgress" aria-hidden="true"></div>
+    <div class="v2-shell">
+      <header class="v2-header">
+        <a class="v2-brand" href="/" aria-label="rain 首页"><img src="https://github.com/rain-lei.png?size=96" alt="rain 的 GitHub 头像" /><span><strong>rain</strong><small>build · write · learn</small></span></a>
+        <nav class="v2-nav" aria-label="主导航"><a class:list={[{ 'is-active':active==='home' }]} href="/">首页</a><a class:list={[{ 'is-active':active==='articles' }]} href="/articles/">文章</a><a href="/#projects">项目</a><a href="/#about">关于</a><a href="/search/">搜索</a></nav>
+        <div class="v2-actions"><a class="v2-github" href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer">GitHub <span>↗</span></a><button class="v2-icon" id="themeToggle" type="button" aria-label="切换深浅色模式"><span id="themeIcon">◐</span></button><button class="v2-menu" id="menuToggle" type="button" aria-label="打开菜单" aria-expanded="false">菜单</button></div>
+      </header>
+      <nav class="v2-mobile-nav" id="mobileNav" aria-hidden="true"><a href="/">首页</a><a href="/articles/">文章</a><a href="/#projects">项目</a><a href="/#about">关于</a><a href="/search/">搜索</a></nav>
+      <slot />
+      <footer class="v2-footer"><div><strong>rain</strong><span>© <b data-year>{new Date().getFullYear()}</b></span></div><nav><a href="/articles/">文章</a><a href="/admin/">管理</a><a href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer">GitHub</a></nav><span>持续构建，持续记录。</span></footer>
+    </div>
+    <script src="../scripts/site.ts"></script>
+  </body>
+</html>

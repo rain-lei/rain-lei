@@ -2,6 +2,8 @@
 Thumbs.db
 node_modules/
 dist/
+site/dist/
+site/.astro/
 .env
 data/*.sqlite
 data/*.sqlite-*

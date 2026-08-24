@@ -1,0 +1,6 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+<BaseLayout title="内容工作台 · rain" description="rain 博客内容维护入口。">
+<main class="search-page"><p class="v2-kicker">CONTENT WORKSPACE / GIT-BASED CMS</p><h1>内容工作台</h1><div class="project-layout"><section class="project-list"><h2>文章与图片</h2><p>文章使用带结构化 Frontmatter 的 Markdown，提交前由 Astro Content Collections 校验。</p><p><a class="v2-button is-primary" href="https://github.com/rain-lei/rain-lei/tree/main/content/posts">管理文章 ↗</a> <a class="v2-button" href="https://github.com/rain-lei/rain-lei/tree/main/uploads">管理图片 ↗</a></p></section><section class="about-block"><p class="v2-kicker">PUBLISH</p><h2>提交即发布，<br />版本可回滚。</h2><p>Pull Request 先运行类型、内容和构建检查；合并到 main 后由 GitHub Actions 部署到阿里云。</p><div class="about-links"><a href="https://github.com/rain-lei/rain-lei/actions">查看 Actions ↗</a></div></section></div></main>
+</BaseLayout>

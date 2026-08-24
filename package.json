@@ -1,1 +1,14 @@
-{"name":"rain-static-blog","version":"1.0.0","private":true,"description":"rain 的 Markdown 静态个人博客","type":"commonjs","scripts":{"build":"node scripts/build-static.js","check":"node scripts/build-static.js --check","start":"node scripts/build-static.js && node scripts/serve-static.js","dev":"node scripts/build-static.js && node scripts/serve-static.js"},"engines":{"node":">=22.5.0"}}
+{
+  "name": "rain-blog-workspace",
+  "version": "2.0.0",
+  "private": true,
+  "description": "rain 的 Astro + Markdown 静态个人博客",
+  "packageManager": "pnpm@10.15.1",
+  "scripts": {
+    "dev": "corepack pnpm --filter @rain/blog dev",
+    "build": "corepack pnpm --filter @rain/blog build && node scripts/copy-runtime-assets.mjs",
+    "check": "corepack pnpm --filter @rain/blog typecheck && npm run build",
+    "preview": "corepack pnpm --filter @rain/blog preview"
+  },
+  "engines": { "node": ">=22.5.0" }
+}

@@ -1,0 +1,9 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { categoryLabels, estimateRead, formatDate, postSlug, sortPosts } from '../../lib/posts';
+const posts=sortPosts(await getCollection('posts'));
+---
+<BaseLayout title="文章归档 · rain" description="rain 的全部文章与学习记录。" active="articles" bodyClass="archive-v2">
+<main class="archive-main"><header class="archive-hero v2-reveal"><div><p class="v2-kicker">WRITING / ARCHIVE</p><h1>文章<br /><em>归档</em></h1><p>技术实践、学习手册和生活记录。这里按时间收纳全部公开文章。</p></div><div class="archive-art" data-art-stage><span class="archive-rain"></span><span class="archive-seal">RAIN<br />NOTES</span><div class="archive-count"><strong>{String(posts.length).padStart(2,'0')}</strong><span>PUBLIC NOTES</span></div><small>ISSUE / 2026</small></div></header><section class="archive-browser"><div class="archive-toolbar"><label class="archive-search"><span>⌕</span><input id="archiveSearch" type="search" placeholder="搜索标题、摘要或分类" autocomplete="off" /></label><div class="archive-filters"><button class="is-active" data-filter="all">全部</button><button data-filter="study">学习</button><button data-filter="life">生活</button><button data-filter="entertainment">娱乐</button></div></div><div class="archive-result-line"><span id="archiveResultCount">{posts.length} 篇结果</span><a href="/search/">全文搜索 ↗</a></div><div class="archive-list">{posts.map((post,index)=><a class="archive-item" data-category={post.data.category} href={`/articles/${postSlug(post)}/`}><span class="archive-item-no">{String(index+1).padStart(2,'0')}</span><span class="archive-item-main"><span class="archive-item-meta"><b>{categoryLabels[post.data.category]}</b><time>{formatDate(post.data.date)}</time><small>{estimateRead(post.body||'')}</small></span><strong>{post.data.title}</strong><p>{post.data.excerpt}</p></span><span class="archive-item-arrow">↗</span></a>)}</div></section></main>
+</BaseLayout>
