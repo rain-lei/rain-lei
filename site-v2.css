@@ -301,7 +301,7 @@ body.v2::before {
 .poster-year { top:20px; right:20px; writing-mode:vertical-rl; }
 .poster-caption { left:20px; bottom:18px; }
 .art-poster>strong { position:absolute; z-index:2; left:22px; bottom:45px; font:700 126px/.64 'DM Sans',sans-serif; letter-spacing:-.13em; transform:translate(var(--px),var(--py)); transition:transform .18s ease-out; }
-.art-poster img { position:absolute; z-index:3; right:28px; bottom:46px; width:148px; height:148px; object-fit:cover; border:8px solid var(--acid); border-radius:50%; filter:grayscale(1) contrast(1.1); transform:translate(calc(var(--px) * -1),calc(var(--py) * -1)); transition:transform .18s ease-out; }
+.art-poster img { position:absolute; z-index:3; right:28px; bottom:46px; width:148px; height:148px; object-fit:cover; border:8px solid var(--acid); border-radius:50%; filter:saturate(1.06) contrast(1.02); transform:translate(calc(var(--px) * -1),calc(var(--py) * -1)); transition:transform .18s ease-out; }
 .poster-disc { position:absolute; z-index:1; right:-52px; top:72px; width:210px; height:210px; border-radius:50%; background:var(--coral); transform:translate(calc(var(--px) * .5),calc(var(--py) * .5)); transition:transform .18s ease-out; }
 .poster-cross { position:absolute; z-index:4; top:105px; left:50%; color:var(--acid); font:300 60px/1 'DM Sans',sans-serif; transform:translate(calc(-50% + var(--px)),var(--py)) rotate(12deg); }
 .rain-field { position:absolute; inset:0; z-index:1; overflow:hidden; }
