@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">英语实践成绩获取与使用流程</title>
+  <desc id="desc">英语类考试、竞赛和校园活动产生的实践成绩可累加，最多十个实践分，同一成果不可重复，最终计入大学英语二和大学英语四等课程成绩的百分之十。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#171717"/></marker>
+    <style>.t{font-family:Arial,'Microsoft YaHei',sans-serif;fill:#171717}.box{stroke:#171717;stroke-width:3}.line{fill:none;stroke:#171717;stroke-width:4;marker-end:url(#arrow)}.head{font-size:27px;font-weight:800}.body{font-size:18px}.mono{font-family:Consolas,monospace;letter-spacing:2px}</style>
+  </defs>
+  <rect width="1200" height="720" fill="#f6f3eb"/>
+  <path d="M0 0H1200V16H0Z" fill="#ff6b59"/>
+  <text class="t mono" x="62" y="72" font-size="18">PRACTICE SCORE / 02</text>
+  <text class="t" x="62" y="126" font-size="43" font-weight="800">实践成绩怎么进入课程成绩</text>
+
+  <rect class="box" x="62" y="204" width="282" height="148" rx="22" fill="#8db5ff"/>
+  <text class="t head" x="203" y="252" text-anchor="middle">英语类考试</text>
+  <text class="t body" x="203" y="292" text-anchor="middle">四六级口试</text>
+  <text class="t body" x="203" y="323" text-anchor="middle">国际人才英语考试</text>
+
+  <rect class="box" x="459" y="204" width="282" height="148" rx="22" fill="#ffd36a"/>
+  <text class="t head" x="600" y="252" text-anchor="middle">英语类竞赛</text>
+  <text class="t body" x="600" y="292" text-anchor="middle">外国语学院认定</text>
+  <text class="t body" x="600" y="323" text-anchor="middle">最低从校级开始计分</text>
+
+  <rect class="box" x="856" y="204" width="282" height="148" rx="22" fill="#d8ff67"/>
+  <text class="t head" x="997" y="252" text-anchor="middle">校园英语活动</text>
+  <text class="t body" x="997" y="292" text-anchor="middle">模联、学术会议、训练营</text>
+  <text class="t body" x="997" y="323" text-anchor="middle">活动月、社区活动等</text>
+
+  <path class="line" d="M203 352V407H476"/>
+  <path class="line" d="M600 352V407"/>
+  <path class="line" d="M997 352V407H724"/>
+
+  <rect class="box" x="414" y="407" width="372" height="136" rx="24" fill="#ffffff"/>
+  <text class="t" x="600" y="458" text-anchor="middle" font-size="36" font-weight="900">累计，最高 10 分</text>
+  <text class="t body" x="600" y="501" text-anchor="middle">同一成绩或同一获奖不能重复使用</text>
+
+  <path class="line" d="M786 475H856"/>
+  <rect class="box" x="856" y="405" width="282" height="140" rx="24" fill="#4f5cff"/>
+  <text x="997" y="454" text-anchor="middle" font-family="Arial,'Microsoft YaHei',sans-serif" font-size="25" font-weight="800" fill="#fff">进入课程成绩</text>
+  <text x="997" y="494" text-anchor="middle" font-family="Arial,'Microsoft YaHei',sans-serif" font-size="21" fill="#fff">大英 2 / 大英 4</text>
+  <text x="997" y="526" text-anchor="middle" font-family="Arial,'Microsoft YaHei',sans-serif" font-size="21" fill="#fff">占总评 10%</text>
+
+  <rect x="62" y="596" width="1076" height="76" rx="18" fill="#171717"/>
+  <circle cx="105" cy="634" r="11" fill="#ff6b59"/>
+  <text x="137" y="629" font-family="Arial,'Microsoft YaHei',sans-serif" font-size="20" fill="#fff">截止：大学英语 2 / 4 教学周最后一个教学日</text>
+  <text x="137" y="655" font-family="Arial,'Microsoft YaHei',sans-serif" font-size="16" fill="#bdbdbd">先确认计分周期，再保存成绩单、证书、参会证明或结业材料。</text>
+</svg>

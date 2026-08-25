@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">大学英语 A 级与 B 级课程路线</title>
+  <desc id="desc">分级考试后，A 级从大学英语三及学术英语等后续课程开始；B 级依次学习大学英语一至四及后续选修。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#171717"/></marker>
+    <style>
+      .t{font-family:Arial,'Microsoft YaHei',sans-serif;fill:#171717}.mono{font-family:Consolas,monospace;letter-spacing:2px}.box{stroke:#171717;stroke-width:3}.line{fill:none;stroke:#171717;stroke-width:4;marker-end:url(#arrow)}.label{font-size:25px;font-weight:700}.small{font-size:18px}.route{font-size:30px;font-weight:800}
+    </style>
+  </defs>
+  <rect width="1200" height="700" fill="#f6f3eb"/>
+  <path d="M0 0H1200V16H0Z" fill="#4f5cff"/>
+  <text class="t mono" x="62" y="72" font-size="18">COURSE MAP / 01</text>
+  <text class="t" x="62" y="126" font-size="43" font-weight="800">A / B 级课程路线</text>
+  <text class="t small" x="62" y="163" fill="#666">分级考试决定起点；具体课程开放与选课安排以当学期通知为准。</text>
+
+  <rect class="box" x="62" y="222" width="166" height="78" rx="18" fill="#ff6b59"/>
+  <text class="t label" x="145" y="270" text-anchor="middle">分级考试</text>
+
+  <rect class="box" x="286" y="205" width="130" height="112" rx="18" fill="#d8ff67"/>
+  <text class="t route" x="351" y="252" text-anchor="middle">A 级</text>
+  <text class="t small" x="351" y="283" text-anchor="middle">自愿确认</text>
+  <path class="line" d="M228 248H268"/>
+
+  <rect class="box" x="482" y="205" width="200" height="112" rx="18" fill="#ffffff"/>
+  <text class="t label" x="582" y="248" text-anchor="middle">大英 1 / 2</text>
+  <text class="t small" x="582" y="281" text-anchor="middle">分级考试赋分</text>
+  <path class="line" d="M416 261H464"/>
+
+  <rect class="box" x="748" y="205" width="168" height="112" rx="18" fill="#8db5ff"/>
+  <text class="t label" x="832" y="248" text-anchor="middle">大英 3</text>
+  <text class="t small" x="832" y="281" text-anchor="middle">从高阶段学习</text>
+  <path class="line" d="M682 261H730"/>
+
+  <rect class="box" x="982" y="205" width="156" height="112" rx="18" fill="#4f5cff"/>
+  <text x="1060" y="247" text-anchor="middle" font-family="Arial,'Microsoft YaHei',sans-serif" font-size="24" font-weight="700" fill="#fff">学术英语</text>
+  <text x="1060" y="280" text-anchor="middle" font-family="Arial,'Microsoft YaHei',sans-serif" font-size="18" fill="#fff">后续课程</text>
+  <path class="line" d="M916 261H964"/>
+
+  <rect class="box" x="286" y="412" width="130" height="112" rx="18" fill="#ffd36a"/>
+  <text class="t route" x="351" y="459" text-anchor="middle">B 级</text>
+  <text class="t small" x="351" y="490" text-anchor="middle">常规路径</text>
+  <path class="line" d="M228 274C255 274 250 468 268 468"/>
+
+  <rect class="box" x="466" y="412" width="140" height="112" rx="18" fill="#ffffff"/>
+  <text class="t label" x="536" y="459" text-anchor="middle">大英 1</text>
+  <text class="t small" x="536" y="490" text-anchor="middle">2 学分</text>
+  <path class="line" d="M416 468H448"/>
+
+  <rect class="box" x="652" y="412" width="140" height="112" rx="18" fill="#ffffff"/>
+  <text class="t label" x="722" y="459" text-anchor="middle">大英 2</text>
+  <text class="t small" x="722" y="490" text-anchor="middle">2 学分</text>
+  <path class="line" d="M606 468H634"/>
+
+  <rect class="box" x="838" y="412" width="140" height="112" rx="18" fill="#8db5ff"/>
+  <text class="t label" x="908" y="459" text-anchor="middle">大英 3</text>
+  <text class="t small" x="908" y="490" text-anchor="middle">1 学分</text>
+  <path class="line" d="M792 468H820"/>
+
+  <rect class="box" x="1024" y="395" width="138" height="146" rx="18" fill="#4f5cff"/>
+  <text x="1093" y="447" text-anchor="middle" font-family="Arial,'Microsoft YaHei',sans-serif" font-size="23" font-weight="700" fill="#fff">大英 4</text>
+  <text x="1093" y="480" text-anchor="middle" font-family="Arial,'Microsoft YaHei',sans-serif" font-size="17" fill="#fff">1 学分</text>
+  <text x="1093" y="513" text-anchor="middle" font-family="Arial,'Microsoft YaHei',sans-serif" font-size="17" fill="#fff">＋后续选修</text>
+  <path class="line" d="M978 468H1006"/>
+
+  <rect x="62" y="590" width="1100" height="66" rx="16" fill="#171717"/>
+  <text x="92" y="632" font-family="Arial,'Microsoft YaHei',sans-serif" font-size="20" fill="#fff">A 级需要学生签字确认；不同意进入 A 级班，可转入 B 级路线学习。</text>
+</svg>
