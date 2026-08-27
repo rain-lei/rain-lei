@@ -5,15 +5,17 @@ const menuToggle=document.getElementById('menuToggle');
 const mobileNav=document.getElementById('mobileNav');
 const header=document.querySelector('.v2-header');
 const progress=document.getElementById('scrollProgress');
+const backToTop=document.getElementById('backToTop');
 if(localStorage.getItem('rain-theme')==='dark') body.classList.add('dark');
 const updateTheme=()=>{ if(themeIcon) themeIcon.textContent=body.classList.contains('dark')?'◑':'◐'; };
 updateTheme();
 themeToggle?.addEventListener('click',()=>{body.classList.toggle('dark');localStorage.setItem('rain-theme',body.classList.contains('dark')?'dark':'light');updateTheme();});
 menuToggle?.addEventListener('click',()=>{const open=mobileNav?.classList.toggle('is-open');menuToggle.setAttribute('aria-expanded',String(Boolean(open)));mobileNav?.setAttribute('aria-hidden',String(!open));});
 mobileNav?.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{mobileNav.classList.remove('is-open');menuToggle?.setAttribute('aria-expanded','false');}));
-const updateScroll=()=>{header?.classList.toggle('is-scrolled',scrollY>18);if(progress){const max=document.documentElement.scrollHeight-innerHeight;progress.style.transform=`scaleX(${max>0?Math.min(1,scrollY/max):0})`;}};
+const updateScroll=()=>{header?.classList.toggle('is-scrolled',scrollY>18);backToTop?.classList.toggle('is-visible',scrollY>620);if(progress){const max=document.documentElement.scrollHeight-innerHeight;progress.style.transform=`scaleX(${max>0?Math.min(1,scrollY/max):0})`;}};
 addEventListener('scroll',updateScroll,{passive:true});updateScroll();
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
+backToTop?.addEventListener('click',()=>scrollTo({top:0,behavior:reduced?'auto':'smooth'}));
 const transition=document.getElementById('pageTransition');
 if(transition&&!reduced){
   addEventListener('pageshow',()=>body.classList.remove('is-leaving'));
@@ -64,3 +66,30 @@ if(articleToc&&articleTocLinks&&articleHeadings.length>1){
   addEventListener('scroll',()=>{if(!tocFrame)tocFrame=requestAnimationFrame(updateToc);},{passive:true});
   updateToc();
 }
+
+document.querySelectorAll<HTMLTableElement>('.article-body table').forEach(table=>{
+  if(table.closest('.markdown-table-wrap'))return;
+  const frame=document.createElement('div');frame.className='article-table-frame';
+  const label=document.createElement('div');label.className='article-content-label';label.innerHTML='<span>TABLE</span><small>横向滑动查看完整表格 →</small>';
+  const wrap=document.createElement('div');wrap.className='markdown-table-wrap';wrap.tabIndex=0;wrap.setAttribute('role','region');wrap.setAttribute('aria-label','可横向滚动的表格');
+  table.before(frame);frame.append(label,wrap);wrap.append(table);
+});
+
+document.querySelectorAll<HTMLElement>('.article-body pre').forEach(pre=>{
+  if(pre.closest('.article-code-frame'))return;
+  const code=pre.querySelector('code');
+  const language=[...(code?.classList||[])].find(name=>name.startsWith('language-'))?.replace('language-','')||'TEXT';
+  const frame=document.createElement('div');frame.className='article-code-frame';
+  const toolbar=document.createElement('div');toolbar.className='article-code-toolbar';
+  const label=document.createElement('span');label.textContent=language.toUpperCase();
+  const copy=document.createElement('button');copy.type='button';copy.textContent='复制';copy.setAttribute('aria-label','复制代码');
+  copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(code?.textContent||pre.textContent||'');copy.textContent='已复制 ✓';window.setTimeout(()=>copy.textContent='复制',1400);}catch{copy.textContent='复制失败';}});
+  pre.before(frame);toolbar.append(label,copy);frame.append(toolbar,pre);
+});
+
+document.querySelectorAll<HTMLImageElement>('.article-body img').forEach(img=>{
+  img.loading='lazy';img.decoding='async';
+  if(img.closest('a'))return;
+  const link=document.createElement('a');link.className='article-image-link';link.href=img.currentSrc||img.src;link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label',`${img.alt||'文章图片'}：查看原图`);
+  img.before(link);link.append(img);
+});
