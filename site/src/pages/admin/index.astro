@@ -1,6 +1,86 @@
 ---
+import { getCollection } from 'astro:content';
+import { readFile, readdir } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const workspaceRoot=resolve(process.cwd(),'..');
+const posts=await getCollection('posts');
+const published=posts.filter(post=>post.data.status==='published').length;
+const drafts=posts.filter(post=>post.data.status==='draft').length;
+const template=await readFile(resolve(workspaceRoot,'content/templates/post.md'),'utf8');
+const friendLinks=JSON.parse(await readFile(resolve(workspaceRoot,'friend-links.json'),'utf8')) as {links?:Array<{enabled?:boolean}>};
+const enabledLinks=(friendLinks.links||[]).filter(link=>link.enabled!==false).length;
+
+const countFiles=async(directory:string):Promise<number>=>{
+  const entries=await readdir(directory,{withFileTypes:true});
+  const counts=await Promise.all(entries.map(entry=>entry.isDirectory()?countFiles(resolve(directory,entry.name)):1));
+  return counts.reduce((sum,count)=>sum+count,0);
+};
+const uploads=await countFiles(resolve(workspaceRoot,'uploads')).catch(()=>0);
 ---
-<BaseLayout title="内容工作台 · rain" description="rain 博客内容维护入口。">
-<main class="search-page"><p class="v2-kicker">CONTENT WORKSPACE / GIT-BASED CMS</p><h1>内容工作台</h1><div class="project-layout"><section class="project-list"><h2>文章与图片</h2><p>文章使用带结构化 Frontmatter 的 Markdown，提交前由 Astro Content Collections 校验。</p><p><a class="v2-button is-primary" href="https://github.com/rain-lei/rain-lei/tree/main/content/posts">管理文章 ↗</a> <a class="v2-button" href="https://github.com/rain-lei/rain-lei/tree/main/uploads">管理图片 ↗</a></p></section><section class="about-block"><p class="v2-kicker">PUBLISH</p><h2>提交即发布，<br />版本可回滚。</h2><p>Pull Request 先运行类型、内容和构建检查；合并到 main 后由 GitHub Actions 部署到阿里云。</p><div class="about-links"><a href="https://github.com/rain-lei/rain-lei/actions">查看 Actions ↗</a></div></section></div></main>
+<BaseLayout title="内容工作台 · rain" description="rain 博客内容维护入口。" bodyClass="admin-v2" noindex>
+  <main class="admin-main">
+    <header class="admin-hero">
+      <div class="admin-hero-copy v2-reveal">
+        <p class="v2-kicker">CONTENT WORKSPACE / GIT-BASED CMS</p>
+        <h1>内容不在<br /><em>黑盒后台</em>里。</h1>
+        <p>文章、图片和友链都是仓库中的公开文件。每次修改都有 Git 历史，提交前由 Astro 校验，合并后由 GitHub Actions 发布到服务器。</p>
+        <div class="admin-notice"><span>PUBLIC</span><p>这里没有网页登录密码，也不会在浏览器中保存 Token。编辑操作会前往 GitHub 完成。</p></div>
+      </div>
+      <div class="admin-console v2-reveal" data-art-stage aria-hidden="true">
+        <span>RAIN / CONTENT OPS</span>
+        <strong>EDIT<br />CHECK<br />SHIP</strong>
+        <i></i><b>✓</b>
+        <small>VERSIONED<br />REVERSIBLE</small>
+      </div>
+    </header>
+
+    <section class="admin-stats v2-reveal" aria-label="内容概览">
+      <div><strong>{String(published).padStart(2,'0')}</strong><span>已发布文章</span></div>
+      <div><strong>{String(uploads).padStart(2,'0')}</strong><span>上传素材</span></div>
+      <div><strong>{String(enabledLinks).padStart(2,'0')}</strong><span>启用友链</span></div>
+      <div><strong>{String(drafts).padStart(2,'0')}</strong><span>草稿</span></div>
+    </section>
+
+    <section class="admin-actions">
+      <div class="admin-section-head v2-reveal"><div><span>01</span><p class="v2-kicker">CONTENT ACTIONS</p><h2>从这里开始维护</h2></div><small>所有外部操作均在 GitHub 打开</small></div>
+      <div class="admin-action-grid">
+        <article class="admin-action-card is-primary v2-reveal">
+          <span>01 / WRITE</span><strong>新建文章</strong><p>从 Markdown 模板开始，填写标题、摘要、分类、日期和正文。</p>
+          <div><a href="https://github.com/rain-lei/rain-lei/new/main/content/posts" target="_blank" rel="noopener noreferrer">开始写作 ↗</a><a href="https://github.com/rain-lei/rain-lei/tree/main/content/posts" target="_blank" rel="noopener noreferrer">文章目录</a></div>
+        </article>
+        <article class="admin-action-card v2-reveal">
+          <span>02 / MEDIA</span><strong>上传图片</strong><p>将图片放到 <code>uploads/年份/主题/</code>，再通过站内绝对路径插入文章。</p>
+          <div><a href="https://github.com/rain-lei/rain-lei/upload/main/uploads" target="_blank" rel="noopener noreferrer">上传素材 ↗</a><a href="https://github.com/rain-lei/rain-lei/tree/main/uploads" target="_blank" rel="noopener noreferrer">查看目录</a></div>
+        </article>
+        <article class="admin-action-card v2-reveal">
+          <span>03 / FRIENDS</span><strong>维护友链</strong><p>编辑站点名称、地址、头像与说明；外部申请继续通过 Pull Request 审核。</p>
+          <div><a href="https://github.com/rain-lei/rain-lei/edit/main/friend-links.json" target="_blank" rel="noopener noreferrer">编辑友链 ↗</a><a href="https://github.com/rain-lei/rain-lei/blob/main/FRIEND_LINKS.md" target="_blank" rel="noopener noreferrer">申请规范</a></div>
+        </article>
+        <article class="admin-action-card is-dark v2-reveal">
+          <span>04 / RELEASE</span><strong>发布与回滚</strong><p>查看校验和部署状态；需要时从工作流选择提交 SHA 回滚到已验证版本。</p>
+          <div><a href="https://github.com/rain-lei/rain-lei/actions/workflows/deploy.yml" target="_blank" rel="noopener noreferrer">部署记录 ↗</a><a href="https://github.com/rain-lei/rain-lei/actions/workflows/validate.yml" target="_blank" rel="noopener noreferrer">构建检查</a></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="admin-pipeline">
+      <div class="admin-section-head v2-reveal"><div><span>02</span><p class="v2-kicker">PUBLISH PIPELINE</p><h2>一次修改如何上线</h2></div><small>失败时不会覆盖上一个可用版本</small></div>
+      <ol class="pipeline-flow v2-reveal">
+        <li><span>01</span><strong>编辑文件</strong><small>Markdown / 图片 / JSON</small></li>
+        <li><span>02</span><strong>提交 Git</strong><small>Commit 或 Pull Request</small></li>
+        <li><span>03</span><strong>自动校验</strong><small>类型、内容、构建、索引</small></li>
+        <li><span>04</span><strong>部署服务器</strong><small>健康检查与自动回滚</small></li>
+      </ol>
+    </section>
+
+    <section class="admin-template v2-reveal">
+      <div><p class="v2-kicker">POST TEMPLATE</p><h2>最小文章模板</h2><p>模板直接读取仓库文件，因此这里展示的内容始终与实际写作规范一致。</p><div class="admin-template-links"><a href="https://github.com/rain-lei/rain-lei/blob/main/content/templates/post.md" target="_blank" rel="noopener noreferrer">在 GitHub 查看 ↗</a><a href="https://github.com/rain-lei/rain-lei/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">提交规范 ↗</a></div></div>
+      <div class="admin-template-code"><div><span>MARKDOWN</span><button id="copyPostTemplate" type="button">复制模板</button></div><pre><code id="postTemplateCode">{template.trim()}</code></pre></div>
+    </section>
+  </main>
+  <script>
+    document.getElementById('copyPostTemplate')?.addEventListener('click',async event=>{const button=event.currentTarget as HTMLButtonElement;const code=document.getElementById('postTemplateCode')?.textContent||'';try{await navigator.clipboard.writeText(code);button.textContent='已复制 ✓';window.setTimeout(()=>button.textContent='复制模板',1500);}catch{button.textContent='复制失败';}});
+  </script>
 </BaseLayout>
