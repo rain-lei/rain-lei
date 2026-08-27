@@ -123,10 +123,10 @@ body.v2::after { content:''; position:fixed; inset:0; z-index:-1; pointer-events
 .links-title h3 { margin:8px 0 0; font:700 32px 'Noto Serif SC',serif; }
 .links-title>span { color:var(--muted); font:9px 'DM Mono',monospace; }
 .links-block .friend-links-grid { margin-top:0; }
-.links-block .friend-link-card { grid-template-columns:40px 1fr 24px; padding:18px 0; }
+.links-block .friend-link-card { grid-template-columns:44px minmax(0,1fr) 24px; padding:18px 0; }
 .links-block .friend-link-card::before { display:none; }
 .links-block .friend-link-card:hover { padding-inline:10px; background:color-mix(in srgb,var(--card) 45%,transparent); }
-.links-block .friend-link-card img { width:36px; height:36px; border-radius:10px; }
+.links-block .friend-link-avatar { width:42px; height:42px; border-radius:12px; }
 
 .v2-footer { min-height:110px; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:30px; color:var(--muted); font:9px 'DM Mono',monospace; }
 .v2-footer>div { display:flex; align-items:center; gap:18px; }

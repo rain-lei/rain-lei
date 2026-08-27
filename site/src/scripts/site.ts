@@ -93,8 +93,42 @@ if(repoTargets.length){
   }
 }
 
-const links=document.getElementById('friendLinksGrid');
-if(links){const fallback=links.innerHTML;fetch('/friend-links.json').then(r=>r.json()).then(data=>{links.innerHTML=data.links.map((link:any)=>`<a class="friend-link-card" href="${link.url}" target="_blank" rel="noopener noreferrer"><img src="${link.avatar}" alt="${link.name}" loading="lazy"><span><strong>${link.name}</strong><small>${link.description}</small></span><b>↗</b></a>`).join('');}).catch(()=>links.innerHTML=fallback);}
+const friendTargets=[...document.querySelectorAll<HTMLElement>('[data-friend-links]')];
+if(friendTargets.length){
+  type FriendLink={name:string;url:string;avatar?:string;description?:string;sort_order?:number;enabled?:boolean};
+  const httpsUrl=(value:unknown)=>{try{const url=new URL(String(value||''));return url.protocol==='https:'&&!url.username&&!url.password?url:null;}catch{return null;}};
+  const avatarFor=(link:FriendLink,site:URL)=>{
+    const avatar=document.createElement('span');avatar.className='friend-link-avatar';
+    const initial=document.createElement('span');initial.className='friend-link-initial';initial.textContent=link.name.trim().slice(0,1).toUpperCase()||'·';avatar.append(initial);
+    const source=httpsUrl(link.avatar)||httpsUrl(new URL('/favicon.ico',site).href);
+    if(source){const image=document.createElement('img');image.src=source.href;image.alt='';image.loading='lazy';image.decoding='async';image.addEventListener('load',()=>avatar.classList.add('has-image'));image.addEventListener('error',()=>image.remove());avatar.append(image);}
+    return avatar;
+  };
+  const renderFriends=(target:HTMLElement,items:FriendLink[])=>{
+    const fragment=document.createDocumentFragment();
+    items.forEach(link=>{
+      const site=httpsUrl(link.url);if(!site)return;
+      const card=document.createElement('a');card.className='friend-link-card';card.href=site.href;card.target='_blank';card.rel='noopener noreferrer';card.setAttribute('aria-label',`${link.name}（在新窗口打开）`);
+      const copy=document.createElement('span');copy.className='friend-link-copy';
+      const title=document.createElement('strong');title.textContent=link.name.trim();
+      const description=document.createElement('small');description.textContent=link.description?.trim()||'去看看这个站点';
+      const domain=document.createElement('em');domain.textContent=site.hostname.replace(/^www\./,'');
+      const arrow=document.createElement('b');arrow.textContent='↗';arrow.setAttribute('aria-hidden','true');
+      copy.append(title,description,domain);card.append(avatarFor(link,site),copy,arrow);fragment.append(card);
+    });
+    if(fragment.childNodes.length)target.replaceChildren(fragment);
+  };
+  const fallbacks=new Map(friendTargets.map(target=>[target,target.innerHTML]));
+  fetch('/friend-links.json',{headers:{Accept:'application/json'}})
+    .then(response=>response.ok?response.json():Promise.reject(new Error(`Friend links ${response.status}`)))
+    .then((data:{links?:FriendLink[]})=>{
+      const visible=(Array.isArray(data.links)?data.links:[]).filter(link=>link&&link.enabled!==false&&link.name?.trim()&&httpsUrl(link.url)).sort((a,b)=>(Number.isFinite(a.sort_order)?Number(a.sort_order):9999)-(Number.isFinite(b.sort_order)?Number(b.sort_order):9999)||a.name.localeCompare(b.name,'zh-CN'));
+      if(!visible.length)throw new Error('No visible friend links');
+      friendTargets.forEach(target=>renderFriends(target,visible));
+      document.querySelectorAll<HTMLElement>('[data-friend-status]').forEach(node=>node.textContent=`${visible.length} 个站点 · PR WELCOME`);
+    })
+    .catch(()=>friendTargets.forEach(target=>{target.innerHTML=fallbacks.get(target)||'';}));
+}
 
 const filters=[...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
 const archiveItems=[...document.querySelectorAll<HTMLElement>('.archive-item')];
