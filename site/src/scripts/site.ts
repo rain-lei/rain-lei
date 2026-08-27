@@ -14,6 +14,21 @@ mobileNav?.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=
 const updateScroll=()=>{header?.classList.toggle('is-scrolled',scrollY>18);if(progress){const max=document.documentElement.scrollHeight-innerHeight;progress.style.transform=`scaleX(${max>0?Math.min(1,scrollY/max):0})`;}};
 addEventListener('scroll',updateScroll,{passive:true});updateScroll();
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const transition=document.getElementById('pageTransition');
+if(transition&&!reduced){
+  addEventListener('pageshow',()=>body.classList.remove('is-leaving'));
+  document.addEventListener('click',event=>{
+    if(body.classList.contains('is-leaving')||event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+    const anchor=(event.target as Element|null)?.closest<HTMLAnchorElement>('a[href]');
+    if(!anchor||anchor.target==='_blank'||anchor.hasAttribute('download')||anchor.dataset.noTransition!==undefined)return;
+    const next=new URL(anchor.href,location.href);
+    if(next.origin!==location.origin||(next.protocol!=='http:'&&next.protocol!=='https:'))return;
+    if(next.pathname===location.pathname&&next.search===location.search)return;
+    event.preventDefault();
+    body.classList.add('is-leaving');
+    window.setTimeout(()=>location.assign(next.href),460);
+  });
+}
 const reveals=document.querySelectorAll('.v2-reveal');
 if(reduced||!('IntersectionObserver' in window)) reveals.forEach(el=>el.classList.add('is-visible')); else {const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target);}}),{threshold:.08});reveals.forEach(el=>observer.observe(el));}
 if(!reduced&&matchMedia('(pointer:fine)').matches) document.querySelectorAll<HTMLElement>('[data-art-stage]').forEach(stage=>{stage.addEventListener('pointermove',event=>{const rect=stage.getBoundingClientRect();stage.style.setProperty('--art-x',(((event.clientX-rect.left)/rect.width-.5)*2).toFixed(3));stage.style.setProperty('--art-y',(((event.clientY-rect.top)/rect.height-.5)*2).toFixed(3));});stage.addEventListener('pointerleave',()=>{stage.style.setProperty('--art-x','0');stage.style.setProperty('--art-y','0');});});
@@ -30,3 +45,22 @@ const archiveSearch=document.querySelector<HTMLInputElement>('#archiveSearch');
 const resultCount=document.querySelector<HTMLElement>('#archiveResultCount');
 let active='all';const filterArchive=()=>{const q=(archiveSearch?.value||'').trim().toLowerCase();let count=0;archiveItems.forEach(item=>{const visible=(active==='all'||item.dataset.category===active)&&(!q||(item.textContent||'').toLowerCase().includes(q));item.hidden=!visible;item.classList.toggle('is-filtered-out',!visible);item.setAttribute('aria-hidden',String(!visible));if(visible)count++;});if(resultCount)resultCount.textContent=`${count} 篇结果`;};
 filters.forEach(button=>button.addEventListener('click',()=>{active=button.dataset.filter||'all';filters.forEach(b=>{const selected=b===button;b.classList.toggle('is-active',selected);b.setAttribute('aria-pressed',String(selected));});filterArchive();}));archiveSearch?.addEventListener('input',filterArchive);filterArchive();
+
+const articleToc=document.querySelector<HTMLElement>('#articleToc');
+const articleTocLinks=document.querySelector<HTMLElement>('#articleTocLinks');
+const articleHeadings=[...document.querySelectorAll<HTMLElement>('.article-body h2')];
+if(articleToc&&articleTocLinks&&articleHeadings.length>1){
+  const tocLinks=articleHeadings.map((heading,index)=>{
+    if(!heading.id)heading.id=`section-${String(index+1).padStart(2,'0')}`;
+    const link=document.createElement('a');
+    link.href=`#${heading.id}`;
+    const number=document.createElement('span');number.textContent=String(index+1).padStart(2,'0');
+    const label=document.createElement('b');label.textContent=heading.textContent?.trim()||`第 ${index+1} 节`;
+    link.append(number,label);articleTocLinks.append(link);return link;
+  });
+  articleToc.hidden=false;
+  let tocFrame=0;
+  const updateToc=()=>{tocFrame=0;let current=0;articleHeadings.forEach((heading,index)=>{if(heading.getBoundingClientRect().top<=150)current=index;});tocLinks.forEach((link,index)=>{const selected=index===current;link.classList.toggle('is-active',selected);if(selected)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});};
+  addEventListener('scroll',()=>{if(!tocFrame)tocFrame=requestAnimationFrame(updateToc);},{passive:true});
+  updateToc();
+}
