@@ -16,13 +16,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       </div>
     </header>
 
+    <section class="project-snapshot v2-reveal" aria-label="GitHub 项目概览">
+      <div><strong data-repo-count>09</strong><span>PUBLIC REPOS<br />公开仓库</span></div>
+      <div><strong data-repo-language-count>07</strong><span>LANGUAGES<br />主要语言</span></div>
+      <div><strong data-repo-latest>SYNC</strong><span>LATEST PUSH<br />最近更新</span></div>
+      <small>数据来自 GitHub 公共接口；不可用时展示本地项目目录。</small>
+    </section>
+
     <section class="project-directory">
       <div class="interior-section-head v2-reveal">
         <div><span>01</span><p class="v2-kicker">PUBLIC REPOSITORIES</p><h2>公开仓库</h2></div>
-        <span class="repo-live"><i></i>与 GitHub 同步</span>
+        <span class="repo-live" data-repo-status aria-live="polite"><i></i>正在连接 GitHub</span>
       </div>
       <div class="project-directory-list v2-reveal">
-        <div class="github-repo-list" data-github-repos data-repo-limit="9">
+        <div class="github-repo-list" data-github-repos data-repo-limit="9" aria-live="polite">
           <div class="repo-skeleton"><i></i><span></span><span></span></div>
           <div class="repo-skeleton"><i></i><span></span><span></span></div>
         </div>
