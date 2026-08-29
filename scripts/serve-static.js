@@ -16,15 +16,16 @@ http.createServer((request, response) => {
   const relative = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
   const target = path.resolve(root, relative);
   const safeTarget = target.startsWith(`${root}${path.sep}`) || target === root;
-  let file = path.join(root, 'index.html');
+  let file = path.join(root, '404.html');
+  let status = 404;
   if (safeTarget && fs.existsSync(target)) {
     const stat = fs.statSync(target);
-    if (stat.isFile()) file = target;
+    if (stat.isFile()) { file = target; status = 200; }
     if (stat.isDirectory()) {
       const directoryIndex = path.join(target, 'index.html');
-      if (fs.existsSync(directoryIndex) && fs.statSync(directoryIndex).isFile()) file = directoryIndex;
+      if (fs.existsSync(directoryIndex) && fs.statSync(directoryIndex).isFile()) { file = directoryIndex; status = 200; }
     }
   }
-  response.writeHead(200, { 'Content-Type': types[path.extname(file).toLowerCase()] || 'application/octet-stream' });
+  response.writeHead(status, { 'Content-Type': types[path.extname(file).toLowerCase()] || 'application/octet-stream' });
   fs.createReadStream(file).pipe(response);
 }).listen(port, '127.0.0.1', () => console.log(`静态站点预览：http://127.0.0.1:${port}`));
