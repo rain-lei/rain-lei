@@ -1,7 +1,28 @@
 ---
 import '../styles/global.css';
-interface Props { title?:string; description?:string; active?:'home'|'articles'|'projects'|'about'|'search'; bodyClass?:string; noindex?:boolean; }
-const { title='rain · 构建与记录', description='rain 的个人主页：软件工程、项目实践与个人文章。', active, bodyClass='', noindex=false } = Astro.props;
+interface Props {
+  title?:string;
+  description?:string;
+  active?:'home'|'articles'|'projects'|'about'|'search';
+  bodyClass?:string;
+  noindex?:boolean;
+  type?:'website'|'article';
+  publishedTime?:Date;
+  tags?:string[];
+  image?:string;
+}
+const {
+  title='rain · 构建与记录',
+  description='rain 的个人主页：软件工程、项目实践与个人文章。',
+  active,
+  bodyClass='',
+  noindex=false,
+  type='website',
+  publishedTime,
+  tags=[],
+  image='https://github.com/rain-lei.png?size=512',
+} = Astro.props;
+const canonical=new URL(Astro.url.pathname,Astro.site||Astro.url).href;
 ---
 <!doctype html>
 <html lang="zh-CN">
@@ -9,8 +30,26 @@ const { title='rain · 构建与记录', description='rain 的个人主页：软
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <meta name="theme-color" id="themeColor" content="#f2f1ec" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="generator" content={Astro.generator} />
     {noindex&&<meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:site_name" content="rain" />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:alt" content="rain 的 GitHub 头像" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    {type==='article'&&publishedTime&&<meta property="article:published_time" content={publishedTime.toISOString()} />}
+    {type==='article'&&tags.map(tag=><meta property="article:tag" content={tag} />)}
+    <script is:inline>try{if(localStorage.getItem('rain-theme')==='dark')document.documentElement.dataset.theme='dark';}catch{}</script>
     <link rel="icon" href="https://github.com/rain-lei.png?size=64" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

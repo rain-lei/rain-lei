@@ -13,7 +13,7 @@ body.v2 {
   overflow-x: clip;
 }
 
-body.v2.dark { --paper:#131411; --ink:#f3f3ed; --muted:#9d9e96; --line:#34362f; --card:#20221d; --lime:#c9ff38; }
+html[data-theme='dark'] body.v2,body.v2.dark { --paper:#131411; --ink:#f3f3ed; --muted:#9d9e96; --line:#34362f; --card:#20221d; --lime:#c9ff38; }
 body.v2::before { content:''; position:fixed; inset:0; z-index:-2; pointer-events:none; background:radial-gradient(620px circle at 82% 4%, color-mix(in srgb,var(--lime) 11%,transparent),transparent 70%),linear-gradient(90deg,transparent 49.9%,color-mix(in srgb,var(--line) 24%,transparent) 50%,transparent 50.1%); }
 body.v2::after { content:''; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.025; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E"); }
 .v2 a { text-decoration:none; }

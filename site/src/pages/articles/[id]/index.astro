@@ -17,7 +17,7 @@ const others=posts
   .slice(0,3);
 const contentLabel=post.data.contentType==='game'?'小游戏':categoryLabels[post.data.category];
 ---
-<BaseLayout title={`${post.data.title} · rain`} description={post.data.excerpt} active="articles" bodyClass="article-page article-v2">
+<BaseLayout title={`${post.data.title} · rain`} description={post.data.excerpt} active="articles" bodyClass="article-page article-v2" type="article" publishedTime={post.data.date} tags={post.data.tech}>
   <main>
     <article class="article-wrap">
       <div class="article-heading">
@@ -58,7 +58,11 @@ const contentLabel=post.data.contentType==='game'?'小游戏':categoryLabels[pos
 
       <div class="article-layout">
         <aside class="article-rail" data-pagefind-ignore>
-          <div class="article-share"><span>SHARE</span><button id="copyLink" aria-label="复制文章链接">↗</button></div>
+          <div class="article-share">
+            <span>SHARE</span>
+            <button id="shareLink" type="button" aria-label="分享文章" aria-describedby="shareLinkStatus"><span aria-hidden="true">↗</span><b>分享文章</b></button>
+            <span class="sr-only" id="shareLinkStatus" role="status" aria-live="polite"></span>
+          </div>
           <nav class="article-toc" id="articleToc" aria-label="本文目录" hidden><span>ON THIS PAGE</span><div id="articleTocLinks"></div></nav>
         </aside>
         <div class="article-body markdown-body" data-pagefind-body>
@@ -81,5 +85,22 @@ const contentLabel=post.data.contentType==='game'?'小游戏':categoryLabels[pos
       <div class="mini-posts">{others.map((item,index)=><a class="mini-post" href={`/articles/${postSlug(item)}/`}><span class="mini-no">{String(index+1).padStart(2,'0')}</span><div><small>{item.data.contentType==='game'?'小游戏':categoryLabels[item.data.category]} · {formatDate(item.data.date)}</small><strong>{item.data.title}</strong></div><span>↗</span></a>)}</div>
     </section>
   </main>
-  <script>document.getElementById('copyLink')?.addEventListener('click',async(event)=>{const button=event.currentTarget as HTMLButtonElement;try{await navigator.clipboard.writeText(location.href);button.textContent='✓';button.setAttribute('aria-label','文章链接已复制');window.setTimeout(()=>{button.textContent='↗';button.setAttribute('aria-label','复制文章链接');},1600);}catch{button.textContent='!';button.setAttribute('aria-label','复制失败');}});</script>
+  <script>
+    const shareButton=document.getElementById('shareLink') as HTMLButtonElement|null;
+    const shareStatus=document.getElementById('shareLinkStatus');
+    const resetShare=()=>{if(!shareButton)return;shareButton.innerHTML='<span aria-hidden="true">↗</span><b>分享文章</b>';shareButton.setAttribute('aria-label','分享文章');};
+    const copied=()=>{if(!shareButton)return;shareButton.innerHTML='<span aria-hidden="true">✓</span><b>链接已复制</b>';shareButton.setAttribute('aria-label','文章链接已复制');if(shareStatus)shareStatus.textContent='文章链接已复制';window.setTimeout(resetShare,1800);};
+    const copyLink=async()=>{await navigator.clipboard.writeText(location.href);copied();};
+    shareButton?.addEventListener('click',async()=>{
+      try{
+        if(navigator.share){
+          await navigator.share({title:document.title,text:document.querySelector('meta[name="description"]')?.getAttribute('content')||'',url:location.href});
+          if(shareStatus)shareStatus.textContent='已打开系统分享';
+        }else await copyLink();
+      }catch(error){
+        if((error as DOMException)?.name==='AbortError')return;
+        try{await copyLink();}catch{if(shareButton){shareButton.innerHTML='<span aria-hidden="true">!</span><b>复制失败</b>';shareButton.setAttribute('aria-label','复制文章链接失败');}if(shareStatus)shareStatus.textContent='复制文章链接失败';}
+      }
+    });
+  </script>
 </BaseLayout>

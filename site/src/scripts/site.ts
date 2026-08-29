@@ -1,13 +1,14 @@
 const body=document.body;
 const themeToggle=document.getElementById('themeToggle');
 const themeIcon=document.getElementById('themeIcon');
+const themeColor=document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
 const menuToggle=document.getElementById('menuToggle');
 const mobileNav=document.getElementById('mobileNav');
 const header=document.querySelector('.v2-header');
 const progress=document.getElementById('scrollProgress');
 const backToTop=document.getElementById('backToTop');
 if(localStorage.getItem('rain-theme')==='dark') body.classList.add('dark');
-const updateTheme=()=>{ if(themeIcon) themeIcon.textContent=body.classList.contains('dark')?'◑':'◐'; };
+const updateTheme=()=>{const dark=body.classList.contains('dark');document.documentElement.dataset.theme=dark?'dark':'light';if(themeIcon) themeIcon.textContent=dark?'◑':'◐';if(themeColor)themeColor.content=dark?'#131411':'#f2f1ec';};
 updateTheme();
 themeToggle?.addEventListener('click',()=>{body.classList.toggle('dark');localStorage.setItem('rain-theme',body.classList.contains('dark')?'dark':'light');updateTheme();});
 const syncMobileMenu=(open:boolean)=>{menuToggle?.setAttribute('aria-expanded',String(open));menuToggle?.setAttribute('aria-label',open?'关闭菜单':'打开菜单');mobileNav?.setAttribute('aria-hidden',String(!open));};
