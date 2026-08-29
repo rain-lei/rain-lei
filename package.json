@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "corepack pnpm --filter @rain/blog dev",
     "build": "corepack pnpm --filter @rain/blog build && node scripts/copy-runtime-assets.mjs",
-    "check": "corepack pnpm --filter @rain/blog typecheck && npm run build",
+    "check": "node scripts/validate-friend-links.mjs && corepack pnpm --filter @rain/blog typecheck && npm run build",
     "preview": "corepack pnpm --filter @rain/blog preview"
   },
   "engines": { "node": ">=22.5.0" }

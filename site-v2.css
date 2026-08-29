@@ -182,8 +182,8 @@ body.v2::after { content:''; position:fixed; inset:0; z-index:-1; pointer-events
   .v2-header { grid-template-columns:1fr auto; }
   .v2-nav,.v2-github { display:none; }
   .v2-menu { display:block; }
-  .v2-mobile-nav { position:fixed; top:70px; left:20px; right:20px; z-index:45; display:grid; max-height:0; overflow:hidden; opacity:0; background:var(--ink); color:var(--paper); border-radius:0 0 14px 14px; transition:max-height .3s,opacity .25s,padding .3s; }
-  .v2-mobile-nav.is-open { max-height:280px; opacity:1; padding:12px 20px 20px; }
+  .v2-mobile-nav { position:fixed; top:70px; left:20px; right:20px; z-index:45; display:grid; max-height:0; overflow:hidden; visibility:hidden; pointer-events:none; opacity:0; background:var(--ink); color:var(--paper); border-radius:0 0 14px 14px; transition:max-height .3s,opacity .25s,padding .3s,visibility 0s .3s; }
+  .v2-mobile-nav.is-open { max-height:280px; visibility:visible; pointer-events:auto; opacity:1; padding:12px 20px 20px; transition-delay:0s; }
   .v2-mobile-nav a { padding:12px 0; border-bottom:1px solid color-mix(in srgb,var(--paper) 15%,transparent); font-size:13px; }
   .hero-layout { grid-template-columns:1fr minmax(310px,.65fr); gap:38px; }
   .hero-main h1 { font-size:clamp(64px,9.5vw,92px); }
