@@ -57,6 +57,7 @@ const canonical=new URL(Astro.url.pathname,Astro.site||Astro.url).href;
     <title>{title}</title>
   </head>
   <body class={`v2 ${bodyClass}`}>
+    <a class="v2-skip-link" href="#main-content">跳至正文</a>
     <div class="v2-progress" id="scrollProgress" aria-hidden="true"></div>
     <div class="v2-page-transition" id="pageTransition" aria-hidden="true"><span>RAIN / NEXT PAGE</span><strong>继续探索</strong><i></i></div>
     <button class="v2-backtop" id="backToTop" type="button" aria-label="返回页面顶部"><span>↑</span><small>TOP</small></button>

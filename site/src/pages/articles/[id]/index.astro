@@ -18,7 +18,7 @@ const others=posts
 const contentLabel=post.data.contentType==='game'?'小游戏':categoryLabels[post.data.category];
 ---
 <BaseLayout title={`${post.data.title} · rain`} description={post.data.excerpt} active="articles" bodyClass="article-page article-v2" type="article" publishedTime={post.data.date} tags={post.data.tech}>
-  <main>
+  <main id="main-content">
     <article class="article-wrap">
       <div class="article-heading">
         <a class="back-crumb" href="/articles/">文章归档 / ARCHIVE</a>

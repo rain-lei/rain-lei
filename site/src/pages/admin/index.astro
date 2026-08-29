@@ -20,7 +20,7 @@ const countFiles=async(directory:string):Promise<number>=>{
 const uploads=await countFiles(resolve(workspaceRoot,'uploads')).catch(()=>0);
 ---
 <BaseLayout title="内容工作台 · rain" description="rain 博客内容维护入口。" bodyClass="admin-v2" noindex>
-  <main class="admin-main">
+  <main id="main-content" class="admin-main">
     <header class="admin-hero">
       <div class="admin-hero-copy v2-reveal">
         <p class="v2-kicker">CONTENT WORKSPACE / GIT-BASED CMS</p>
