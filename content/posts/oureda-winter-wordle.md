@@ -18,7 +18,7 @@ tech:
 
 # OurEDA Winter Wordle
 
-这是我在 OurEDA 25 级 Web 方向寒假作业中完成的 Wordle 猜词小游戏，也是一次使用原生前端技术处理状态、输入和页面反馈的练习。
+OurEDA 25 级 Web 方向寒假作业，使用原生 HTML、CSS 和 JavaScript 实现五字母猜词游戏。
 
 ## 玩法
 
@@ -30,9 +30,8 @@ tech:
 
 页面同时支持屏幕键盘和实体键盘操作，并提供删除、提交、刷新与显示答案功能。
 
-## 练习内容
+## 实现内容
 
-这个作业没有使用前端框架，主要练习了以下内容：
 
 1. 使用 DOM 将程序状态同步到页面；
 2. 管理最多六轮猜测的游戏生命周期；
@@ -46,5 +45,3 @@ tech:
 - [在线试玩](https://rain-lei.github.io/oureda-25-web-winter/)
 - [查看源码](https://github.com/rain-lei/oureda-25-web-winter)
 - 技术栈：HTML、CSS、JavaScript
-
-这是早期 Web 学习阶段的课程作业，页面和代码仍保留着当时的实现方式。相比重新包装成一个“成熟产品”，把它作为小游戏归档更符合它原本的定位。
