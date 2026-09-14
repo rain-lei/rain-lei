@@ -1,0 +1,13 @@
+---
+interface Props { scope?: 'site' | 'page' }
+const { scope = 'site' } = Astro.props;
+---
+<span class="view-counter" data-pagefind-ignore title="浏览量（PV），重复访问会累计">
+  <span>{scope === 'site' ? '全站浏览' : '阅读'}</span>
+  <span id={`busuanzi_container_${scope}_pv`} style="display:none"><span id={`busuanzi_value_${scope}_pv`}></span> 次</span>
+  <span data-counter-status={scope}>加载中</span>
+</span>
+
+<style>
+  .view-counter { display:inline-flex; align-items:center; gap:.45em; font-size:12px; font-weight:400; font-variant-numeric:tabular-nums; }
+</style>

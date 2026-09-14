@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import ViewCounter from '../components/ViewCounter.astro';
 interface Props {
   title?:string;
   description?:string;
@@ -69,8 +70,9 @@ const canonical=new URL(Astro.url.pathname,Astro.site||Astro.url).href;
       </header>
       <nav class="v2-mobile-nav" id="mobileNav" aria-hidden="true"><a class:list={[{ 'is-active':active==='home' }]} href="/">首页</a><a class:list={[{ 'is-active':active==='articles' }]} href="/articles/">文章</a><a class:list={[{ 'is-active':active==='projects' }]} href="/projects/">项目</a><a class:list={[{ 'is-active':active==='about' }]} href="/about/">关于</a><a class:list={[{ 'is-active':active==='search' }]} href="/search/">搜索</a></nav>
       <slot />
-      <footer class="v2-footer"><div><strong>rain</strong><span>© <b data-year>{new Date().getFullYear()}</b></span></div><nav><a href="/articles/">文章</a><a href="/projects/">项目</a><a href="/about/">关于</a><a href="/admin/">管理</a></nav><span>持续构建，持续记录。</span></footer>
+      <footer class="v2-footer"><div><strong>rain</strong><span>© <b data-year>{new Date().getFullYear()}</b></span></div><nav><a href="/articles/">文章</a><a href="/projects/">项目</a><a href="/about/">关于</a><a href="/admin/">管理</a></nav>{!noindex && <ViewCounter />}</footer>
     </div>
     <script src="../scripts/site.ts"></script>
+    <script src="../scripts/views.ts"></script>
   </body>
 </html>

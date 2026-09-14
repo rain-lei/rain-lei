@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ViewCounter from '../../../components/ViewCounter.astro';
 import { categoryLabels, categoryWords, estimateRead, formatDate, postSlug, sortPosts } from '../../../lib/posts';
 
 export async function getStaticPaths(){
@@ -25,6 +26,7 @@ const contentLabel=post.data.contentType==='game'?'小游戏':categoryLabels[pos
         <div class="article-meta">
           <span data-pagefind-meta="date">{formatDate(post.data.date)}</span>
           <span>{post.data.contentType==='game'?'WEB GAME':estimateRead(post.body||'')}</span>
+          <ViewCounter scope="page" />
         </div>
         <h1>{post.data.title}</h1>
         <p class="article-deck">{post.data.excerpt}</p>
