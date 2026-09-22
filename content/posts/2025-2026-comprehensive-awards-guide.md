@@ -3,6 +3,7 @@ title: 2025—2026 学年综合奖励评审手册
 excerpt: 面向求实书院 2025 级本科生，逐项说明参评资格、成绩计算、五类素质能力荣誉、奖学金门槛、材料要求、评审流程。
 category: study
 date: 2026-08-23
+updated: 2026-09-22
 status: published
 accent: blue
 ---

@@ -4,6 +4,7 @@ title: Windows 开发工具清单
 excerpt: 罗列本机已安装的常见程序员应用，并说明各工具的主要功能。
 category: life
 date: 2026-08-20
+updated: 2026-09-22
 status: published
 accent: sunset
 ---

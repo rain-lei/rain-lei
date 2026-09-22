@@ -134,11 +134,19 @@ if(friendTargets.length){
 }
 
 const filters=[...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+const tagFilters=[...document.querySelectorAll<HTMLButtonElement>('[data-tag-filter]')];
 const archiveItems=[...document.querySelectorAll<HTMLElement>('.archive-item')];
 const archiveSearch=document.querySelector<HTMLInputElement>('#archiveSearch');
 const resultCount=document.querySelector<HTMLElement>('#archiveResultCount');
-let active='all';const filterArchive=()=>{const q=(archiveSearch?.value||'').trim().toLowerCase();let count=0;archiveItems.forEach(item=>{const visible=(active==='all'||item.dataset.category===active)&&(!q||(item.textContent||'').toLowerCase().includes(q));item.hidden=!visible;item.classList.toggle('is-filtered-out',!visible);item.setAttribute('aria-hidden',String(!visible));if(visible)count++;});if(resultCount)resultCount.textContent=`${count} 篇结果`;};
-filters.forEach(button=>button.addEventListener('click',()=>{active=button.dataset.filter||'all';filters.forEach(b=>{const selected=b===button;b.classList.toggle('is-active',selected);b.setAttribute('aria-pressed',String(selected));});filterArchive();}));archiveSearch?.addEventListener('input',filterArchive);filterArchive();
+const archiveUrl=new URL(location.href);const validCategories=new Set(['all','study','life','entertainment']);const validTags=new Set(tagFilters.map(button=>button.dataset.tagFilter||'all'));let active=validCategories.has(archiveUrl.searchParams.get('category')||'')?archiveUrl.searchParams.get('category')||'all':'all';let activeTag=validTags.has(archiveUrl.searchParams.get('tag')||'')?archiveUrl.searchParams.get('tag')||'all':'all';
+const syncArchiveUrl=()=>{const params=new URLSearchParams();const q=(archiveSearch?.value||'').trim();if(active!=='all')params.set('category',active);if(activeTag!=='all')params.set('tag',activeTag);if(q)params.set('q',q);const next=params.toString();history.replaceState(null,'',`${location.pathname}${next?`?${next}`:''}`);};
+const filterArchive=()=>{const q=(archiveSearch?.value||'').trim().toLowerCase();let count=0;archiveItems.forEach(item=>{const tags=(item.dataset.tags||'').toLowerCase().split('|');const visible=(active==='all'||item.dataset.category===active)&&(activeTag==='all'||tags.includes(activeTag.toLowerCase()))&&(!q||(item.textContent||'').toLowerCase().includes(q));item.hidden=!visible;item.classList.toggle('is-filtered-out',!visible);item.setAttribute('aria-hidden',String(!visible));if(visible)count++;});if(resultCount)resultCount.textContent=`${count} 篇结果`;};
+filters.forEach(button=>button.addEventListener('click',()=>{active=button.dataset.filter||'all';filters.forEach(b=>{const selected=b===button;b.classList.toggle('is-active',selected);b.setAttribute('aria-pressed',String(selected));});syncArchiveUrl();filterArchive();}));
+tagFilters.forEach(button=>button.addEventListener('click',()=>{activeTag=button.dataset.tagFilter||'all';tagFilters.forEach(b=>{const selected=b===button;b.classList.toggle('is-active',selected);b.setAttribute('aria-pressed',String(selected));});syncArchiveUrl();filterArchive();}));
+if(archiveSearch){archiveSearch.value=archiveUrl.searchParams.get('q')||'';}
+filters.forEach(button=>{const selected=(button.dataset.filter||'all')===active;button.classList.toggle('is-active',selected);button.setAttribute('aria-pressed',String(selected));});
+tagFilters.forEach(button=>{const selected=(button.dataset.tagFilter||'all')===activeTag;button.classList.toggle('is-active',selected);button.setAttribute('aria-pressed',String(selected));});
+archiveSearch?.addEventListener('input',()=>{syncArchiveUrl();filterArchive();});filterArchive();
 
 const articleToc=document.querySelector<HTMLElement>('#articleToc');
 const articleTocLinks=document.querySelector<HTMLElement>('#articleTocLinks');

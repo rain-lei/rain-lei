@@ -4,6 +4,7 @@ title: OurEDA Winter Wordle
 excerpt: OurEDA 25 级 Web 方向寒假作业：使用原生 HTML、CSS 和 JavaScript 实现的五字母猜词小游戏，可直接在线试玩。
 category: entertainment
 date: 2026-01-18
+updated: 2026-09-22
 status: published
 accent: green
 contentType: game

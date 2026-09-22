@@ -99,6 +99,13 @@ html { scroll-behavior:smooth; }
 .archive-item.is-game { background:color-mix(in srgb,var(--acid) 12%,transparent); }
 .archive-item.is-game .archive-item-arrow { background:var(--acid); color:#141412; }
 .archive-item[hidden], .archive-item.is-filtered-out { display:none !important; }
+.archive-tag-filters { display:flex; flex-wrap:wrap; align-items:center; gap:7px; padding:14px 0 0; }
+.archive-tag-filters>span { margin-right:4px; color:var(--muted); font:9px var(--mono); letter-spacing:.14em; }
+.archive-tag-filters button { padding:5px 8px; border:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; font:10px var(--sans); }
+.archive-tag-filters button:hover,.archive-tag-filters button.is-active { border-color:var(--blue); background:var(--blue); color:#fff; }
+.archive-item-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+.archive-item-tags em { padding:4px 7px; border:1px solid var(--line); color:var(--muted); font:9px var(--mono); font-style:normal; }
+.article-updated { color:var(--blue); }
 
 /* Branded missing-route page */
 .not-found-main { min-height:calc(100vh - 178px); display:grid; align-items:center; padding:56px 0 100px; }
@@ -362,6 +369,8 @@ body.is-leaving .v2-page-transition i { animation:transition-line .46s cubic-bez
   .article-rail { position:static; }
   .article-rail .article-share { margin-bottom:28px; border-bottom:0; }
   .article-toc { display:none; }
+  .archive-tag-filters { gap:6px; }
+  .archive-tag-filters button { padding:6px 8px; }
   .v2-page-transition { padding:26px 20px 40px; }
 }
 

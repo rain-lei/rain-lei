@@ -4,6 +4,7 @@ title: C 程序设计复习提纲（2025）
 excerpt: 按数据结构、表达式、控制结构、函数与指针整理 C 语言复习范围，并归纳阅读代码、程序填空、程序设计和综合设计题的检查重点。
 category: study
 date: 2025-11-19
+updated: 2026-09-22
 status: published
 accent: green
 contentType: article

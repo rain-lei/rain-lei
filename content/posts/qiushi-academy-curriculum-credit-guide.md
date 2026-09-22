@@ -3,6 +3,7 @@ title: 求实书院育人课程与学分认定指南
 excerpt: 整理书院育人课程的学分结构、四个模块、五门课程完成方式、材料留存要求与系统认定流程。
 category: study
 date: 2026-08-23
+updated: 2026-09-22
 status: published
 accent: green
 ---

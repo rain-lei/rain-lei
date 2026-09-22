@@ -9,6 +9,7 @@ const posts = defineCollection({
     excerpt: z.string().min(1),
     category: z.enum(['study', 'life', 'entertainment']),
     date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
     status: z.enum(['draft', 'published']).default('published'),
     accent: z.enum(['sunset', 'blue', 'green', 'cream', 'purple', 'orange']).default('blue'),
     contentType: z.enum(['article', 'game']).default('article'),

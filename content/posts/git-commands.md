@@ -4,6 +4,7 @@ title: Git 常用命令速查手册
 excerpt: Git 常见操作：从配置、提交到分支、远程仓库与回滚。
 category: study
 date: 2026-08-20
+updated: 2026-09-22
 status: published
 accent: orange
 ---

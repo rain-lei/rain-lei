@@ -4,6 +4,7 @@ title: 大学英语学习指南：课程、实践成绩、以考代修与分级�
 excerpt: 梳理大学英语分级课程、成绩构成、实践活动计分、雅思托福与四六级以考代修、期末考试和入学分级测试要求。
 category: study
 date: 2026-08-25
+updated: 2026-09-22
 status: published
 accent: blue
 contentType: article

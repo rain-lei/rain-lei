@@ -9,6 +9,7 @@ interface Props {
   noindex?:boolean;
   type?:'website'|'article';
   publishedTime?:Date;
+  updatedTime?:Date;
   tags?:string[];
   image?:string;
 }
@@ -20,6 +21,7 @@ const {
   noindex=false,
   type='website',
   publishedTime,
+  updatedTime,
   tags=[],
   image='https://github.com/rain-lei.png?size=512',
 } = Astro.props;
@@ -49,6 +51,7 @@ const canonical=new URL(Astro.url.pathname,Astro.site||Astro.url).href;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
     {type==='article'&&publishedTime&&<meta property="article:published_time" content={publishedTime.toISOString()} />}
+    {type==='article'&&updatedTime&&<meta property="article:modified_time" content={updatedTime.toISOString()} />}
     {type==='article'&&tags.map(tag=><meta property="article:tag" content={tag} />)}
     <script is:inline>try{if(localStorage.getItem('rain-theme')==='dark')document.documentElement.dataset.theme='dark';}catch{}</script>
     <link rel="icon" href="https://github.com/rain-lei.png?size=64" type="image/png" />

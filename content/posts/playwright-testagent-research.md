@@ -4,6 +4,7 @@ title: Playwright Test Agents 与 GUI 自动化测试适用性分析
 excerpt: 从视觉 GUI Agent、Codex Computer Use、Playwright CLI 到 Planner、Generator、Healer 三类测试代理，整理自动化测试方案的工作流与实践记录。
 category: study
 date: 2026-07-15
+updated: 2026-09-22
 status: published
 accent: blue
 contentType: article

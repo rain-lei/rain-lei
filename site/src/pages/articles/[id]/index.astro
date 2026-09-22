@@ -18,13 +18,14 @@ const others=posts
   .slice(0,3);
 const contentLabel=post.data.contentType==='game'?'小游戏':categoryLabels[post.data.category];
 ---
-<BaseLayout title={`${post.data.title} · rain`} description={post.data.excerpt} active="articles" bodyClass="article-page article-v2" type="article" publishedTime={post.data.date} tags={post.data.tech}>
+<BaseLayout title={`${post.data.title} · rain`} description={post.data.excerpt} active="articles" bodyClass="article-page article-v2" type="article" publishedTime={post.data.date} updatedTime={post.data.updated} tags={post.data.tech}>
   <main id="main-content">
     <article class="article-wrap">
       <div class="article-heading">
         <a class="back-crumb" href="/articles/">文章归档 / ARCHIVE</a>
         <div class="article-meta">
-          <span data-pagefind-meta="date">{formatDate(post.data.date)}</span>
+          <span data-pagefind-meta="date">发布 {formatDate(post.data.date)}</span>
+          {post.data.updated&&<span class="article-updated">更新 {formatDate(post.data.updated)}</span>}
           <span>{post.data.contentType==='game'?'WEB GAME':estimateRead(post.body||'')}</span>
           <ViewCounter scope="page" />
         </div>
