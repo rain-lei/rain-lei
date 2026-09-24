@@ -187,9 +187,18 @@ document.querySelectorAll<HTMLElement>('.article-body pre').forEach(pre=>{
   pre.before(frame);toolbar.append(label,copy);frame.append(toolbar,pre);
 });
 
+const lightbox=document.createElement('dialog');lightbox.className='article-lightbox';lightbox.setAttribute('aria-label','文章图片预览');
+const lightboxClose=document.createElement('button');lightboxClose.type='button';lightboxClose.className='article-lightbox-close';lightboxClose.setAttribute('aria-label','关闭图片预览');lightboxClose.textContent='×';
+const lightboxImage=document.createElement('img');lightboxImage.alt='';
+const lightboxCaption=document.createElement('p');
+lightbox.append(lightboxClose,lightboxImage,lightboxCaption);document.body.append(lightbox);
+const closeLightbox=()=>{if(lightbox.open)lightbox.close();};
+lightboxClose.addEventListener('click',closeLightbox);lightbox.addEventListener('click',event=>{if(event.target===lightbox)closeLightbox();});lightbox.addEventListener('close',()=>{lightboxImage.removeAttribute('src');lightboxCaption.textContent='';});
 document.querySelectorAll<HTMLImageElement>('.article-body img').forEach(img=>{
   img.loading='lazy';img.decoding='async';
   if(img.closest('a'))return;
-  const link=document.createElement('a');link.className='article-image-link';link.href=img.currentSrc||img.src;link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label',`${img.alt||'文章图片'}：查看原图`);
+  const link=document.createElement('a');link.className='article-image-link';link.href=img.currentSrc||img.src;link.setAttribute('aria-label',`${img.alt||'文章图片'}：放大查看`);link.setAttribute('aria-haspopup','dialog');
+  link.addEventListener('click',event=>{event.preventDefault();lightboxImage.src=link.href;lightboxImage.alt=img.alt||'文章图片';lightboxCaption.textContent=img.alt||'文章图片';lightbox.showModal();});
   img.before(link);link.append(img);
 });
+addEventListener('keydown',event=>{if(event.key==='Escape'&&lightbox.open)closeLightbox();});

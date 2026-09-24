@@ -368,7 +368,8 @@ body.is-leaving .v2-page-transition i { animation:transition-line .46s cubic-bez
   .article-v2 .article-layout { display:block; max-width:780px; }
   .article-rail { position:static; }
   .article-rail .article-share { margin-bottom:28px; border-bottom:0; }
-  .article-toc { display:none; }
+  .article-toc { display:block; margin:0 0 30px; }
+  .article-toc>div { max-height:180px; }
   .archive-tag-filters { gap:6px; }
   .archive-tag-filters button { padding:6px 8px; }
   .v2-page-transition { padding:26px 20px 40px; }
@@ -394,6 +395,12 @@ body.is-leaving .v2-page-transition i { animation:transition-line .46s cubic-bez
 .article-image-link::after { content:'查看原图 ↗'; position:absolute; right:10px; bottom:10px; padding:7px 9px; border:1px solid #141412; background:var(--acid); color:#141412; font:9px var(--mono); opacity:0; transform:translateY(5px); transition:opacity .2s,transform .2s; }
 .article-image-link:hover::after,.article-image-link:focus-visible::after { opacity:1; transform:none; }
 .article-image-link img { width:100%; margin:0 !important; }
+.article-lightbox { width:min(94vw,1100px); max-width:none; max-height:92vh; padding:clamp(12px,2vw,26px); border:1px solid var(--ink); background:var(--paper); color:var(--ink); box-shadow:12px 12px 0 var(--blue); }
+.article-lightbox::backdrop { background:color-mix(in srgb,var(--ink) 78%,transparent); }
+.article-lightbox img { display:block; width:auto; max-width:100%; max-height:calc(92vh - 76px); margin:auto; object-fit:contain; }
+.article-lightbox p { margin:12px 38px 0 0; color:var(--muted); font-size:11px; line-height:1.6; }
+.article-lightbox-close { position:absolute; top:10px; right:10px; width:30px; height:30px; border:1px solid var(--ink); background:var(--acid); color:#141412; cursor:pointer; font:20px/1 var(--sans); }
+.article-lightbox-close:hover,.article-lightbox-close:focus-visible { background:var(--blue); color:#fff; }
 
 .v2-backtop { position:fixed; right:max(18px,calc((100vw - var(--v2-max))/2 - 64px)); bottom:24px; z-index:35; width:50px; height:56px; display:grid; place-items:center; padding:5px; border:1px solid var(--ink); background:var(--blue); color:#fff; box-shadow:5px 5px 0 var(--acid); cursor:pointer; opacity:0; pointer-events:none; transform:translateY(16px); transition:opacity .2s,transform .2s,box-shadow .2s; }
 .v2-backtop span { font:500 20px/1 var(--mono); }
