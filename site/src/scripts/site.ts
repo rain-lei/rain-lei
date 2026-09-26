@@ -19,24 +19,27 @@ const updateScroll=()=>{header?.classList.toggle('is-scrolled',scrollY>18);backT
 addEventListener('scroll',updateScroll,{passive:true});updateScroll();
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 backToTop?.addEventListener('click',()=>scrollTo({top:0,behavior:reduced?'auto':'smooth'}));
-const transition=document.getElementById('pageTransition');
-if(transition&&!reduced){
-  addEventListener('pageshow',()=>body.classList.remove('is-leaving'));
-  document.addEventListener('click',event=>{
-    if(body.classList.contains('is-leaving')||event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
-    const anchor=(event.target as Element|null)?.closest<HTMLAnchorElement>('a[href]');
-    if(!anchor||anchor.target==='_blank'||anchor.hasAttribute('download')||anchor.dataset.noTransition!==undefined)return;
-    const next=new URL(anchor.href,location.href);
-    if(next.origin!==location.origin||(next.protocol!=='http:'&&next.protocol!=='https:'))return;
-    if(next.pathname===location.pathname&&next.search===location.search)return;
-    event.preventDefault();
-    body.classList.add('is-leaving');
-    window.setTimeout(()=>location.assign(next.href),460);
-  });
-}
 const reveals=document.querySelectorAll('.v2-reveal');
 if(reduced||!('IntersectionObserver' in window)) reveals.forEach(el=>el.classList.add('is-visible')); else {const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target);}}),{threshold:.08});reveals.forEach(el=>observer.observe(el));}
-if(!reduced&&matchMedia('(pointer:fine)').matches) document.querySelectorAll<HTMLElement>('[data-art-stage]').forEach(stage=>{stage.addEventListener('pointermove',event=>{const rect=stage.getBoundingClientRect();stage.style.setProperty('--art-x',(((event.clientX-rect.left)/rect.width-.5)*2).toFixed(3));stage.style.setProperty('--art-y',(((event.clientY-rect.top)/rect.height-.5)*2).toFixed(3));});stage.addEventListener('pointerleave',()=>{stage.style.setProperty('--art-x','0');stage.style.setProperty('--art-y','0');});});
+
+const randomReadLink=document.querySelector<HTMLAnchorElement>('[data-random-read]');
+const randomReadButton=document.querySelector<HTMLButtonElement>('[data-random-draw]');
+const randomReadOptions=[...document.querySelectorAll<HTMLAnchorElement>('[data-random-source]')];
+if(randomReadLink&&randomReadButton&&randomReadOptions.length>1){
+  const randomReadTitle=randomReadLink.querySelector('strong');
+  let selected=randomReadOptions.findIndex(option=>option.href===randomReadLink.href);
+  randomReadButton.hidden=false;
+  randomReadButton.addEventListener('click',()=>{
+    const alternatives=randomReadOptions.filter((_,index)=>index!==selected);
+    selected=randomReadOptions.indexOf(alternatives[Math.floor(Math.random()*alternatives.length)]);
+    const next=randomReadOptions[selected];
+    randomReadLink.href=next.href;
+    if(randomReadTitle)randomReadTitle.textContent=next.textContent?.trim()||'打开这篇文章';
+    randomReadLink.classList.remove('is-new-pick');
+    void randomReadLink.offsetWidth;
+    randomReadLink.classList.add('is-new-pick');
+  });
+}
 
 const repoTargets=[...document.querySelectorAll<HTMLElement>('[data-github-repos]')];
 if(repoTargets.length){
@@ -67,7 +70,7 @@ if(repoTargets.length){
       const stars=repo.stargazers_count==null?'':`<span class="repo-stars">★ ${Math.max(0,Number(repo.stargazers_count)||0)}</span>`;
       const forks=repo.forks_count==null?'':`<span class="repo-forks">⑂ ${Math.max(0,Number(repo.forks_count)||0)}</span>`;
       const updated=formatRepoDate(repo.pushed_at);
-      return `<a class="github-repo-card" href="${esc(safeRepoUrl(repo))}" target="_blank" rel="noopener noreferrer"><span class="repo-index">${String(index+1).padStart(2,'0')}</span><span class="repo-card-content"><span class="repo-title-row"><span class="repo-title-wrap"><strong>${esc(repo.name)}</strong>${repo.name==='rain-lei'?'<em class="repo-badge">本站</em>':''}</span><span class="repo-arrow">↗</span></span><span class="repo-description">${esc(repo.description||local?.description||'代码、实验与持续迭代的项目记录。')}</span><span class="repo-meta"><span class="repo-language" style="--language-color:${color}"><i></i>${esc(language)}</span>${stars}${forks}${updated?`<time datetime="${esc(repo.pushed_at)}">更新 ${updated}</time>`:''}</span>${topics.length?`<span class="repo-topics">${topics.map(topic=>`<em>${esc(topic)}</em>`).join('')}</span>`:''}</span></a>`;
+      return `<a class="github-repo-card" href="${esc(safeRepoUrl(repo))}" target="_blank" rel="noopener noreferrer"><span class="repo-index">${String(index+1).padStart(2,'0')}</span><span class="repo-card-content"><span class="repo-title-row"><span class="repo-title-wrap"><strong>${esc(repo.name)}</strong>${repo.name==='rain-lei'?'<em class="repo-badge">本站</em>':''}</span><span class="repo-arrow">↗</span></span><span class="repo-description">${esc(repo.description||local?.description||'暂无项目简介。')}</span><span class="repo-meta"><span class="repo-language" style="--language-color:${color}"><i></i>${esc(language)}</span>${stars}${forks}${updated?`<time datetime="${esc(repo.pushed_at)}">更新 ${updated}</time>`:''}</span>${topics.length?`<span class="repo-topics">${topics.map(topic=>`<em>${esc(topic)}</em>`).join('')}</span>`:''}</span></a>`;
     }).join('');
   };
   const statusTargets=[...document.querySelectorAll<HTMLElement>('[data-repo-status]')];
@@ -76,8 +79,8 @@ if(repoTargets.length){
     const languages=new Set(repos.map(repo=>repo.language).filter(Boolean));
     document.querySelectorAll<HTMLElement>('[data-repo-language-count]').forEach(node=>node.textContent=String(languages.size).padStart(2,'0'));
     const latest=formatRepoDate(repos.find(repo=>repo.pushed_at)?.pushed_at);
-    document.querySelectorAll<HTMLElement>('[data-repo-latest]').forEach(node=>node.textContent=latest?latest.slice(5):source==='fallback'?'LOCAL':'CACHE');
-    const label=source==='live'?`已同步 ${repos.length} 个公开仓库`:source==='cache'?`会话缓存 · ${repos.length} 个仓库`:`离线目录 · ${repos.length} 个仓库`;
+    document.querySelectorAll<HTMLElement>('[data-repo-latest]').forEach(node=>node.textContent=latest?latest.slice(5):source==='fallback'?'本地':'缓存');
+    const label=source==='live'?`已读取 ${repos.length} 个仓库`:source==='cache'?`使用缓存 · ${repos.length} 个仓库`:`本地清单 · ${repos.length} 个仓库`;
     statusTargets.forEach(node=>{node.childNodes.forEach(child=>{if(child.nodeType===Node.TEXT_NODE)child.remove();});node.append(document.createTextNode(label));node.classList.toggle('is-offline',source==='fallback');});
   };
   const renderAll=(repos:GithubRepo[],source:'live'|'cache'|'fallback')=>{repoTargets.forEach(target=>render(target,repos));updateSummary(repos,source);};
@@ -128,7 +131,7 @@ if(friendTargets.length){
       const visible=(Array.isArray(data.links)?data.links:[]).filter(link=>link&&link.enabled!==false&&link.name?.trim()&&httpsUrl(link.url)).sort((a,b)=>(Number.isFinite(a.sort_order)?Number(a.sort_order):9999)-(Number.isFinite(b.sort_order)?Number(b.sort_order):9999)||a.name.localeCompare(b.name,'zh-CN'));
       if(!visible.length)throw new Error('No visible friend links');
       friendTargets.forEach(target=>renderFriends(target,visible));
-      document.querySelectorAll<HTMLElement>('[data-friend-status]').forEach(node=>node.textContent=`${visible.length} 个站点 · PR WELCOME`);
+      document.querySelectorAll<HTMLElement>('[data-friend-status]').forEach(node=>node.textContent=`${visible.length} 个站点 · 欢迎提交 PR`);
     })
     .catch(()=>friendTargets.forEach(target=>{target.innerHTML=fallbacks.get(target)||'';}));
 }

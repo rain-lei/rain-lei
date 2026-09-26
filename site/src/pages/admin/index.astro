@@ -28,7 +28,7 @@ const uploads=await countFiles(resolve(workspaceRoot,'uploads')).catch(()=>0);
         <p>文章、图片和友链都是仓库中的公开文件。每次修改都有 Git 历史，提交前由 Astro 校验，合并后由 GitHub Actions 发布到服务器。</p>
         <div class="admin-notice"><span>PUBLIC</span><p>这里没有网页登录密码，也不会在浏览器中保存 Token。编辑操作会前往 GitHub 完成。</p></div>
       </div>
-      <div class="admin-console v2-reveal" data-art-stage aria-hidden="true">
+      <div class="admin-console v2-reveal" aria-hidden="true">
         <span>RAIN / CONTENT OPS</span>
         <strong>EDIT<br />CHECK<br />SHIP</strong>
         <i></i><b>✓</b>

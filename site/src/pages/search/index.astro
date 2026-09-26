@@ -8,34 +8,28 @@ const topics=['大学英语','奖励评审','书院课程','Playwright','Git','C
 ---
 <BaseLayout title="全文搜索 · rain" description="搜索 rain 的全部公开文章。" active="search" bodyClass="search-v2">
 <main id="main-content" class="search-main" data-pagefind-ignore>
-  <header class="search-hero v2-reveal">
+  <header class="search-hero search-page-heading v2-reveal">
     <div class="search-hero-copy">
-      <p class="v2-kicker">PAGEFIND / FULL TEXT</p>
-      <h1>在记录里<br /><em>找到线索。</em></h1>
-      <p>搜索标题、正文、技术关键词或课程名称。索引完全在浏览器中运行，不会上传你的检索内容。</p>
+      <p class="v2-kicker">搜索 · {posts.length} 篇文章</p>
+      <h1>搜索文章</h1>
+      <p>输入标题、正文、标签或课程名称。</p>
       <div class="search-console" role="search">
         <span class="search-console-mark" aria-hidden="true">⌕</span>
-        <input id="pagefindInput" type="search" aria-label="搜索文章" placeholder="例如：Playwright、C 语言、大学英语" autocomplete="off" />
+        <input id="pagefindInput" type="search" aria-label="搜索文章" placeholder="试试：Playwright、C 语言、大学英语" autocomplete="off" />
         <kbd>/</kbd>
         <button id="searchClear" type="button" aria-label="清空搜索" hidden>×</button>
       </div>
-      {topics.length>0&&<div class="search-topics" aria-label="常用搜索词"><span>TRY</span>{topics.map(topic=><button type="button" data-search-topic={topic}>{topic}</button>)}</div>}
-    </div>
-    <div class="search-poster" data-art-stage aria-hidden="true">
-      <span>INDEX / {String(posts.length).padStart(2,'0')}</span>
-      <strong>FIND<br />IDEAS</strong>
-      <i></i><b>↘</b>
-      <small>LOCAL SEARCH<br />NO TRACKING</small>
+      {topics.length>0&&<div class="search-topics" aria-label="常用搜索词"><span>常用</span>{topics.map(topic=><button type="button" data-search-topic={topic}>{topic}</button>)}</div>}
     </div>
   </header>
 
   <section class="search-workspace" aria-labelledby="searchStatus">
     <div class="search-status-line">
-      <div><span class="search-status-dot"></span><strong id="searchStatus" aria-live="polite">等待输入关键词</strong></div>
-      <small id="searchCount">{posts.length} 篇公开内容可检索</small>
+      <div><span class="search-status-dot"></span><strong id="searchStatus" aria-live="polite">输入关键词搜索</strong></div>
+      <small id="searchCount">共 {posts.length} 篇文章</small>
     </div>
     <div class="search-idle" id="searchIdle">
-      <div class="search-idle-heading"><span>RECENT / 最近更新</span><p>还没想好搜什么？可以先从这些内容开始。</p></div>
+      <div class="search-idle-heading"><span>最近添加</span><p>也可以点开最近的文章直接阅读。</p></div>
       <div class="search-recent-grid">{recent.map((post,index)=><a href={`/articles/${postSlug(post)}/`}><span>{String(index+1).padStart(2,'0')}</span><small>{categoryLabels[post.data.category]} · {formatDate(post.data.date)}</small><strong>{post.data.title}</strong><b>↗</b></a>)}</div>
     </div>
     <div class="search-results" id="pagefindResults" hidden></div>
@@ -52,14 +46,14 @@ const topicButtons=[...document.querySelectorAll<HTMLButtonElement>('[data-searc
 let timer:number;let requestId=0;
 const escapeHtml=(value:unknown)=>String(value??'').replace(/[&<>"']/g,char=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[char]!));
 const safeExcerpt=(value:unknown)=>escapeHtml(value).replaceAll('&lt;mark&gt;','<mark>').replaceAll('&lt;/mark&gt;','</mark>');
-const setIdle=()=>{output.hidden=true;output.innerHTML='';idle.hidden=false;status.textContent='等待输入关键词';count.textContent='输入标题、正文或技术关键词';clear.hidden=true;history.replaceState(null,'',location.pathname);};
+const setIdle=()=>{output.hidden=true;output.innerHTML='';idle.hidden=false;status.textContent='输入关键词搜索';count.textContent='搜索标题、正文或标签';clear.hidden=true;history.replaceState(null,'',location.pathname);};
 const renderResults=(results:any[],query:string)=>{
   idle.hidden=true;output.hidden=false;clear.hidden=false;
   status.textContent=results.length?`“${query}”的搜索结果`:`没有找到“${query}”`;
   count.textContent=`${results.length} 篇匹配内容`;
-  output.innerHTML=results.length?results.map((item,index)=>{const category=escapeHtml(item.meta.category||'文章');const date=escapeHtml(item.meta.date||'RAIN NOTES');const title=escapeHtml(item.meta.title||'未命名文章');const url=escapeHtml(item.url);const excerpt=safeExcerpt(item.excerpt||'');return `<a class="search-result-card" href="${url}"><span class="search-result-index">${String(index+1).padStart(2,'0')}</span><span class="search-result-content"><small>${category} · ${date}</small><strong>${title}</strong><p>${excerpt}</p><em>${url}</em></span><b>↗</b></a>`;}).join(''):'<div class="search-empty-state"><strong>换一种说法试试</strong><p>可以缩短关键词，或从文章归档按分类浏览。</p><a href="/articles/">进入文章归档 ↗</a></div>';
+  output.innerHTML=results.length?results.map((item,index)=>{const category=escapeHtml(item.meta.category||'文章');const date=escapeHtml(item.meta.date||'');const title=escapeHtml(item.meta.title||'未命名文章');const url=escapeHtml(item.url);const excerpt=safeExcerpt(item.excerpt||'');return `<a class="search-result-card" href="${url}"><span class="search-result-index">${String(index+1).padStart(2,'0')}</span><span class="search-result-content"><small>${category}${date?` · ${date}`:''}</small><strong>${title}</strong><p>${excerpt}</p><em>${url}</em></span><b>↗</b></a>`;}).join(''):'<div class="search-empty-state"><strong>没有找到匹配文章</strong><p>缩短关键词，或按分类浏览文章。</p><a href="/articles/">浏览文章 ↗</a></div>';
 };
-const search=async()=>{const query=input.value.trim();const current=++requestId;if(!query){setIdle();return;}clear.hidden=false;idle.hidden=true;output.hidden=false;output.innerHTML='<div class="search-loading"><i></i><span>正在检索文章索引…</span></div>';status.textContent='正在搜索';count.textContent='LOCAL INDEX / SEARCHING';history.replaceState(null,'',`${location.pathname}?q=${encodeURIComponent(query)}`);try{const pagefind=await (new Function('return import("/pagefind/pagefind.js")'))();const response=await pagefind.search(query);const results=await Promise.all(response.results.slice(0,24).map((item:any)=>item.data()));if(current===requestId)renderResults(results,query);}catch{if(current===requestId){status.textContent='搜索索引暂时不可用';count.textContent='请刷新页面后重试';output.innerHTML='<div class="search-empty-state"><strong>索引没有成功载入</strong><p>开发预览首次打开时可能尚未生成 Pagefind 索引。</p><a href="/articles/">先浏览文章归档 ↗</a></div>';}}};
+const search=async()=>{const query=input.value.trim();const current=++requestId;if(!query){setIdle();return;}clear.hidden=false;idle.hidden=true;output.hidden=false;output.innerHTML='<div class="search-loading"><i></i><span>正在搜索…</span></div>';status.textContent='正在搜索';count.textContent='请稍候';history.replaceState(null,'',`${location.pathname}?q=${encodeURIComponent(query)}`);try{const pagefind=await (new Function('return import("/pagefind/pagefind.js")'))();const response=await pagefind.search(query);const results=await Promise.all(response.results.slice(0,24).map((item:any)=>item.data()));if(current===requestId)renderResults(results,query);}catch{if(current===requestId){status.textContent='搜索索引暂时不可用';count.textContent='请刷新页面后重试';output.innerHTML='<div class="search-empty-state"><strong>索引暂时无法载入</strong><p>可以先从文章列表继续浏览。</p><a href="/articles/">浏览文章 ↗</a></div>';}}};
 input?.addEventListener('input',()=>{clearTimeout(timer);timer=window.setTimeout(search,180);});
 clear?.addEventListener('click',()=>{input.value='';setIdle();input.focus();});
 topicButtons.forEach(button=>button.addEventListener('click',()=>{input.value=button.dataset.searchTopic||'';search();input.focus();}));
