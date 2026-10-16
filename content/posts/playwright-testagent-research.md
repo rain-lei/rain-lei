@@ -1,10 +1,10 @@
 ---
 id: playwright-testagent-research
-title: Playwright Test Agents 与 GUI 自动化测试适用性分析
-excerpt: 从视觉 GUI Agent、Codex Computer Use、Playwright CLI 到 Planner、Generator、Healer 三类测试代理，整理自动化测试方案的工作流与实践记录。
+title: Playwright Test Agents 调研：方案比较与测试记录
+excerpt: 比较截图操作、浏览器命令与测试代理，记录软件学院官网和 163 邮箱登录页的测试过程、生成文件与报告结果。
 category: study
 date: 2026-07-15
-updated: 2026-09-22
+updated: 2026-10-17
 status: published
 accent: blue
 contentType: article
@@ -15,9 +15,7 @@ tech:
   - GUI Testing
 ---
 
-# Playwright Test Agents 与 GUI 自动化测试适用性分析
-
-调研比较视觉 GUI Agent、通用 Computer Use、Playwright CLI 和 Playwright Test Agents 在 Web 自动化测试中的执行方式、产物与适用范围。
+这次调研比较了四种浏览器自动化方案，关注三个问题：怎样找到页面上的元素，执行后留下什么文件，以及这些操作能否变成可重复运行的测试。实验使用大连理工大学软件学院官网和 163 邮箱登录页，下面保留了当时的操作截图与结果。
 
 ![Playwright Test Agents 与项目适用性分析汇报封面](/uploads/2026/playwright-testagent/01-cover.png)
 
@@ -25,16 +23,16 @@ tech:
 
 调研涉及四类方案。它们都能驱动浏览器，但定位并不相同。
 
-| 方案 | 核心输入与执行方式 | 主要定位 | 在本项目中的角色 |
-| --- | --- | --- | --- |
-| 视觉 GUI Agent | 截图、多模态模型、鼠标键盘操作 | 模拟真实用户操作 | 前期方案与视觉兜底能力 |
-| Codex Computer Use | 截图、界面信息、模型决策、系统输入 | 通用计算机操作 | 验证通用视觉执行路线 |
-| Playwright CLI | 自然语言任务、结构化页面信息、浏览器命令 | 面向编码 Agent 的浏览器控制 | 提供稳定且低开销的执行层 |
-| Playwright Test Agents | Planner、Generator、Healer 协作 | 测试规划、生成、执行与修复 | 更贴合自动化测试完整生命周期 |
+| 方案 | 怎样操作页面 | 本次关注的内容 |
+| --- | --- | --- |
+| 视觉 GUI Agent | 根据截图决定鼠标、键盘或浏览器动作 | 前期项目的定位方式与执行过程 |
+| Codex Computer Use | 读取截图和界面信息，再调用操作工具 | 通用界面操作能否完成演示任务 |
+| Playwright CLI | Agent 调用浏览器命令，读取页面状态和执行结果 | 如何将逐步操作保存为测试代码 |
+| Playwright Test Agents | 分别规划测试、生成代码和处理失败 | 测试计划、代码和报告是否便于检查与复用 |
 
 ![四类研究对象及其定位](/uploads/2026/playwright-testagent/02-research-scope.png)
 
-从项目适配度看，Playwright CLI 提供了较完整的浏览器操作能力；Playwright Test Agents 则进一步覆盖测试设计、代码生成和失败修复，更接近最终需要的测试系统。
+这几种方案可以配合使用。例如，Agent 用浏览器工具探索页面，再把确定的步骤写成 Playwright 测试文件。
 
 ## 二、前期方案：视觉 GUI Agent
 
@@ -42,23 +40,14 @@ tech:
 
 ![前期 GUI 自动化项目与 163 邮箱登录页实验](/uploads/2026/playwright-testagent/03-previous-project.png)
 
-### 优点
+截图定位可以处理一些难以从 DOM 或无障碍树中找到的目标。代价是每轮都要重新观察页面，分辨率、窗口位置和页面布局变化也可能影响定位。
 
-- 操作过程接近真实用户，可以直接处理点击、输入和页面跳转；
-- 能覆盖部分难以通过 DOM 或无障碍树稳定定位的界面；
-- 适合验证真实桌面环境中的 GUI 行为。
-
-### 局限
-
-- 依赖持续截图和多模态推理，单步成本与等待时间较高；
-- 视觉定位容易受到分辨率、窗口位置和页面变化影响；
-- 主要解决“如何执行”，没有自然覆盖测试计划、用例生成、断言和失败修复；
-- 需要真实桌面与浏览器环境，不利于批量、并发和 CI 执行。
+前期方案主要完成点击、输入和跳转。要用它做回归测试，还需要保存测试步骤、补充断言，并处理重复运行时的环境问题。原汇报没有列出统一条件下的耗时或模型调用统计，因此还不能据此比较几种方案的速度与成本。
 
 
-## 三、Codex Computer Use：通用视觉操作
+## 三、Codex Computer Use 演示
 
-Codex Computer Use 的基本循环可以概括为：
+这次演示中的操作过程是：
 
 1. 接收自然语言任务；
 2. 获取截图和可用的界面信息；
@@ -68,32 +57,36 @@ Codex Computer Use 的基本循环可以概括为：
 
 ![Codex Computer Use 的操作流程与实验画面](/uploads/2026/playwright-testagent/04-codex-computer-use.png)
 
-这类方案的优势是通用性强，能够用一句自然语言指令驱动浏览器甚至桌面应用，并通过连续观察进行自我纠正。浏览器场景中，也可以根据按钮名称、文本、角色、标签或 CSS 信息定位元素。
+演示记录了模型根据当前界面继续操作的过程。在浏览器里，除了截图，还可以利用按钮名称、文字和角色等信息定位目标。
 
-但它仍然更像一个通用操作 Agent：模型调用、截图理解和上下文维护会带来额外开销，测试过程也不天然产生规范的测试代码、断言、Trace 和报告。对需要专用领域规则、本地模型或国产化适配的项目，定制成本同样需要单独评估。
+这些记录能帮助检查某次操作是否完成。如果要在页面更新后重新执行同一组检查，还需要把步骤和预期结果写成测试，并保存运行报告。
 
 
-## 四、Playwright CLI：面向 Agent 的浏览器执行层
+## 四、Playwright CLI 与测试命令
 
-Playwright CLI 将浏览器能力包装为适合编码 Agent 调用的命令。一次任务可以形成下面的链路：
+原汇报图中放了两类命令，需要分开看：
+
+- `playwright-cli open`、`snapshot`、`click`、`fill` 等命令供 Agent 逐步操作浏览器，见 [playwright-cli 项目说明](https://github.com/microsoft/playwright-cli)。
+- `npx playwright test` 用于运行测试文件，`npx playwright show-report` 用于打开测试报告，见 [Playwright 命令行文档](https://playwright.dev/docs/test-cli)。
+
+从探索页面到运行测试，过程如下：
 
 ```text
 自然语言测试任务
   → Agent 制订步骤
   → CLI 执行 open / snapshot / click / fill 等操作
-  → 返回页面引用、截图、日志、请求和退出状态
-  → 生成 Playwright Test、断言、Trace 与测试报告
+  → Agent 根据页面状态和操作结果编写测试与断言
+  → npx playwright test 运行测试
+  → 按配置保存截图、Trace 和测试报告
 ```
 
 ![Playwright CLI 在测试系统中的数据流](/uploads/2026/playwright-testagent/05-playwright-cli.png)
 
-与持续发送整张截图相比，结构化页面状态能够减少无关视觉信息，通常更适合高频浏览器操作。CLI 返回的日志、退出码、截图和 Trace 也让每一步更容易验证，并可用于编写可重复执行的测试文件。
+命令执行成功，只说明这条命令完成了。测试是否检查到了需求，要看生成的代码里有哪些断言；报告、截图和 Trace 则用于回查执行过程。
 
-它的局限主要位于上层：CLI 本身是执行工具，测试目标是否合理、断言是否充分、失败后如何判断和修复，仍依赖 Agent 的规划与代码能力。如果只观察最终命令，模型的中间判断过程也不一定完全透明。
+## 五、Planner、Generator 和 Healer
 
-## 五、Playwright Test Agents：覆盖测试生命周期
-
-Playwright Test Agents 将任务拆分给三类代理：
+[Playwright Test Agents](https://playwright.dev/docs/test-agents) 将测试规划、代码生成和失败修复分别交给三类代理：
 
 | Agent | 输入 | 主要产物 | 职责 |
 | --- | --- | --- | --- |
@@ -113,53 +106,56 @@ Playwright Test Agents 将任务拆分给三类代理：
   → 失败时交给 Healer 分析、修复和重跑
 ```
 
-这种拆分降低了模块之间的耦合：测试计划可以人工审阅，生成的 TypeScript 测试可以纳入版本管理，失败修复也只在需要时触发。执行可选择有头或无头浏览器，并有机会接入不同的上层模型。
+测试计划和 TypeScript 文件都能单独打开检查，也能提交到仓库保存。下一次运行时，可以直接执行已有测试，不必重新从自然语言任务开始。
 
 它主要面向浏览器测试；遇到 Canvas、远程桌面或缺少语义信息的界面时，仍可能需要视觉定位方案补充。
 
-## 六、测试工作流
+## 六、各阶段需要检查什么
 
 ![Playwright Test Agents GUI 自动化测试完整工作流](/uploads/2026/playwright-testagent/07-workflow.png)
 
-完整流程可以拆成四个阶段：
+生成文件后，还需要检查计划和代码是否符合原来的测试目标。
 
 ### 1. 测试规划
 
-输入 Web 应用、需求文档或种子测试，由 Planner 浏览产品并生成结构化测试计划。测试计划包含测试范围、前置条件、操作步骤和预期结果。
+查看 Planner 的计划是否写清前置条件、操作步骤和预期结果。只有“点击提交”而没有提交后的预期结果，还不足以判断功能是否正确。
 
 ### 2. 代码生成
 
-Generator 根据计划生成 `.spec.ts` 文件，同时在真实页面中校验定位器和关键交互。测试代码需包含验证预期结果的断言。
+对照计划检查 `.spec.ts` 文件。除了定位器能否找到元素，还要看断言检查的是元素存在、元素可见，还是业务结果已经发生。
 
 ### 3. 执行与修复
 
-运行测试并保存日志、截图、Trace 与 HTML 报告。失败时由 Healer 区分环境问题、定位器失效、等待条件不足和产品缺陷，再决定是否修改测试代码。修复后重新执行，直到通过或确认需要人工处理。
+失败后结合日志、截图和 Trace 查原因，再检查 Healer 修改了什么。如果它删掉断言或跳过了用例，报告变绿也不能说明问题已经解决。[官方说明](https://playwright.dev/docs/test-agents#-healer)也提到，Healer 判断功能有问题时可能跳过测试。
 
 ### 4. 版本管理与 CI/CD
 
-测试代码和计划纳入版本管理，执行报告随运行记录保存；测试可接入 CI/CD 重复执行。
+把计划和测试代码提交到仓库，将报告与对应提交关联。接入 CI/CD 后，还要配置浏览器、测试数据和所需的登录状态。
 
 ## 七、实际操作记录
 
-调研中对大连理工大学软件学院官网进行了分层测试：
+2026 年 7 月 6 日的软件学院官网测试记录了以下内容：
 
 - 第一轮整理 50 条人工测试用例，覆盖页面、导航、搜索、内容、响应式和安全相关检查，共涉及 12 个功能模块；
 - 第二轮记录 15 步点击流，并保存 22 张截图与操作日志，用于逐页验证主要导航路径；
-- 第三轮构建路由地图与 3 条 E2E 闭环，覆盖搜索、浏览跳转和三种分辨率对比；
+- 第三轮整理页面路由，并设计 3 条端到端测试流程，涉及搜索、浏览跳转和三种分辨率对比；
 - 最终整理出 29 个结果文件，约 27 MB。
 
 ![软件学院官网的点击流记录与自动化测试总结](/uploads/2026/playwright-testagent/08-practice.png)
 
-另一组实验使用 163 邮箱登录页验证 Agent 产物：Planner 先生成测试计划，Generator 再生成 TypeScript 测试代码；软院官网测试则在有头 Chromium 中执行，并保留浏览器截图日志。
+163 邮箱登录页实验保留了 Planner 生成的计划和 Generator 生成的 TypeScript 文件。下面右下角是软件学院官网在有头 Chromium 中运行时的截图日志。
 
 ![Planner 计划、Generator 测试代码与有头浏览器日志](/uploads/2026/playwright-testagent/09-generated-artifacts.png)
 
-163 邮箱示例的报告显示共执行 10 条测试，10 条通过，未出现失败、波动或跳过项，总用时约 1.1 分钟。截图中可见的场景包括：
+163 邮箱示例的报告记录于 2026 年 7 月 6 日：共 10 条测试，10 条通过，失败、Flaky 和跳过项均为 0，总用时约 1.1 分钟。截图中能读到的用例包括：
 
 - 登录页面加载和基础结构检查；
 - 登录容器与关键元素可见性；
 - iframe 中的邮箱、密码输入；
-- 登录方式切换；
-- 表单提交与校验等后续用例。
+- 登录方式切换。
+
+截图底部还能看到表单提交校验文件，具体用例没有完整显示。
 
 ![163 邮箱示例的 Playwright HTML 测试报告](/uploads/2026/playwright-testagent/10-report.png)
+
+这次实验留下了可检查的计划、测试代码和报告，说明这套流程在这些样例上能够运行。10 条用例全部通过，只能说明本次执行满足了代码中的断言；完整登录业务是否覆盖、换一批页面是否仍然稳定，还需要更多测试记录。

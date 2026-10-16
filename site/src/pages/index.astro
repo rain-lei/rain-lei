@@ -14,9 +14,9 @@ const firstPost = posts[0];
       <div class="hero-status"><span></span>大连理工大学 · 软件工程 · 2025 级</div>
       <div class="hero-layout">
         <div class="hero-main v2-reveal">
-          <p class="v2-kicker">rain 的个人博客</p>
-          <h1><span>课上学的，</span><br /><em>课外做的。</em></h1>
-          <p class="hero-summary">这里放课程资料、项目练习，还有开发和部署时遇到的问题。做完一个小东西，顺手把过程记下来。</p>
+          <p class="v2-kicker">课程资料与开发笔记</p>
+          <h1><span>rain 的</span><br /><em>个人博客</em></h1>
+          <p class="hero-summary">这里放课程资料、开发笔记和自己做的项目。文章有错误或需要补充的地方，可以通过下方邮箱联系我。</p>
           <div class="hero-cta">
             <a class="v2-button is-primary" href="/articles/">看文章 <span>↗</span></a>
             <a class="v2-button" href="/projects/">看项目 <span>↗</span></a>
@@ -32,20 +32,20 @@ const firstPost = posts[0];
             <span class="poster-cross">+</span>
             <strong>RA<br />IN</strong>
             <img src="https://github.com/rain-lei.png?size=240" alt="" />
-            <span class="poster-caption">课程 · 项目 · 随手记</span>
+            <span class="poster-caption">课程 · 项目 · 笔记</span>
           </div>
           <div class="profile-content">
             <div class="profile-head">
               <div><span>大连理工大学</span><strong>rain</strong><small>软件工程 · 2025 级</small></div>
               <b>大连</b>
             </div>
-            <p>课程相关资料和自己做的小项目。碰到有用的解决办法，也会记在这里。</p>
+            <p>项目源码和练习代码放在 GitHub，站内的小游戏可以直接试玩。</p>
             <dl class="profile-stats">
               <div><dt>{String(posts.length).padStart(2, '0')}</dt><dd>篇文章</dd></div>
               <div><dt data-repo-count>08</dt><dd>个仓库</dd></div>
               <div><dt>2025</dt><dd>入学</dd></div>
             </dl>
-            {firstPost && <a class="profile-latest" href={`/articles/${postSlug(firstPost)}/`}><span>最近写过</span><strong>{firstPost.data.title}</strong><b>↗</b></a>}
+            {firstPost && <a class="profile-latest" href={`/articles/${postSlug(firstPost)}/`}><span>最新文章</span><strong>{firstPost.data.title}</strong><b>↗</b></a>}
           </div>
         </aside>
       </div>
@@ -54,20 +54,20 @@ const firstPost = posts[0];
       </div>
     </section>
 
-    {firstPost && <section class="random-read-strip v2-reveal" aria-label="随机逛逛">
-      <span>不知道看什么？</span>
-      <p>随手<br /><strong>挑一个。</strong></p>
+    {firstPost && <section class="random-read-strip v2-reveal" aria-label="随机阅读">
+      <span>文章推荐</span>
+      <p><strong>随机阅读</strong></p>
       <div class="random-read-controls">
         <a data-random-read href={`/articles/${postSlug(firstPost)}/`}><strong>{firstPost.data.title}</strong><span aria-hidden="true">↗</span></a>
-        <button type="button" data-random-draw hidden>换一个 <span aria-hidden="true">↻</span></button>
-        <small>从 {posts.length} 条公开内容中挑选</small>
+        <button type="button" data-random-draw hidden>换一篇 <span aria-hidden="true">↻</span></button>
+        <small>共 {posts.length} 篇文章</small>
         <div data-random-sources data-pagefind-ignore hidden>{posts.map(post => <a data-random-source href={`/articles/${postSlug(post)}/`}>{post.data.title}</a>)}</div>
       </div>
     </section>}
 
     <section class="v2-section latest-section">
       <div class="v2-section-head v2-reveal">
-        <div><span class="section-no">01</span><p class="v2-kicker">最近更新</p><h2>最近写下的内容</h2></div>
+        <div><span class="section-no">01</span><p class="v2-kicker">文章</p><h2>最近发布</h2></div>
         <a class="v2-text-link" href="/articles/">所有文章 <span>↗</span></a>
       </div>
       <div class="home-post-list">
@@ -82,7 +82,7 @@ const firstPost = posts[0];
 
     <section class="v2-section project-section">
       <div class="v2-section-head v2-reveal">
-        <div><span class="section-no">02</span><p class="v2-kicker">GitHub 仓库</p><h2>最近更新的仓库</h2></div>
+        <div><span class="section-no">02</span><p class="v2-kicker">GitHub</p><h2>最近更新的项目</h2></div>
         <a class="v2-text-link" href="/projects/">所有项目 <span>↗</span></a>
       </div>
       <div class="project-preview-list v2-reveal">
@@ -94,12 +94,12 @@ const firstPost = posts[0];
 
     <section class="v2-section network-section" id="contact">
       <div class="contact-block v2-reveal">
-        <span class="section-no">03</span><p class="v2-kicker">联系</p><h2>联系我</h2>
+        <span class="section-no">03</span><p class="v2-kicker">邮箱</p><h2>联系我</h2>
         <p>问题反馈、项目交流或友链申请，可以发邮件。</p>
         <a class="contact-mail" href="mailto:rain__lei@outlook.com">rain__lei@outlook.com <span>↗</span></a>
       </div>
       <div class="links-block v2-reveal">
-        <div class="links-title"><div><p class="v2-kicker">友链</p><h3>常去的网站</h3></div><span data-friend-status>欢迎提交 PR</span></div>
+        <div class="links-title"><div><p class="v2-kicker">博客与网站</p><h3>友情链接</h3></div><span data-friend-status>欢迎提交 PR</span></div>
         <div class="friend-links-grid" data-friend-links>
           <a class="friend-link-card" href="https://github.com/rain-lei"><span class="friend-link-avatar has-image"><span class="friend-link-initial">R</span><img src="https://github.com/rain-lei.png?size=96" alt="" /></span><span class="friend-link-copy"><strong>rain-lei · GitHub</strong><small>代码和公开仓库</small><em>github.com</em></span><b>↗</b></a>
         </div>

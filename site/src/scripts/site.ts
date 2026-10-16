@@ -45,8 +45,8 @@ const repoTargets=[...document.querySelectorAll<HTMLElement>('[data-github-repos
 if(repoTargets.length){
   type GithubRepo={name:string;description?:string|null;language?:string|null;stargazers_count?:number|null;forks_count?:number|null;pushed_at?:string|null;topics?:string[];html_url?:string;fork?:boolean;archived?:boolean};
   const fallbackRepos:GithubRepo[]=[
-    {name:'lingxi',description:'Python 项目实验与持续开发记录',language:'Python',topics:['Python'],html_url:'https://github.com/rain-lei/lingxi'},
-    {name:'rain-lei',description:'个人博客、内容系统与 GitHub 资料页',language:'CSS',topics:['Astro','Blog'],html_url:'https://github.com/rain-lei/rain-lei'},
+    {name:'lingxi',description:'Python 项目',language:'Python',topics:['Python'],html_url:'https://github.com/rain-lei/lingxi'},
+    {name:'rain-lei',description:'个人博客源码、文章与 GitHub 资料页',language:'CSS',topics:['Astro','Blog'],html_url:'https://github.com/rain-lei/rain-lei'},
     {name:'easyxgame',description:'EasyX 课程作业与原创游戏《萌泡大作战》',language:'C++',topics:['EasyX','Game'],html_url:'https://github.com/rain-lei/easyxgame'},
     {name:'EDAbackend-todo-practice',description:'JWT 鉴权与 Todo CRUD 后端练习',language:'JavaScript',topics:['Express','JWT'],html_url:'https://github.com/rain-lei/EDAbackend-todo-practice'},
     {name:'junli',description:'HTML 页面实验与前端练习',language:'HTML',topics:['HTML'],html_url:'https://github.com/rain-lei/junli'},

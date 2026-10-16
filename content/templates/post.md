@@ -7,8 +7,6 @@ status: published
 accent: blue
 ---
 
-# 文章标题
-
 从这里开始写正文。
 
 ## 小标题

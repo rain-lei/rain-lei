@@ -1,15 +1,15 @@
 ---
 id: oureda-winter-wordle
 title: OurEDA Winter Wordle
-excerpt: OurEDA 25 级 Web 方向寒假作业：使用原生 HTML、CSS 和 JavaScript 实现的五字母猜词小游戏，可直接在线试玩。
+excerpt: OurEDA 25 级 Web 方向寒假作业。六次机会猜一个五字母单词，可以在页面里直接玩。
 category: entertainment
 date: 2026-01-18
-updated: 2026-09-22
+updated: 2026-10-17
 status: published
 accent: green
 contentType: game
 playUrl: https://rain-lei.github.io/oureda-25-web-winter/
-repository: https://github.com/rain-lei/oureda-25-web-winter
+repository: https://github.com/rain-lei/oureda-25-web-winter/tree/website
 tech:
   - HTML
   - CSS
@@ -17,32 +17,25 @@ tech:
   - GitHub Pages
 ---
 
-# OurEDA Winter Wordle
-
-OurEDA 25 级 Web 方向寒假作业，使用原生 HTML、CSS 和 JavaScript 实现五字母猜词游戏。
+这是用 HTML、CSS 和 JavaScript 写的 Wordle 小游戏。上面的窗口就能玩，也可以[单独打开游戏](https://rain-lei.github.io/oureda-25-web-winter/)。
 
 ## 玩法
 
-每局会随机选择一个五字母英文单词。玩家有六次猜测机会，每次提交后方格会使用颜色反馈结果：
+每局随机选一个五字母英文单词，你有六次机会。输入单词并提交后，看方格颜色继续猜：
 
 - 绿色：字母和位置都正确；
 - 黄色：答案包含这个字母，但位置不正确；
-- 灰色：答案中不存在这个字母。
+- 灰色：这个字母没有匹配到答案；也可能是猜的重复字母比答案中的多。
 
-页面同时支持屏幕键盘和实体键盘操作，并提供删除、提交、刷新与显示答案功能。
+可以点屏幕上的键盘，也可以直接用实体键盘输入。页面提供删除、提交、刷新和显示答案的按钮。
 
-## 实现内容
+## 代码做了什么
 
+JavaScript 保存当前输入、猜测次数和游戏状态，再更新方格和键盘。每次提交会检查单词、判断字母位置，并决定这局是否结束：猜中就获胜，六次都没猜中则结束。
 
-1. 使用 DOM 将程序状态同步到页面；
-2. 管理最多六轮猜测的游戏生命周期；
-3. 校验输入单词并计算颜色序列；
-4. 处理重复字母和位置匹配；
-5. 让虚拟键盘与实体键盘使用同一套输入逻辑；
-6. 使用 Git 保存开发过程，并通过 GitHub Pages 发布。
+字母重复出现时，先匹配位置正确的字母，再判断剩余字母是否出现在答案里，避免一个字母被重复计算。两种键盘提交后都调用同一个判断函数，页面通过 GitHub Pages 发布。
 
 ## 项目信息
 
 - [在线试玩](https://rain-lei.github.io/oureda-25-web-winter/)
-- [查看源码](https://github.com/rain-lei/oureda-25-web-winter)
-- 技术栈：HTML、CSS、JavaScript
+- [查看源码（website 分支）](https://github.com/rain-lei/oureda-25-web-winter/tree/website)

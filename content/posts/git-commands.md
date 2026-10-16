@@ -1,15 +1,15 @@
 ---
 id: git-常用命令速查手册
 title: Git 常用命令速查手册
-excerpt: Git 常见操作：从配置、提交到分支、远程仓库与回滚。
+excerpt: 按操作查 Git 命令：查看改动、提交、切换分支、同步远程仓库，以及撤销和临时保存修改。
 category: study
 date: 2026-08-20
-updated: 2026-09-22
+updated: 2026-10-17
 status: published
 accent: orange
 ---
 
-# Git 常用命令速查手册
+`<文件名>`、`<仓库地址>` 等是占位符，使用时替换成实际值，不保留尖括号。各节列的是不同操作，按需要选择命令。
 
 ## 一、基础配置
 
@@ -31,11 +31,14 @@ git remote -v
 
 ```bash
 git status
+git diff
 git add <文件名>
 git add .
-git restore <文件名>
+git diff --cached
 git restore --staged <文件名>
 ```
+
+`git diff` 查看未暂存的改动，`git diff --cached` 查看准备提交的改动。`restore --staged` 取消暂存，文件中的修改仍然保留。
 
 ## 四、提交与日志
 
@@ -69,7 +72,7 @@ git push origin <分支名>
 ## 七、撤销与回滚
 
 ```bash
-# 撤销未提交的工作区修改
+# 丢弃指定文件中尚未暂存的修改
 git restore <文件名>
 
 # 新建一个“反向提交”来撤销已发布提交（协作仓库优先使用）
@@ -79,7 +82,7 @@ git revert <提交SHA>
 git switch --detach <提交SHA>
 ```
 
-## 八、暂存修改
+## 八、临时保存修改
 
 ```bash
 git stash push -m "临时保存"
@@ -89,7 +92,7 @@ git stash pop
 
 ## 九、忽略文件
 
-把本机秘密和生成物写入 `.gitignore`：
+在 `.gitignore` 中列出不需要提交的文件或目录，例如本地配置、依赖和构建结果：
 
 ```gitignore
 .env

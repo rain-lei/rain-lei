@@ -19,20 +19,20 @@ const countFiles=async(directory:string):Promise<number>=>{
 };
 const uploads=await countFiles(resolve(workspaceRoot,'uploads')).catch(()=>0);
 ---
-<BaseLayout title="内容工作台 · rain" description="rain 博客内容维护入口。" bodyClass="admin-v2" noindex>
+<BaseLayout title="博客管理 · rain" description="rain 博客的文章、图片和友链管理入口。" bodyClass="admin-v2" noindex>
   <main id="main-content" class="admin-main">
     <header class="admin-hero">
       <div class="admin-hero-copy v2-reveal">
-        <p class="v2-kicker">CONTENT WORKSPACE / GIT-BASED CMS</p>
-        <h1>内容不在<br /><em>黑盒后台</em>里。</h1>
-        <p>文章、图片和友链都是仓库中的公开文件。每次修改都有 Git 历史，提交前由 Astro 校验，合并后由 GitHub Actions 发布到服务器。</p>
-        <div class="admin-notice"><span>PUBLIC</span><p>这里没有网页登录密码，也不会在浏览器中保存 Token。编辑操作会前往 GitHub 完成。</p></div>
+        <p class="v2-kicker">rain</p>
+        <h1>博客<br /><em>内容管理</em></h1>
+        <p>在 GitHub 编辑文章、上传图片或修改友链。修改提交到 main 分支后，自动检查并部署到网站。</p>
+        <div class="admin-notice"><span>GitHub</span><p>下面的编辑链接需要登录 GitHub，并具有仓库写入权限。</p></div>
       </div>
       <div class="admin-console v2-reveal" aria-hidden="true">
-        <span>RAIN / CONTENT OPS</span>
-        <strong>EDIT<br />CHECK<br />SHIP</strong>
+        <span>rain / 博客管理</span>
+        <strong>文章<br />图片<br />友链</strong>
         <i></i><b>✓</b>
-        <small>VERSIONED<br />REVERSIBLE</small>
+        <small>GitHub<br />rain-lei / rain-lei</small>
       </div>
     </header>
 
@@ -44,7 +44,7 @@ const uploads=await countFiles(resolve(workspaceRoot,'uploads')).catch(()=>0);
     </section>
 
     <section class="admin-actions">
-      <div class="admin-section-head v2-reveal"><div><span>01</span><p class="v2-kicker">CONTENT ACTIONS</p><h2>从这里开始维护</h2></div><small>所有外部操作均在 GitHub 打开</small></div>
+      <div class="admin-section-head v2-reveal"><div><span>01</span><p class="v2-kicker">编辑入口</p><h2>文章与素材</h2></div><small>以下链接前往 GitHub</small></div>
       <div class="admin-action-grid">
         <article class="admin-action-card is-primary v2-reveal">
           <span>01 / WRITE</span><strong>新建文章</strong><p>从 Markdown 模板开始，填写标题、摘要、分类、日期和正文。</p>
@@ -66,7 +66,7 @@ const uploads=await countFiles(resolve(workspaceRoot,'uploads')).catch(()=>0);
     </section>
 
     <section class="admin-pipeline">
-      <div class="admin-section-head v2-reveal"><div><span>02</span><p class="v2-kicker">PUBLISH PIPELINE</p><h2>一次修改如何上线</h2></div><small>失败时不会覆盖上一个可用版本</small></div>
+      <div class="admin-section-head v2-reveal"><div><span>02</span><p class="v2-kicker">发布流程</p><h2>修改后如何上线</h2></div><small>部署失败时自动恢复上一版本</small></div>
       <ol class="pipeline-flow v2-reveal">
         <li><span>01</span><strong>编辑文件</strong><small>Markdown / 图片 / JSON</small></li>
         <li><span>02</span><strong>提交 Git</strong><small>Commit 或 Pull Request</small></li>
@@ -76,7 +76,7 @@ const uploads=await countFiles(resolve(workspaceRoot,'uploads')).catch(()=>0);
     </section>
 
     <section class="admin-template v2-reveal">
-      <div><p class="v2-kicker">POST TEMPLATE</p><h2>最小文章模板</h2><p>模板直接读取仓库文件，因此这里展示的内容始终与实际写作规范一致。</p><div class="admin-template-links"><a href="https://github.com/rain-lei/rain-lei/blob/main/content/templates/post.md" target="_blank" rel="noopener noreferrer">在 GitHub 查看 ↗</a><a href="https://github.com/rain-lei/rain-lei/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">提交规范 ↗</a></div></div>
+      <div><p class="v2-kicker">Markdown</p><h2>文章模板</h2><p>复制模板，填写文章信息和正文后，保存到文章目录。</p><div class="admin-template-links"><a href="https://github.com/rain-lei/rain-lei/blob/main/content/templates/post.md" target="_blank" rel="noopener noreferrer">在 GitHub 查看 ↗</a><a href="https://github.com/rain-lei/rain-lei/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">提交规范 ↗</a></div></div>
       <div class="admin-template-code"><div><span>MARKDOWN</span><button id="copyPostTemplate" type="button">复制模板</button></div><pre><code id="postTemplateCode">{template.trim()}</code></pre></div>
     </section>
   </main>
