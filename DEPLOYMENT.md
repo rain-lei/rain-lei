@@ -51,6 +51,14 @@ pnpm dev
 
 旧的 `/articles.html`、`/admin.html` 和 `/article.html?id=...` 会跳转到新的 Astro 路由，已有链接继续可用。
 
+## GitHub Pages 配置
+
+`www.rainlei.xyz` 由服务器上的 Docker Nginx 提供服务，发布入口是 `.github/workflows/deploy.yml`。当前没有向 `rain-lei.github.io/rain-lei/` 发布站点。
+
+仓库 **Settings → Pages → Build and deployment → Source** 保持为 **GitHub Actions**（`build_type: workflow`），停止旧的按分支自动运行的 Jekyll 构建。这个设置保存在 GitHub 仓库配置中，不由工作流 YAML 文件控制。
+
+不要改回从 `main / (root)` 构建：`.astro` 文件开头的 `---` 内是 TypeScript，旧的 Jekyll 流程会把它当成 YAML，报 `Invalid YAML front matter`。也无需为了兼容 Jekyll 修改 Astro 组件；网站继续通过现有 Astro 检查和服务器部署流程发布。
+
 ## 隐私
 
 不要提交 `.env`、私钥、Token、数据库、日志、服务器密码或个人敏感信息。GitHub Actions 连接信息只存放在仓库 Secrets 中。
