@@ -1,45 +1,30 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Loopy from '../../components/Loopy.astro';
+import Icon from '../../components/Icon.astro';
 import { categoryLabels, estimateRead, formatDate, postSlug, sortPosts } from '../../lib/posts';
-
-const posts = sortPosts(await getCollection('posts'));
-const tags = Array.from(new Set(posts.flatMap(post => post.data.tech))).sort((a, b) => a.localeCompare(b, 'zh-CN'));
+const posts=sortPosts(await getCollection('posts'));
+const tags=Array.from(new Set(posts.flatMap(post=>post.data.tech))).sort((a,b)=>a.localeCompare(b,'zh-CN'));
+const decorations = ['programmer', 'reading', 'snack'] as const;
 ---
-
 <BaseLayout title="文章 · rain" description="rain 的文章、课程资料与项目记录。" active="articles" bodyClass="archive-v2">
-  <main id="main-content" class="archive-main">
-    <header class="archive-heading v2-reveal">
-      <div>
-        <p class="v2-kicker">文章 · {posts.length} 篇</p>
-        <h1>文章</h1>
-      </div>
-      <p>按日期浏览，或用分类、标签和关键词筛选。</p>
-    </header>
-
-    <section class="archive-browser">
-      <div class="archive-toolbar">
-        <label class="archive-search"><span aria-hidden="true">⌕</span><input id="archiveSearch" type="search" placeholder="搜索标题、摘要或分类" autocomplete="off" /></label>
-        <div class="archive-filters" aria-label="按文章分类筛选">
-          <button type="button" class="is-active" data-filter="all" aria-pressed="true">全部</button>
-          <button type="button" data-filter="study" aria-pressed="false">学习</button>
-          <button type="button" data-filter="life" aria-pressed="false">生活</button>
-          <button type="button" data-filter="entertainment" aria-pressed="false">娱乐</button>
-        </div>
-      </div>
-      <div class="archive-tag-filters" aria-label="按文章标签筛选"><span>标签</span><button type="button" class="is-active" data-tag-filter="all" aria-pressed="true">全部</button>{tags.map(tag => <button type="button" data-tag-filter={tag} aria-pressed="false">{tag}</button>)}</div>
-      <div class="archive-result-line"><span id="archiveResultCount" aria-live="polite">{posts.length} 篇文章</span><a href="/search/">全文搜索 ↗</a></div>
-      <div class="archive-list">
-        {posts.map((post, index) => <a class:list={['archive-item', { 'is-game': post.data.contentType === 'game' }]} data-category={post.data.category} data-tags={post.data.tech.join('|')} href={`/articles/${postSlug(post)}/`}>
-          <span class="archive-item-no">{String(index + 1).padStart(2, '0')}</span>
-          <span class="archive-item-main">
-            <span class="archive-item-meta"><b>{post.data.contentType === 'game' ? '小游戏' : categoryLabels[post.data.category]}</b><time>{formatDate(post.data.date)}</time><small>{post.data.contentType === 'game' ? '在线试玩' : estimateRead(post.body || '')}</small></span>
-            <strong>{post.data.title}</strong><p>{post.data.excerpt}</p>
-            {post.data.tech.length > 0 && <span class="archive-item-tags" aria-label="文章标签">{post.data.tech.slice(0, 4).map(tag => <em>{tag}</em>)}</span>}
-          </span>
-          <span class="archive-item-arrow">{post.data.contentType === 'game' ? '▶' : '↗'}</span>
-        </a>)}
-      </div>
-    </section>
+  <main id="main-content" class="page-main">
+    <header class="page-heading"><div><p class="v2-kicker">共 {posts.length} 篇</p><h1>文章</h1></div><Loopy variant="snack" small /></header>
+    <div class="archive-layout">
+      <section class="archive-browser" aria-label="文章列表">
+        <div class="archive-toolbar"><label class="archive-search"><Icon name="search" /><input id="archiveSearch" type="search" aria-label="筛选文章" placeholder="搜索标题、摘要或标签" autocomplete="off" /><kbd>/</kbd></label></div>
+        <div class="archive-result-line"><div class="archive-result-summary"><span id="archiveResultCount" aria-live="polite">{posts.length} 篇文章</span><button id="archiveClear" type="button" data-archive-reset hidden>清除筛选 ×</button></div><a href="/search/">全文搜索 ↗</a></div>
+        <div class="archive-list">{posts.map((post,index)=><a class="archive-item" data-category={post.data.category} data-tags={post.data.tech.join('|')} href={`/articles/${postSlug(post)}/`}>
+          <span class="archive-item-main"><span class="post-meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time><b>{categoryLabels[post.data.category]}</b><small>{post.data.contentType==='game'?'在线试玩':estimateRead(post.body||'')}</small></span><strong>{post.data.title}</strong><p>{post.data.excerpt}</p><span class="archive-item-footer"><span class="archive-item-tags">{post.data.tech.slice(0,3).map(tag=><em>{tag}</em>)}</span><img class="archive-item-art" src={`/images/loopy/${decorations[index % decorations.length]}.png`} width="600" height="600" alt="" aria-hidden="true" loading="lazy" decoding="async" draggable="false" /></span></span><Icon class="archive-item-arrow" />
+        </a>)}</div>
+        <div id="archiveEmpty" class="archive-empty" hidden><h2>没有找到相关文章</h2><p>换个关键词，或清除筛选条件。</p><button class="v2-button" type="button" id="archiveReset" data-archive-reset>清除筛选<Icon name="arrow" /></button></div>
+      </section>
+      <aside class="archive-sidebar">
+        <section class="filter-card"><h2>分类</h2><div class="archive-filters" aria-label="按文章分类筛选"><button class="is-active" type="button" data-filter="all" aria-pressed="true">全部<span>{posts.length}</span></button>{Object.entries(categoryLabels).map(([key,label])=><button type="button" data-filter={key} aria-pressed="false">{label}<span>{posts.filter(p=>p.data.category===key).length}</span></button>)}</div></section>
+        <details class="filter-card tag-details" open><summary>标签<span id="archiveSelectedTag" hidden></span></summary><div class="archive-tag-filters" aria-label="按文章标签筛选"><button class="is-active" type="button" data-tag-filter="all" aria-pressed="true">全部</button>{tags.map(tag=><button type="button" data-tag-filter={tag} aria-pressed="false">{tag}</button>)}</div></details>
+        {posts[0]&&<div class="random-read"><span>随机阅读</span><a data-random-read href={`/articles/${postSlug(posts[0])}/`}><strong>{posts[0].data.title}</strong><Icon name="external" /></a><button type="button" data-random-draw hidden>换一篇 ↻</button><div hidden data-random-sources>{posts.map(post=><a data-random-source href={`/articles/${postSlug(post)}/`}>{post.data.title}</a>)}</div></div>}
+      </aside>
+    </div>
   </main>
 </BaseLayout>

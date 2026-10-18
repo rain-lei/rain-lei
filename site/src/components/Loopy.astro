@@ -1,0 +1,14 @@
+---
+interface Props { variant?: 'reading' | 'snack' | 'programmer'; interactive?: boolean; small?: boolean }
+const { variant='reading', interactive=false, small=false } = Astro.props;
+const description={reading:'戴眼镜读书的 Loopy',snack:'拿着汉堡的 Loopy',programmer:'戴耳机的 Loopy'};
+---
+<div class:list={['loopy-scene', { 'is-small':small }]}>
+  <span class="loopy-halo" aria-hidden="true"></span>
+  <span class="loopy-shadow" aria-hidden="true"></span>
+  <span class="loopy-star" aria-hidden="true">✦</span>
+  {interactive ? <button class="loopy-stage" type="button" aria-label="和 Loopy 打个招呼">
+    <span class="loopy-bob"><span class="loopy-greeting"><img src={`/images/loopy/${variant}.png`} width="600" height="600" alt={description[variant]} fetchpriority="high" /></span></span>
+    <span class="hello-spark" aria-hidden="true">✦</span><span class="hello-spark" aria-hidden="true">✧</span>
+  </button> : <img class="loopy-still" src={`/images/loopy/${variant}.png`} width="600" height="600" alt={description[variant]} />}
+</div>

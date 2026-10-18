@@ -12,10 +12,9 @@ const topics=['大学英语','奖励评审','书院课程','Playwright','Git','C
     <div class="search-hero-copy">
       <p class="v2-kicker">搜索 · {posts.length} 篇文章</p>
       <h1>搜索文章</h1>
-      <p>输入标题、正文、标签或课程名称。</p>
       <div class="search-console" role="search">
         <span class="search-console-mark" aria-hidden="true">⌕</span>
-        <input id="pagefindInput" type="search" aria-label="搜索文章" placeholder="试试：Playwright、C 语言、大学英语" autocomplete="off" />
+        <input id="pagefindInput" type="search" aria-label="搜索文章" placeholder="搜索标题、正文或标签" autocomplete="off" />
         <kbd>/</kbd>
         <button id="searchClear" type="button" aria-label="清空搜索" hidden>×</button>
       </div>
@@ -29,7 +28,7 @@ const topics=['大学英语','奖励评审','书院课程','Playwright','Git','C
       <small id="searchCount">共 {posts.length} 篇文章</small>
     </div>
     <div class="search-idle" id="searchIdle">
-      <div class="search-idle-heading"><span>最近添加</span><p>也可以点开最近的文章直接阅读。</p></div>
+      <div class="search-idle-heading"><span>最近更新</span></div>
       <div class="search-recent-grid">{recent.map((post,index)=><a href={`/articles/${postSlug(post)}/`}><span>{String(index+1).padStart(2,'0')}</span><small>{categoryLabels[post.data.category]} · {formatDate(post.data.date)}</small><strong>{post.data.title}</strong><b>↗</b></a>)}</div>
     </div>
     <div class="search-results" id="pagefindResults" hidden></div>
@@ -46,7 +45,7 @@ const topicButtons=[...document.querySelectorAll<HTMLButtonElement>('[data-searc
 let timer:number;let requestId=0;
 const escapeHtml=(value:unknown)=>String(value??'').replace(/[&<>"']/g,char=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[char]!));
 const safeExcerpt=(value:unknown)=>escapeHtml(value).replaceAll('&lt;mark&gt;','<mark>').replaceAll('&lt;/mark&gt;','</mark>');
-const setIdle=()=>{output.hidden=true;output.innerHTML='';idle.hidden=false;status.textContent='输入关键词搜索';count.textContent='搜索标题、正文或标签';clear.hidden=true;history.replaceState(null,'',location.pathname);};
+const setIdle=()=>{requestId++;clearTimeout(timer);output.hidden=true;output.innerHTML='';idle.hidden=false;status.textContent='输入关键词搜索';count.textContent='搜索标题、正文或标签';clear.hidden=true;history.replaceState(null,'',location.pathname);};
 const renderResults=(results:any[],query:string)=>{
   idle.hidden=true;output.hidden=false;clear.hidden=false;
   status.textContent=results.length?`“${query}”的搜索结果`:`没有找到“${query}”`;

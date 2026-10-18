@@ -1,6 +1,8 @@
 ---
 import '../styles/global.css';
 import ViewCounter from '../components/ViewCounter.astro';
+import Icon from '../components/Icon.astro';
+import Backdrop from '../components/Backdrop.astro';
 interface Props {
   title?:string;
   description?:string;
@@ -14,7 +16,7 @@ interface Props {
   image?:string;
 }
 const {
-  title='rain · 课程与项目',
+  title='rain 的博客',
   description='rain 的个人博客，收录课程资料、项目练习与开发笔记。',
   active,
   bodyClass='',
@@ -33,7 +35,7 @@ const canonical=new URL(Astro.url.pathname,Astro.site||Astro.url).href;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="theme-color" id="themeColor" content="#f2f1ec" />
+    <meta name="theme-color" id="themeColor" content="#fffaf7" />
     <meta name="color-scheme" content="light dark" />
     <meta name="generator" content={Astro.generator} />
     {noindex&&<meta name="robots" content="noindex, nofollow" />}
@@ -53,28 +55,32 @@ const canonical=new URL(Astro.url.pathname,Astro.site||Astro.url).href;
     {type==='article'&&publishedTime&&<meta property="article:published_time" content={publishedTime.toISOString()} />}
     {type==='article'&&updatedTime&&<meta property="article:modified_time" content={updatedTime.toISOString()} />}
     {type==='article'&&tags.map(tag=><meta property="article:tag" content={tag} />)}
-    <script is:inline>try{if(localStorage.getItem('rain-theme')==='dark')document.documentElement.dataset.theme='dark';}catch{}</script>
+    <script is:inline>try{document.documentElement.dataset.theme=localStorage.getItem('rain-theme')||'light';}catch{}</script>
     <link rel="icon" href="https://github.com/rain-lei.png?size=64" type="image/png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet" />
     <title>{title}</title>
   </head>
-  <body class={`v2 ${bodyClass}`}>
+  <body class={`v2 ${bodyClass}`} data-motion="off">
+    <Backdrop />
     <a class="v2-skip-link" href="#main-content">跳至正文</a>
     <div class="v2-progress" id="scrollProgress" aria-hidden="true"></div>
-    <button class="v2-backtop" id="backToTop" type="button" aria-label="返回页面顶部"><span>↑</span><small>TOP</small></button>
+    <button class="v2-backtop" id="backToTop" type="button" aria-label="返回页面顶部"><Icon name="up" /></button>
     <div class="v2-shell">
       <header class="v2-header">
-        <a class="v2-brand" href="/" aria-label="rain 首页"><img src="https://github.com/rain-lei.png?size=96" alt="rain 的 GitHub 头像" /><span><strong>rain</strong><small>课程 · 项目 · 记录</small></span></a>
-        <nav class="v2-nav" aria-label="主导航"><a class:list={[{ 'is-active':active==='home' }]} href="/">首页</a><a class:list={[{ 'is-active':active==='articles' }]} href="/articles/">文章</a><a class:list={[{ 'is-active':active==='projects' }]} href="/projects/">项目</a><a class:list={[{ 'is-active':active==='about' }]} href="/about/">关于</a><a class:list={[{ 'is-active':active==='search' }]} href="/search/">搜索</a></nav>
-        <div class="v2-actions"><a class="v2-github" href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer">GitHub <span>↗</span></a><button class="v2-icon" id="themeToggle" type="button" aria-label="切换深浅色模式"><span id="themeIcon">◐</span></button><button class="v2-menu" id="menuToggle" type="button" aria-label="打开菜单" aria-controls="mobileNav" aria-expanded="false">菜单</button></div>
+        <a class="v2-brand" href="/" aria-label="rain 首页"><img src="/images/github-avatar.png" data-github-avatar width="48" height="48" alt="rain 的 GitHub 头像" /><strong>rain</strong></a>
+        <nav class="v2-nav" aria-label="主导航">{[['home','/','首页'],['articles','/articles/','文章'],['projects','/projects/','项目'],['about','/about/','关于']].map(([key,href,label])=><a class:list={[{ 'is-active':active===key }]} aria-current={active===key?'page':undefined} href={href}>{label}</a>)}</nav>
+        <div class="v2-actions">
+          <a class="header-search" href="/search/" aria-label="搜索文章"><Icon name="search" /><span>搜索</span><kbd>/</kbd></a>
+          <button class="v2-icon motion-toggle" id="motionToggle" type="button" aria-label="开启动效" aria-pressed="false"><Icon name="pause" class="motion-pause" /><Icon name="play" class="motion-play" /></button>
+          <button class="v2-icon" id="themeToggle" type="button" aria-label="切换为深色模式"><Icon name="sun" class="theme-sun" /><Icon name="moon" class="theme-moon" /></button>
+          <button class="v2-icon v2-menu" id="menuToggle" type="button" aria-label="打开菜单" aria-controls="mobileNav" aria-expanded="false"><Icon name="menu" /></button>
+        </div>
       </header>
-      <nav class="v2-mobile-nav" id="mobileNav" aria-hidden="true"><a class:list={[{ 'is-active':active==='home' }]} href="/">首页</a><a class:list={[{ 'is-active':active==='articles' }]} href="/articles/">文章</a><a class:list={[{ 'is-active':active==='projects' }]} href="/projects/">项目</a><a class:list={[{ 'is-active':active==='about' }]} href="/about/">关于</a><a class:list={[{ 'is-active':active==='search' }]} href="/search/">搜索</a></nav>
+      <nav class="v2-mobile-nav" id="mobileNav" aria-label="手机导航" aria-hidden="true">{[['home','/','首页'],['articles','/articles/','文章'],['projects','/projects/','项目'],['about','/about/','关于'],['search','/search/','搜索']].map(([key,href,label])=><a class:list={[{ 'is-active':active===key }]} aria-current={active===key?'page':undefined} href={href}>{label}</a>)}</nav>
       <slot />
-      <footer class="v2-footer"><div><strong>rain</strong><span>© <b data-year>{new Date().getFullYear()}</b></span></div><nav><a href="/articles/">文章</a><a href="/projects/">项目</a><a href="/about/">关于</a><a href="/admin/">管理</a></nav>{!noindex && <ViewCounter />}</footer>
+      <footer class="v2-footer"><div>© {new Date().getFullYear()} rain</div><img class="footer-loopy" src="/images/loopy/outline.svg" width="25" height="28" alt="" /><nav><a href="mailto:rain__lei@outlook.com">邮箱</a><a href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="/admin/">管理</a></nav>{!noindex && <ViewCounter />}</footer>
     </div>
     <script src="../scripts/site.ts"></script>
+    <script src="../scripts/loopy.ts"></script>
     <script src="../scripts/views.ts"></script>
   </body>
 </html>

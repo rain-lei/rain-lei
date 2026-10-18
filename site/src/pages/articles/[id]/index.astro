@@ -3,7 +3,7 @@ import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ViewCounter from '../../../components/ViewCounter.astro';
-import { categoryLabels, categoryWords, estimateRead, formatDate, postSlug, sortPosts } from '../../../lib/posts';
+import { categoryLabels, estimateRead, formatDate, postSlug, sortPosts } from '../../../lib/posts';
 
 export async function getStaticPaths(){
   const posts=sortPosts(await getCollection('posts'));
@@ -22,27 +22,20 @@ const contentLabel=post.data.contentType==='game'?'小游戏':categoryLabels[pos
   <main id="main-content">
     <article class="article-wrap">
       <div class="article-heading">
-        <a class="back-crumb" href="/articles/">返回文章列表</a>
+        <a class="back-crumb" href="/articles/">← 文章列表</a>
         <div class="article-meta">
           <span data-pagefind-meta="date">发布 {formatDate(post.data.date)}</span>
           {post.data.updated&&<span class="article-updated">更新 {formatDate(post.data.updated)}</span>}
-          <span>{post.data.contentType==='game'?'WEB GAME':estimateRead(post.body||'')}</span>
+          <span>{post.data.contentType==='game'?'在线试玩':estimateRead(post.body||'')}</span>
           <ViewCounter scope="page" />
+          <span class="article-category" data-pagefind-meta="category">{contentLabel}</span>
         </div>
         <h1>{post.data.title}</h1>
         <p class="article-deck">{post.data.excerpt}</p>
         <div class="article-byline">
-          <img class="avatar" src="https://github.com/rain-lei.png?size=160" alt="rain 的 GitHub 头像" />
+          <img class="avatar" src="/images/github-avatar.png" data-github-avatar alt="rain 的 GitHub 头像" width="34" height="34" />
           <span>rain<br /><small>大连理工大学 · 软件工程</small></span>
         </div>
-      </div>
-
-      <div class={`article-hero ${post.data.accent}`}>
-        <span class="visual-grid"></span>
-        <span class="visual-label" data-pagefind-meta="category">{contentLabel}</span>
-        <span class="visual-word">{post.data.contentType==='game'?'GAME':categoryWords[post.data.category]}</span>
-        <span class="visual-shape"></span>
-        <span class="visual-index">RAIN / {post.data.contentType==='game'?'PLAY':'ARTICLE'}<br />{formatDate(post.data.date)}</span>
       </div>
 
       {post.data.contentType==='game'&&post.data.playUrl&&
@@ -62,11 +55,10 @@ const contentLabel=post.data.contentType==='game'?'小游戏':categoryLabels[pos
       <div class="article-layout">
         <aside class="article-rail" data-pagefind-ignore>
           <div class="article-share">
-            <span>分享</span>
             <button id="shareLink" type="button" aria-label="分享文章" aria-describedby="shareLinkStatus"><span aria-hidden="true">↗</span><b>分享文章</b></button>
             <span class="sr-only" id="shareLinkStatus" role="status" aria-live="polite"></span>
           </div>
-          <nav class="article-toc" id="articleToc" aria-label="本文目录" hidden><span>本文目录</span><div id="articleTocLinks"></div></nav>
+          <nav class="article-toc" id="articleToc" aria-label="本文目录" hidden><details id="articleTocDetails" open><summary>本文目录</summary><div id="articleTocLinks"></div></details></nav>
         </aside>
         <div class="article-body markdown-body" data-pagefind-body>
           <Content />

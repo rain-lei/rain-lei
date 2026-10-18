@@ -1,35 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Loopy from '../../components/Loopy.astro';
+import Icon from '../../components/Icon.astro';
+import WordleTiles from '../../components/WordleTiles.astro';
 ---
-<BaseLayout title="项目 · rain" description="rain 的课程作业、个人项目与 GitHub 仓库。" active="projects" bodyClass="interior-v2 projects-v2">
-  <main id="main-content" class="interior-main projects-main">
-    <header class="projects-heading v2-reveal">
-      <div>
-        <p class="v2-kicker">项目 · GitHub</p>
-        <h1>公开仓库</h1>
-      </div>
-      <p>课程作业、个人项目和练习仓库。列表显示语言、star 数与最近提交时间。</p>
-    </header>
-
-    <section class="project-snapshot v2-reveal" aria-label="项目概览">
-      <div><strong data-repo-count>09</strong><span>公开仓库</span></div>
-      <div><strong data-repo-language-count>07</strong><span>使用语言</span></div>
-      <div><strong data-repo-latest>读取中</strong><span>最近提交</span></div>
-      <small>仓库数据来自 GitHub 公共接口；连接失败时使用缓存或本地清单。</small>
-    </section>
-
-    <section class="project-directory">
-      <div class="interior-section-head v2-reveal">
-        <div><p class="v2-kicker">仓库列表</p><h2>全部项目</h2></div>
-        <span class="repo-live" data-repo-status aria-live="polite"><i></i>正在读取</span>
-      </div>
-      <div class="project-directory-list v2-reveal">
-        <div class="github-repo-list" data-github-repos data-repo-limit="9" aria-live="polite">
-          <div class="repo-skeleton"><i></i><span></span><span></span></div>
-          <div class="repo-skeleton"><i></i><span></span><span></span></div>
-        </div>
-        <a class="project-all" href="https://github.com/rain-lei?tab=repositories" target="_blank" rel="noopener noreferrer">在 GitHub 打开仓库列表 <span>↗</span></a>
-      </div>
-    </section>
+<BaseLayout title="项目 · rain" description="rain 的课程作业、个人项目与 GitHub 仓库。" active="projects" bodyClass="projects-v2">
+  <main id="main-content" class="page-main">
+    <header class="page-heading"><div><p class="v2-kicker">代码与小游戏</p><h1>项目</h1></div><Loopy variant="programmer" small /></header>
+    <section class="featured-project"><div><p class="v2-kicker">在线试玩</p><h2>OurEDA Winter Wordle</h2><p>六次机会，猜一个五字母单词。</p><div class="hero-cta"><a class="v2-button is-primary" href="/articles/oureda-winter-wordle/">开始游戏<Icon /></a><a class="text-link" href="https://github.com/rain-lei/oureda-25-web-winter/tree/website" target="_blank" rel="noopener noreferrer">源码<Icon name="external" /></a></div></div><a class="wordle-link project-wordle" href="/articles/oureda-winter-wordle/" aria-label="打开 Wordle 游戏"><WordleTiles /></a></section>
+    <section class="project-directory"><div class="section-heading"><h2>GitHub 仓库</h2><a class="text-link" href="https://github.com/rain-lei?tab=repositories" target="_blank" rel="noopener noreferrer">在 GitHub 查看<Icon name="external" /></a></div><div class="project-directory-list"><div class="github-repo-list" data-github-repos data-repo-limit="30"><div class="repo-skeleton">正在读取仓库…</div></div></div><p class="repo-status" data-repo-status role="status">正在读取</p></section>
   </main>
 </BaseLayout>

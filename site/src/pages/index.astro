@@ -1,110 +1,45 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { categoryLabels, estimateRead, formatDate, postSlug, sortPosts } from '../lib/posts';
-
+import Icon from '../components/Icon.astro';
+import Loopy from '../components/Loopy.astro';
+import WordleTiles from '../components/WordleTiles.astro';
+import { categoryLabels, formatDate, postSlug, sortPosts } from '../lib/posts';
 const posts = sortPosts(await getCollection('posts'));
-const latest = posts.slice(0, 3);
-const firstPost = posts[0];
+const latest = posts.slice(0,3);
 ---
-
 <BaseLayout active="home" bodyClass="home-v2">
   <main id="main-content">
-    <section class="v2-hero">
-      <div class="hero-status"><span></span>大连理工大学 · 软件工程 · 2025 级</div>
-      <div class="hero-layout">
-        <div class="hero-main v2-reveal">
-          <p class="v2-kicker">课程资料与开发笔记</p>
-          <h1><span>rain 的</span><br /><em>个人博客</em></h1>
-          <p class="hero-summary">这里放课程资料、开发笔记和自己做的项目。文章有错误或需要补充的地方，可以通过下方邮箱联系我。</p>
-          <div class="hero-cta">
-            <a class="v2-button is-primary" href="/articles/">看文章 <span>↗</span></a>
-            <a class="v2-button" href="/projects/">看项目 <span>↗</span></a>
-          </div>
+    <section class="home-hero">
+      <div class="hero-copy">
+        <p class="hero-eyebrow">大连理工大学 · 软件工程</p>
+        <h1>rain 的博客</h1>
+        <div class="hero-cta"><a class="v2-button is-primary" href="/articles/">浏览文章<Icon /></a><a class="v2-button" href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer">GitHub<Icon name="external" /></a></div>
+      </div>
+      <Loopy interactive />
+    </section>
+    <div class="home-grid">
+      <section class="home-latest">
+        <div class="section-heading"><h2>最近更新</h2><a class="text-link" href="/articles/">全部文章<Icon name="external" /></a></div>
+        <div class="home-post-list">
+          {latest.map((post,index)=><a class:list={['home-post', {'is-featured':index===0}]} href={`/articles/${postSlug(post)}/`}>
+            <div class="post-meta"><span>{categoryLabels[post.data.category]}</span><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time></div>
+            <h3>{post.data.title}</h3><p>{post.data.excerpt}</p><Icon class="post-arrow" />
+          </a>)}
         </div>
-
-        <aside class="profile-panel art-profile v2-reveal">
-          <div class="art-poster" aria-hidden="true">
-            <span class="poster-index">rain / 大连</span>
-            <span class="poster-year">{new Date().getFullYear()}</span>
-            <div class="rain-field"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-            <span class="poster-disc"></span>
-            <span class="poster-cross">+</span>
-            <strong>RA<br />IN</strong>
-            <img src="https://github.com/rain-lei.png?size=240" alt="" />
-            <span class="poster-caption">课程 · 项目 · 笔记</span>
-          </div>
-          <div class="profile-content">
-            <div class="profile-head">
-              <div><span>大连理工大学</span><strong>rain</strong><small>软件工程 · 2025 级</small></div>
-              <b>大连</b>
-            </div>
-            <p>项目源码和练习代码放在 GitHub，站内的小游戏可以直接试玩。</p>
-            <dl class="profile-stats">
-              <div><dt>{String(posts.length).padStart(2, '0')}</dt><dd>篇文章</dd></div>
-              <div><dt data-repo-count>08</dt><dd>个仓库</dd></div>
-              <div><dt>2025</dt><dd>入学</dd></div>
-            </dl>
-            {firstPost && <a class="profile-latest" href={`/articles/${postSlug(firstPost)}/`}><span>最新文章</span><strong>{firstPost.data.title}</strong><b>↗</b></a>}
-          </div>
-        </aside>
-      </div>
-      <div class="v2-ticker" aria-label="博客内容">
-        <span>课程笔记</span><i>✦</i><span>项目练习</span><i>✦</i><span>部署记录</span><i>✦</i><span>网页小实验</span>
-      </div>
-    </section>
-
-    {firstPost && <section class="random-read-strip v2-reveal" aria-label="随机阅读">
-      <span>文章推荐</span>
-      <p><strong>随机阅读</strong></p>
-      <div class="random-read-controls">
-        <a data-random-read href={`/articles/${postSlug(firstPost)}/`}><strong>{firstPost.data.title}</strong><span aria-hidden="true">↗</span></a>
-        <button type="button" data-random-draw hidden>换一篇 <span aria-hidden="true">↻</span></button>
-        <small>共 {posts.length} 篇文章</small>
-        <div data-random-sources data-pagefind-ignore hidden>{posts.map(post => <a data-random-source href={`/articles/${postSlug(post)}/`}>{post.data.title}</a>)}</div>
-      </div>
-    </section>}
-
-    <section class="v2-section latest-section">
-      <div class="v2-section-head v2-reveal">
-        <div><span class="section-no">01</span><p class="v2-kicker">文章</p><h2>最近发布</h2></div>
-        <a class="v2-text-link" href="/articles/">所有文章 <span>↗</span></a>
-      </div>
-      <div class="home-post-list">
-        {latest.map((post, index) => <a class="home-post v2-reveal" href={`/articles/${postSlug(post)}/`}>
-          <span class="home-post-no">{String(index + 1).padStart(2, '0')}</span>
-          <span class="home-post-meta"><b>{categoryLabels[post.data.category]}</b><time>{formatDate(post.data.date)}</time><small>{estimateRead(post.body || '')}</small></span>
-          <span class="home-post-copy"><strong>{post.data.title}</strong><small>{post.data.excerpt}</small></span>
-          <span class="home-post-arrow">↗</span>
-        </a>)}
-      </div>
-    </section>
-
-    <section class="v2-section project-section">
-      <div class="v2-section-head v2-reveal">
-        <div><span class="section-no">02</span><p class="v2-kicker">GitHub</p><h2>最近更新的项目</h2></div>
-        <a class="v2-text-link" href="/projects/">所有项目 <span>↗</span></a>
-      </div>
-      <div class="project-preview-list v2-reveal">
-        <div class="project-preview-status"><span>公开仓库</span><small data-repo-status aria-live="polite">正在读取</small></div>
-        <div class="github-repo-list" data-github-repos data-repo-limit="3" aria-live="polite"><div class="repo-skeleton"><i></i><span></span><span></span></div></div>
-        <a class="project-all" href="/projects/">浏览仓库列表 <span>↗</span></a>
-      </div>
-    </section>
-
-    <section class="v2-section network-section" id="contact">
-      <div class="contact-block v2-reveal">
-        <span class="section-no">03</span><p class="v2-kicker">邮箱</p><h2>联系我</h2>
-        <p>问题反馈、项目交流或友链申请，可以发邮件。</p>
-        <a class="contact-mail" href="mailto:rain__lei@outlook.com">rain__lei@outlook.com <span>↗</span></a>
-      </div>
-      <div class="links-block v2-reveal">
-        <div class="links-title"><div><p class="v2-kicker">博客与网站</p><h3>友情链接</h3></div><span data-friend-status>欢迎提交 PR</span></div>
-        <div class="friend-links-grid" data-friend-links>
-          <a class="friend-link-card" href="https://github.com/rain-lei"><span class="friend-link-avatar has-image"><span class="friend-link-initial">R</span><img src="https://github.com/rain-lei.png?size=96" alt="" /></span><span class="friend-link-copy"><strong>rain-lei · GitHub</strong><small>代码和公开仓库</small><em>github.com</em></span><b>↗</b></a>
+      </section>
+      <aside class="home-sidebar">
+        <div class="sidebar-card">
+          <div class="section-heading"><h2>项目</h2><a class="text-link" href="/projects/" aria-label="全部项目"><Icon name="external" /></a></div>
+          <a class="wordle-link" href="/articles/oureda-winter-wordle/"><strong>OurEDA Winter Wordle</strong><WordleTiles /><span>在线试玩<Icon name="external" /></span></a>
+          <a class="sidebar-repo" href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer"><strong>GitHub</strong><span>查看代码仓库<Icon name="external" /></span></a>
         </div>
-        <a class="friend-link-apply" href="https://github.com/rain-lei/rain-lei/blob/main/FRIEND_LINKS.md" target="_blank" rel="noopener noreferrer">申请友链 <span>查看提交说明 ↗</span></a>
-      </div>
+        <div class="sidebar-links"><a href="mailto:rain__lei@outlook.com"><Icon name="mail" />邮箱</a><a href="#contact">友情链接<Icon name="external" /></a></div>
+      </aside>
+    </div>
+    <section class="home-friends" id="contact">
+      <div class="section-heading"><h2>友情链接</h2><a class="text-link" href="https://github.com/rain-lei/rain-lei/blob/main/FRIEND_LINKS.md" target="_blank" rel="noopener noreferrer">申请友链<Icon name="external" /></a></div>
+      <div class="friend-links-grid" data-friend-links><a class="friend-link-card" href="https://github.com/rain-lei"><span class="friend-link-avatar has-image"><img src="/images/github-avatar.png" alt="" width="40" height="40" /></span><span class="friend-link-copy"><strong>rain-lei · GitHub</strong><small>代码和公开仓库</small></span><b>↗</b></a></div>
     </section>
   </main>
 </BaseLayout>

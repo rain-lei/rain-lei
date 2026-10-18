@@ -1,24 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Loopy from '../../components/Loopy.astro';
+import Icon from '../../components/Icon.astro';
 ---
-
-<BaseLayout title="关于 · rain" description="rain 的个人主页、文章内容与联系方式。" active="about" bodyClass="interior-v2 about-v2">
-  <main id="main-content" class="interior-main about-main">
-    <header class="about-heading v2-reveal">
-      <p class="v2-kicker">关于 rain</p>
-      <h1>软件工程在读</h1>
-      <p>我是 rain，大连理工大学软件工程专业 2025 级学生。</p>
-      <a href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer">GitHub <span>↗</span></a>
-    </header>
-
-    <section class="about-values">
-      <div class="interior-section-head v2-reveal"><div><p class="v2-kicker">博客内容</p><h2>这里有什么</h2></div></div>
-      <div class="method-grid">
-        <article class="v2-reveal"><small>课程资料</small><h3>学习笔记</h3><p>大学英语、C 程序设计、求实书院课程和综合奖励评审相关整理。</p></article>
-        <article class="v2-reveal"><small>项目练习</small><h3>代码仓库</h3><p>课程作业、个人项目和小工具，仓库信息同步自 GitHub。</p></article>
-        <article class="v2-reveal"><small>在线试玩</small><h3>小游戏</h3><p>目前可以玩五字母猜词游戏 Wordle，文章里附了玩法和源码地址。</p></article>
-      </div>
+<BaseLayout title="关于 · rain" description="rain，大连理工大学软件工程专业 2025 级学生。" active="about" bodyClass="about-v2">
+  <main id="main-content" class="page-main about-main">
+    <header class="page-heading"><div><p class="v2-kicker">rain</p><h1>关于</h1></div></header>
+    <section class="about-profile">
+      <div class="about-intro"><img class="about-avatar" src="/images/github-avatar.png" data-github-avatar alt="rain 的 GitHub 头像" width="80" height="80" /><h2>rain</h2><p>大连理工大学 · 软件工程 · 2025 级</p></div>
+      <Loopy variant="snack" />
     </section>
-
+    <div class="about-bottom"><section class="about-contact"><h2>联系方式</h2><dl><div><dt>邮箱</dt><dd><a href="mailto:rain__lei@outlook.com">rain__lei@outlook.com ↗</a></dd></div><div><dt>GitHub</dt><dd><a href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer">rain-lei ↗</a></dd></div></dl></section><section class="about-links"><h2>站内</h2><a href="/articles/?category=study">课程笔记<Icon /></a><a href="/projects/">项目与小游戏<Icon /></a><a href="/#contact">友情链接<Icon /></a></section></div>
   </main>
 </BaseLayout>
