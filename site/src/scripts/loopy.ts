@@ -1,4 +1,5 @@
 import { initCursor } from './cursor';
+import { initHomeOpening } from './home-opening';
 
 const body=document.body;
 const button=document.querySelector<HTMLButtonElement>('#motionToggle');
@@ -12,6 +13,7 @@ const animate=(element:Element,keyframes:Keyframe[],options:KeyframeAnimationOpt
   if(!allowed())return;
   const animation=element.animate(keyframes,options);transient.add(animation);
   const forget=()=>transient.delete(animation);animation.addEventListener('finish',forget,{once:true});animation.addEventListener('cancel',forget,{once:true});
+  return animation;
 };
 const syncMotion=()=>{
   const enabled=preference&&!reduced.matches;body.dataset.motion=enabled?'on':'off';
@@ -70,8 +72,9 @@ document.querySelectorAll<HTMLButtonElement>('.loopy-stage').forEach(stage=>{
   });
 });
 
+initHomeOpening(allowed,animate);
 if(allowed()){
-  document.querySelectorAll('.hero-copy,.home-hero .loopy-scene,.page-heading').forEach((el,index)=>animate(el,[{opacity:0,translate:'0 9px'},{opacity:1,translate:'0 0'}],{duration:600,delay:Math.min(index*80,160),easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'}));
+  document.querySelectorAll('.page-heading').forEach((el,index)=>animate(el,[{opacity:0,translate:'0 9px'},{opacity:1,translate:'0 0'}],{duration:600,delay:Math.min(index*80,160),easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'}));
 }
 
 // Show the cached GitHub avatar immediately; refresh it only after a successful load.
