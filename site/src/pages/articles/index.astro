@@ -3,10 +3,10 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Loopy from '../../components/Loopy.astro';
 import Icon from '../../components/Icon.astro';
-import { categoryLabels, estimateRead, formatDate, postSlug, sortPosts } from '../../lib/posts';
+import ArticleArtwork from '../../components/ArticleArtwork.astro';
+import { categoryLabels, estimateRead, formatDate, postIllustration, postSlug, sortPosts } from '../../lib/posts';
 const posts=sortPosts(await getCollection('posts'));
 const tags=Array.from(new Set(posts.flatMap(post=>post.data.tech))).sort((a,b)=>a.localeCompare(b,'zh-CN'));
-const decorations = ['programmer', 'reading', 'snack'] as const;
 ---
 <BaseLayout title="文章 · rain" description="rain 的文章、课程资料与项目记录。" active="articles" bodyClass="archive-v2">
   <main id="main-content" class="page-main">
@@ -15,8 +15,8 @@ const decorations = ['programmer', 'reading', 'snack'] as const;
       <section class="archive-browser" aria-label="文章列表">
         <div class="archive-toolbar"><label class="archive-search"><Icon name="search" /><input id="archiveSearch" type="search" aria-label="筛选文章" placeholder="搜索标题、摘要或标签" autocomplete="off" /><kbd>/</kbd></label></div>
         <div class="archive-result-line"><div class="archive-result-summary"><span id="archiveResultCount" aria-live="polite">{posts.length} 篇文章</span><button id="archiveClear" type="button" data-archive-reset hidden>清除筛选 ×</button></div><a href="/search/">全文搜索 ↗</a></div>
-        <div class="archive-list">{posts.map((post,index)=><a class="archive-item" data-category={post.data.category} data-tags={post.data.tech.join('|')} href={`/articles/${postSlug(post)}/`}>
-          <span class="archive-item-main"><span class="post-meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time><b>{categoryLabels[post.data.category]}</b><small>{post.data.contentType==='game'?'在线试玩':estimateRead(post.body||'')}</small></span><strong>{post.data.title}</strong><p>{post.data.excerpt}</p><span class="archive-item-footer"><span class="archive-item-tags">{post.data.tech.slice(0,3).map(tag=><em>{tag}</em>)}</span><img class="archive-item-art" src={`/images/loopy/${decorations[index % decorations.length]}.png`} width="600" height="600" alt="" aria-hidden="true" loading="lazy" decoding="async" draggable="false" /></span></span><Icon class="archive-item-arrow" />
+        <div class="archive-list">{posts.map(post=><a class="archive-item" data-category={post.data.category} data-tags={post.data.tech.join('|')} data-illustration={postIllustration(post)} href={`/articles/${postSlug(post)}/`}>
+          <span class="archive-item-main"><span class="post-meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time><b>{categoryLabels[post.data.category]}</b><small>{post.data.contentType==='game'?'在线试玩':estimateRead(post.body||'')}</small></span><strong>{post.data.title}</strong><p>{post.data.excerpt}</p><span class="archive-item-footer"><span class="archive-item-tags">{post.data.tech.slice(0,3).map(tag=><em>{tag}</em>)}</span><ArticleArtwork illustration={postIllustration(post)} /></span></span><Icon class="archive-item-arrow" />
         </a>)}</div>
         <div id="archiveEmpty" class="archive-empty" hidden><h2>没有找到相关文章</h2><p>换个关键词，或清除筛选条件。</p><button class="v2-button" type="button" id="archiveReset" data-archive-reset>清除筛选<Icon name="arrow" /></button></div>
       </section>

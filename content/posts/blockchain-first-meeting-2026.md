@@ -3,6 +3,7 @@ id: blockchain-first-meeting-2026
 title: 区块链组 2026 年第一次例会：网页开发流程与 Git 入门
 excerpt: 用任务清单了解前端、后端和数据库如何配合，启动本地项目，并向例会仓库提交第一个 Pull Request。
 category: study
+illustration: programmer
 date: 2026-10-17
 status: published
 accent: blue

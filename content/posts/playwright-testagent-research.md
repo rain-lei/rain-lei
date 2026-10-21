@@ -3,6 +3,7 @@ id: playwright-testagent-research
 title: Playwright Test Agents 调研：方案比较与测试记录
 excerpt: 比较截图操作、浏览器命令与测试代理，记录软件学院官网和 163 邮箱登录页的测试过程、生成文件与报告结果。
 category: study
+illustration: programmer
 date: 2026-07-15
 updated: 2026-10-17
 status: published

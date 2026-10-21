@@ -3,6 +3,7 @@ id: windows-开发工具清单
 title: Windows 开发工具清单
 excerpt: Windows 上的编辑器、语言环境、容器和数据库工具，按用途列在一起，方便配置项目时查找。
 category: life
+illustration: programmer
 date: 2026-08-20
 updated: 2026-10-17
 status: published

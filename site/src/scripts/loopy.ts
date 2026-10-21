@@ -28,8 +28,6 @@ document.addEventListener('visibilitychange',()=>{body.toggleAttribute('data-tab
 initCursor(allowed);
 const mobileTags=document.querySelector<HTMLDetailsElement>('.tag-details');
 if(mobileTags&&matchMedia('(max-width:960px)').matches)mobileTags.open=false;
-const mobileToc=document.querySelector<HTMLDetailsElement>('#articleTocDetails');
-if(mobileToc&&matchMedia('(max-width:760px)').matches)mobileToc.open=false;
 
 const nav=document.querySelector<HTMLElement>('.v2-nav');
 if(nav){

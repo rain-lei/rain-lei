@@ -3,6 +3,7 @@ id: git-常用命令速查手册
 title: Git 常用命令速查手册
 excerpt: 按操作查 Git 命令：查看改动、提交、切换分支、同步远程仓库，以及撤销和临时保存修改。
 category: study
+illustration: programmer
 date: 2026-08-20
 updated: 2026-10-17
 status: published

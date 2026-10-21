@@ -1,0 +1,17 @@
+<div class="article-reading" id="articleReading" data-pagefind-ignore hidden inert aria-hidden="true">
+  <button id="articleReadingToggle" type="button" aria-label="打开文章目录" aria-haspopup="dialog" aria-controls="articleReadingDialog" aria-expanded="false">
+    <span class="reading-section-number" id="readingSectionNumber" aria-hidden="true">01</span>
+    <span class="reading-section-copy"><small>正在阅读</small><b id="readingSectionLabel"></b></span>
+    <span class="reading-directory-label">目录<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></span>
+  </button>
+</div>
+<dialog class="article-reading-dialog" id="articleReadingDialog" aria-labelledby="articleReadingTitle" data-pagefind-ignore>
+  <div class="reading-dialog-heading">
+    <div><p>阅读导航</p><h2 id="articleReadingTitle">本文目录</h2></div>
+    <button id="articleReadingClose" class="v2-icon" type="button" aria-label="关闭文章目录"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
+  </div>
+  <nav id="readingDirectoryLinks" aria-label="文章章节"></nav>
+</dialog>
+<script>
+  import '../scripts/article-reading';
+</script>

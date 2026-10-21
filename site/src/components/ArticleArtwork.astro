@@ -1,0 +1,13 @@
+---
+interface Props { illustration: 'reading' | 'programmer' | 'snack' | 'wordle' }
+const { illustration } = Astro.props;
+---
+{illustration === 'wordle' ? (
+  <span class="archive-item-art archive-item-art--game" aria-hidden="true">
+    <span class="archive-game-label">WORDLE</span>
+    <span class="archive-game-row">{['R','A','I','N','Y'].map((letter,index) => <span class:list={[{green:index === 0 || index === 4,yellow:index === 2}]}>{letter}</span>)}</span>
+    <span class="archive-game-row archive-game-row--empty">{Array.from({length:5},()=><span></span>)}</span>
+  </span>
+) : (
+  <img class="archive-item-art" src={`/images/loopy/${illustration}.png`} width="600" height="600" alt="" aria-hidden="true" loading="lazy" decoding="async" draggable="false" />
+)}

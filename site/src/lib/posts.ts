@@ -7,3 +7,4 @@ export const formatDate = (date: Date) => new Intl.DateTimeFormat('zh-CN', { yea
 export const estimateRead = (body: string) => `${Math.max(1, Math.ceil(body.replace(/\s+/g, '').length / 500))} 分钟`;
 export const sortPosts = (posts: Post[]) => posts.filter((post) => post.data.status === 'published').sort((a,b) => b.data.date.getTime() - a.data.date.getTime());
 export const postSlug = (post: Post) => post.data.id || post.id.replace(/\.md$/i, '');
+export const postIllustration = (post: Post) => post.data.illustration || (post.data.category === 'study' ? 'reading' : 'snack');

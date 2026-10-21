@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ViewCounter from '../../../components/ViewCounter.astro';
+import ArticleReading from '../../../components/ArticleReading.astro';
 import { categoryLabels, estimateRead, formatDate, postSlug, sortPosts } from '../../../lib/posts';
 
 export async function getStaticPaths(){
@@ -19,6 +20,7 @@ const others=posts
 const contentLabel=post.data.contentType==='game'?'小游戏':categoryLabels[post.data.category];
 ---
 <BaseLayout title={`${post.data.title} · rain`} description={post.data.excerpt} active="articles" bodyClass="article-page article-v2" type="article" publishedTime={post.data.date} updatedTime={post.data.updated} tags={post.data.tech}>
+  <ArticleReading />
   <main id="main-content">
     <article class="article-wrap">
       <div class="article-heading">
