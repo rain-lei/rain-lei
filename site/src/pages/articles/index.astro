@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Loopy from '../../components/Loopy.astro';
+import PageHeading from '../../components/PageHeading.astro';
 import Icon from '../../components/Icon.astro';
 import ArticleArtwork from '../../components/ArticleArtwork.astro';
 import { categoryLabels, estimateRead, formatDate, postIllustration, postSlug, sortPosts } from '../../lib/posts';
@@ -10,7 +10,7 @@ const tags=Array.from(new Set(posts.flatMap(post=>post.data.tech))).sort((a,b)=>
 ---
 <BaseLayout title="文章 · rain" description="rain 的文章、课程资料与项目记录。" active="articles" bodyClass="archive-v2">
   <main id="main-content" class="page-main">
-    <header class="page-heading"><div><p class="v2-kicker">共 {posts.length} 篇</p><h1>文章</h1></div><Loopy variant="snack" small /></header>
+    <PageHeading title="文章" kicker={`共 ${posts.length} 篇`} description="课程资料、开发笔记和项目记录。" variant="reading" />
     <div class="archive-layout">
       <section class="archive-browser" aria-label="文章列表">
         <div class="archive-toolbar"><label class="archive-search"><Icon name="search" /><input id="archiveSearch" type="search" aria-label="筛选文章" placeholder="搜索标题、摘要或标签" autocomplete="off" /><kbd>/</kbd></label></div>

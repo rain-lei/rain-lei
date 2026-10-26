@@ -1,15 +1,21 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Loopy from '../../components/Loopy.astro';
+import PageHeading from '../../components/PageHeading.astro';
 import Icon from '../../components/Icon.astro';
 ---
 <BaseLayout title="关于 · rain" description="rain，大连理工大学软件工程专业 2025 级学生。" active="about" bodyClass="about-v2">
   <main id="main-content" class="page-main about-main">
-    <header class="page-heading"><div><p class="v2-kicker">rain</p><h1>关于</h1></div></header>
-    <section class="about-profile">
-      <div class="about-intro"><img class="about-avatar" src="/images/github-avatar.png" data-github-avatar alt="rain 的 GitHub 头像" width="80" height="80" /><h2>rain</h2><p>大连理工大学 · 软件工程 · 2025 级</p></div>
-      <Loopy variant="snack" />
-    </section>
-    <div class="about-bottom"><section class="about-contact"><h2>联系方式</h2><dl><div><dt>邮箱</dt><dd><a href="mailto:rain__lei@outlook.com">rain__lei@outlook.com ↗</a></dd></div><div><dt>GitHub</dt><dd><a href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer">rain-lei ↗</a></dd></div></dl></section><section class="about-links"><h2>站内</h2><a href="/articles/?category=study">课程笔记<Icon /></a><a href="/projects/">项目与小游戏<Icon /></a><a href="/#contact">友情链接<Icon /></a></section></div>
+    <PageHeading title="关于" kicker="rain" description="大连理工大学 · 软件工程 · 2025 级" variant="snack" avatar />
+    <div class="about-layout">
+      <section class="about-contact surface-panel" aria-labelledby="contactHeading">
+        <h2 id="contactHeading">联系方式</h2>
+        <p class="panel-description">可以通过邮箱或 GitHub 找到我。</p>
+        <div class="contact-methods">
+          <a class="contact-method" href="mailto:rain__lei@outlook.com"><span class="contact-method-icon" aria-hidden="true"><Icon name="mail" /></span><span class="contact-method-copy"><small>邮箱</small><strong>rain__lei@outlook.com</strong></span><Icon name="external" /></a>
+          <a class="contact-method" href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer"><span class="contact-method-icon contact-monogram" aria-hidden="true">GH</span><span class="contact-method-copy"><small>GitHub</small><strong>rain-lei</strong></span><Icon name="external" /></a>
+        </div>
+      </section>
+      <aside class="about-links surface-panel" aria-labelledby="aboutLinksHeading"><h2 id="aboutLinksHeading">站内</h2><a href="/articles/?category=study">课程笔记<Icon /></a><a href="/projects/">项目与小游戏<Icon /></a><a href="/#contact">友情链接<Icon /></a></aside>
+    </div>
   </main>
 </BaseLayout>

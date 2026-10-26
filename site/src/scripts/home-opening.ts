@@ -43,9 +43,6 @@ export function initHomeOpening(allowed: () => boolean, animate: MotionAnimator)
   }
 
   const scene = hero.querySelector<HTMLElement>('.loopy-scene');
-  const compact = matchMedia('(max-width:760px)').matches;
-  const drop = compact ? 22 : 42;
-  const bounce = compact ? 3 : 6;
   scene?.classList.add('is-arriving');
 
   rise('.v2-header', 4, 0, 280, .6);
@@ -53,30 +50,21 @@ export function initHomeOpening(allowed: () => boolean, animate: MotionAnimator)
   rise('.hero-copy h1', 10, 70, 400, .25);
   rise('.home-hero .hero-cta', 6, 160, 350);
   run('.home-hero .loopy-halo', [
-    { opacity: 0, scale: .75 },
-    { opacity: .8, scale: .98 },
-  ], 30, 500);
+    { opacity: 0, scale: .94 },
+    { opacity: .8, scale: 1 },
+  ], 40, 420);
   run('.home-hero .loopy-arrival', [
-    { opacity: 0, transform: `translateY(-${drop}px) rotate(-5deg) scale(.96,1.02)` },
-    { opacity: 1, transform: `translateY(${bounce}px) rotate(1.3deg) scale(1.035,.965)`, offset: .5 },
-    { opacity: 1, transform: `translateY(-${bounce * .7}px) rotate(-.7deg) scale(.99,1.01)`, offset: .74 },
+    { opacity: 0, transform: 'translateY(10px)' },
     { opacity: 1, transform: 'none' },
-  ], 90, 860, 'cubic-bezier(.25,.6,.35,1)');
+  ], 80, 460);
   run('.home-hero .loopy-shadow', [
-    { opacity: .2, scale: .55 },
-    { opacity: 1, scale: 1.08, offset: .6 },
-    { opacity: 1, scale: 1 },
-  ], 100, 850);
-  run('.home-hero .loopy-landing', [
-    { opacity: 0, scale: .5 },
-    { opacity: .35, scale: .75, offset: .18 },
-    { opacity: 0, scale: 1.55 },
-  ], 480, 430, 'ease-out');
+    { opacity: 0, scale: .94 },
+    { opacity: .4, scale: 1 },
+  ], 80, 460);
   run('.home-hero .loopy-star', [
-    { opacity: 0, transform: 'translateY(12px) rotate(-8deg) scale(.5)' },
-    { opacity: .75, transform: 'translateY(-5px) rotate(8deg) scale(1.15)', offset: .6 },
-    { opacity: .35, transform: 'rotate(-8deg) scale(.85)' },
-  ], 550, 550);
+    { opacity: 0 },
+    { opacity: .22 },
+  ], 180, 350);
 
   rise('.home-latest > .section-heading', 7, 210, 340);
   document.querySelectorAll('.home-post').forEach((_, index) => {

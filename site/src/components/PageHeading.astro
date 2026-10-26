@@ -1,0 +1,22 @@
+---
+import Loopy from './Loopy.astro';
+interface Props {
+  title: string;
+  kicker: string;
+  description: string;
+  variant?: 'reading' | 'programmer' | 'snack';
+  avatar?: boolean;
+}
+const { title, kicker, description, variant='reading', avatar=false }=Astro.props;
+---
+<header class="page-heading page-heading--section">
+  <div class="page-heading-copy">
+    <div class="page-heading-kicker">
+      {avatar&&<img src="/images/github-avatar.png" data-github-avatar width="24" height="24" alt="" />}
+      <p class="v2-kicker">{kicker}</p>
+    </div>
+    <h1>{title}</h1>
+    <p class="page-description">{description}</p>
+  </div>
+  <div class="page-heading-art"><Loopy variant={variant} small /></div>
+</header>

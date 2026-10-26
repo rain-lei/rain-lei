@@ -1,4 +1,5 @@
 import { animateUi } from './ui-motion';
+import { fallbackRepos, languageColors, selectRepositories, type GithubRepo } from '../lib/repositories';
 
 const body=document.body;
 const themeToggle=document.getElementById('themeToggle');
@@ -9,7 +10,7 @@ const header=document.querySelector('.v2-header');
 const progress=document.getElementById('scrollProgress');
 const backToTop=document.getElementById('backToTop');
 if(document.documentElement.dataset.theme==='dark') body.classList.add('dark');
-const updateTheme=()=>{const dark=body.classList.contains('dark');document.documentElement.dataset.theme=dark?'dark':'light';themeToggle?.setAttribute('aria-label',dark?'切换为浅色模式':'切换为深色模式');if(themeColor)themeColor.content=dark?'#241e25':'#fffaf7';};
+const updateTheme=()=>{const dark=body.classList.contains('dark');document.documentElement.dataset.theme=dark?'dark':'light';themeToggle?.setAttribute('aria-label',dark?'切换为浅色模式':'切换为深色模式');if(themeColor)themeColor.content=getComputedStyle(document.documentElement).getPropertyValue('--paper').trim();};
 updateTheme();
 themeToggle?.addEventListener('click',()=>{body.classList.toggle('dark');try{localStorage.setItem('rain-theme',body.classList.contains('dark')?'dark':'light');}catch{}updateTheme();});
 let menuAnimation:Animation|undefined;
@@ -65,26 +66,15 @@ if(randomReadLink&&randomReadButton&&randomReadOptions.length>1){
 
 const repoTargets=[...document.querySelectorAll<HTMLElement>('[data-github-repos]')];
 if(repoTargets.length){
-  type GithubRepo={name:string;description?:string|null;language?:string|null;stargazers_count?:number|null;forks_count?:number|null;pushed_at?:string|null;topics?:string[];html_url?:string;fork?:boolean;archived?:boolean};
-  const fallbackRepos:GithubRepo[]=[
-    {name:'lingxi',description:'Python 项目',language:'Python',topics:['Python'],html_url:'https://github.com/rain-lei/lingxi'},
-    {name:'rain-lei',description:'个人博客源码、文章与 GitHub 资料页',language:'CSS',topics:['Astro','Blog'],html_url:'https://github.com/rain-lei/rain-lei'},
-    {name:'easyxgame',description:'EasyX 课程作业与原创游戏《萌泡大作战》',language:'C++',topics:['EasyX','Game'],html_url:'https://github.com/rain-lei/easyxgame'},
-    {name:'EDAbackend-todo-practice',description:'JWT 鉴权与 Todo CRUD 后端练习',language:'JavaScript',topics:['Express','JWT'],html_url:'https://github.com/rain-lei/EDAbackend-todo-practice'},
-    {name:'junli',description:'HTML 页面实验与前端练习',language:'HTML',topics:['HTML'],html_url:'https://github.com/rain-lei/junli'},
-    {name:'vibecodearts',description:'ChronoFlow：按个人精力曲线安排任务',language:'TypeScript',topics:['React','Vite'],html_url:'https://github.com/rain-lei/vibecodearts'},
-    {name:'MarketMirror',description:'多类型投资者市场冲击仿真平台',language:'Vue',topics:['FastAPI','ECharts'],html_url:'https://github.com/rain-lei/MarketMirror'},
-    {name:'ppt_name_replacer',description:'从 Excel 批量生成个性化 PPT 奖状',language:'Python',topics:['Flask','Automation'],html_url:'https://github.com/rain-lei/ppt_name_replacer'},
-    {name:'ascd',description:'Vue 3 与 Vite 的前端模板练习',language:'Vue',topics:['Vue 3','Vite'],html_url:'https://github.com/rain-lei/ascd'},
-  ];
   const fallbackByName=new Map(fallbackRepos.map(repo=>[repo.name.toLowerCase(),repo]));
-  const languageColors:Record<string,string>={TypeScript:'#3178c6',JavaScript:'#f1e05a',Vue:'#41b883',Python:'#3572a5','C++':'#f34b7d',C:'#555555',HTML:'#e34c26',CSS:'#663399'};
   const esc=(value:unknown)=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]!));
   const safeRepoUrl=(repo:GithubRepo)=>{try{const url=new URL(repo.html_url||`https://github.com/rain-lei/${repo.name}`);return url.origin==='https://github.com'&&url.pathname.toLowerCase().startsWith('/rain-lei/')?url.href:`https://github.com/rain-lei/${encodeURIComponent(repo.name)}`;}catch{return `https://github.com/rain-lei/${encodeURIComponent(repo.name)}`;}};
   const formatRepoDate=(value?:string|null)=>{if(!value)return'';const date=new Date(value);return Number.isNaN(date.getTime())?'':new Intl.DateTimeFormat('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit'}).format(date).replaceAll('/','.');};
   const render=(target:HTMLElement,repos:GithubRepo[])=>{
     const limit=Math.max(1,Number(target.dataset.repoLimit)||3);
-    target.innerHTML=repos.slice(0,limit).map((repo,index)=>{
+    const names=(value?:string)=>value?.split(',').filter(Boolean);
+    const selected=selectRepositories(repos,{featured:names(target.dataset.repoFeatured),exclude:names(target.dataset.repoExclude),limit});
+    target.innerHTML=selected.map((repo,index)=>{
       const local=fallbackByName.get(repo.name.toLowerCase());
       const language=repo.language||'多语言';
       const color=languageColors[language]||'#8b8b84';
@@ -92,6 +82,8 @@ if(repoTargets.length){
       const stars=repo.stargazers_count==null?'':`<span class="repo-stars">★ ${Math.max(0,Number(repo.stargazers_count)||0)}</span>`;
       const forks=repo.forks_count==null?'':`<span class="repo-forks">⑂ ${Math.max(0,Number(repo.forks_count)||0)}</span>`;
       const updated=formatRepoDate(repo.pushed_at);
+      const description=repo.description||local?.description;
+      if(target.dataset.repoLayout==='compact')return `<a class="github-repo-row" href="${esc(safeRepoUrl(repo))}" target="_blank" rel="noopener noreferrer"><span class="repo-row-copy"><strong>${esc(repo.name)}</strong><small>${esc(description||language)}</small></span><span class="repo-arrow" aria-hidden="true">↗</span></a>`;
       return `<a class="github-repo-card" href="${esc(safeRepoUrl(repo))}" target="_blank" rel="noopener noreferrer"><span class="repo-index">${String(index+1).padStart(2,'0')}</span><span class="repo-card-content"><span class="repo-title-row"><span class="repo-title-wrap"><strong>${esc(repo.name)}</strong>${repo.name==='rain-lei'?'<em class="repo-badge">本站</em>':''}</span><span class="repo-arrow">↗</span></span><span class="repo-description">${esc(repo.description||local?.description||'暂无项目简介。')}</span><span class="repo-meta"><span class="repo-language" style="--language-color:${color}"><i></i>${esc(language)}</span>${stars}${forks}${updated?`<time datetime="${esc(repo.pushed_at)}">更新 ${updated}</time>`:''}</span>${topics.length?`<span class="repo-topics">${topics.map(topic=>`<em>${esc(topic)}</em>`).join('')}</span>`:''}</span></a>`;
     }).join('');
   };

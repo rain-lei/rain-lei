@@ -27,7 +27,11 @@ reduced.addEventListener('change',syncMotion);syncMotion();
 document.addEventListener('visibilitychange',()=>{body.toggleAttribute('data-tab-hidden',document.hidden);if(document.hidden)transient.forEach(a=>a.cancel());});
 initCursor(allowed);
 const mobileTags=document.querySelector<HTMLDetailsElement>('.tag-details');
-if(mobileTags&&matchMedia('(max-width:960px)').matches)mobileTags.open=false;
+if(mobileTags){
+  const compactFilters=matchMedia('(max-width:960px)');
+  const syncTags=()=>{mobileTags.open=!compactFilters.matches;};
+  compactFilters.addEventListener('change',syncTags);syncTags();
+}
 
 const nav=document.querySelector<HTMLElement>('.v2-nav');
 if(nav){

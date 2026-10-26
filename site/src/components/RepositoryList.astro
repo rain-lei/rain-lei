@@ -1,0 +1,16 @@
+---
+import { fallbackRepos, languageColors, selectRepositories } from '../lib/repositories';
+interface Props { featured?:string[]; exclude?:string[]; compact?:boolean; limit?:number }
+const { featured,exclude,compact=false,limit=30 }=Astro.props;
+const repos=selectRepositories(fallbackRepos,{featured,exclude,limit});
+---
+<div class:list={['github-repo-list',{'github-repo-list--compact':compact}]} data-github-repos data-repo-limit={limit} data-repo-featured={featured?.join(',')} data-repo-exclude={exclude?.join(',')} data-repo-layout={compact?'compact':'cards'}>
+  {repos.map(repo=><a class={compact?'github-repo-row':'github-repo-card'} href={repo.html_url} target="_blank" rel="noopener noreferrer">
+    {compact?<><span class="repo-row-copy"><strong>{repo.name}</strong><small>{repo.description||repo.language}</small></span><span class="repo-arrow" aria-hidden="true">↗</span></>:<span class="repo-card-content">
+      <span class="repo-title-row"><span class="repo-title-wrap"><strong>{repo.name}</strong></span><span class="repo-arrow" aria-hidden="true">↗</span></span>
+      <span class="repo-description">{repo.description}</span>
+      <span class="repo-meta"><span class="repo-language" style={`--language-color:${languageColors[repo.language||'']||'#8b8b84'}`}><i></i>{repo.language}</span></span>
+      <span class="repo-topics">{repo.topics?.slice(0,2).map(topic=><em>{topic}</em>)}</span>
+    </span>}
+  </a>)}
+</div>
