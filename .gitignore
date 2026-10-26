@@ -10,4 +10,5 @@ data/*.sqlite-*
 data/
 *.log
 .firecrawl/
+artifacts/
 .DS_Store
