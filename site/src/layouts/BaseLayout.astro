@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import '../styles/decoration.css';
+import '../styles/motion.css';
 import ViewCounter from '../components/ViewCounter.astro';
 import Icon from '../components/Icon.astro';
 import Backdrop from '../components/Backdrop.astro';
@@ -60,14 +61,15 @@ const canonical=new URL(Astro.url.pathname,Astro.site||Astro.url).href;
     <link rel="icon" href="https://github.com/rain-lei.png?size=64" type="image/png" />
     <title>{title}</title>
   </head>
-  <body class={`v2 ${bodyClass}`} data-motion="off">
+  <body class={bodyClass} data-motion="off">
     <Backdrop />
     <a class="v2-skip-link" href="#main-content">跳至正文</a>
     <div class="v2-progress" id="scrollProgress" aria-hidden="true"></div>
-    <button class="v2-backtop" id="backToTop" type="button" aria-label="返回页面顶部"><Icon name="up" /></button>
+    <button class="v2-backtop" id="backToTop" type="button" aria-label="返回页面顶部" inert><Icon name="up" /></button>
     <div class="v2-shell">
       <header class="v2-header">
         <a class="v2-brand" href="/" aria-label="rain 首页"><img src="/images/github-avatar.png" data-github-avatar width="48" height="48" alt="rain 的 GitHub 头像" /><strong>rain</strong></a>
+        <slot name="reading-tools" />
         <nav class="v2-nav" aria-label="主导航">{[['home','/','首页'],['articles','/articles/','文章'],['projects','/projects/','项目'],['about','/about/','关于']].map(([key,href,label])=><a class:list={[{ 'is-active':active===key }]} aria-current={active===key?'page':undefined} href={href}>{label}</a>)}</nav>
         <div class="v2-actions">
           <a class="header-search" href="/search/" aria-label="搜索文章"><Icon name="search" /><span>搜索</span><kbd>/</kbd></a>

@@ -1,132 +1,143 @@
-import { animateUi, uiMotionEnabled } from './ui-motion';
+import { animateUi } from './ui-motion';
 
-const article = document.querySelector<HTMLElement>('.article-body');
-const headings = [...document.querySelectorAll<HTMLElement>('.article-body h2')];
-const inlineToc = document.querySelector<HTMLElement>('#articleToc');
-const inlineLinks = document.querySelector<HTMLElement>('#articleTocLinks');
-const inlineDetails = document.querySelector<HTMLDetailsElement>('#articleTocDetails');
-const toolbar = document.querySelector<HTMLElement>('#articleReading');
-const toggle = document.querySelector<HTMLButtonElement>('#articleReadingToggle');
-const dialog = document.querySelector<HTMLDialogElement>('#articleReadingDialog');
-const directory = document.querySelector<HTMLElement>('#readingDirectoryLinks');
-const header = document.querySelector<HTMLElement>('.v2-header');
-const mobileNav = document.querySelector<HTMLElement>('#mobileNav');
-const mobile = matchMedia('(max-width: 760px)');
+function initReadingDirectory() {
+  const article = document.querySelector<HTMLElement>('.article-body');
+  const contents = document.querySelector<HTMLDetailsElement>('#articleTocDetails');
+  const list = document.querySelector<HTMLElement>('#articleTocLinks');
+  const header = document.querySelector<HTMLElement>('.v2-header');
+  const trigger = document.querySelector<HTMLButtonElement>('#articleReadingToggle');
+  const label = document.querySelector<HTMLElement>('#readingSectionLabel');
+  const dialog = document.querySelector<HTMLDialogElement>('#articleReadingDialog');
+  const directory = document.querySelector<HTMLElement>('#readingDirectoryLinks');
+  if (!article || !contents || !list || !header || !trigger || !label || !dialog || !directory) return;
 
-if (article && headings.length > 1 && inlineToc && inlineLinks && toolbar && toggle && dialog && directory) {
-  const sectionLabel = document.querySelector<HTMLElement>('#readingSectionLabel');
-  const sectionNumber = document.querySelector<HTMLElement>('#readingSectionNumber');
-  const makeLinks = (container: HTMLElement) => headings.map((heading, index) => {
-    if (!heading.id) heading.id = `section-${String(index + 1).padStart(2, '0')}`;
-    const link = document.createElement('a');
-    link.href = `#${heading.id}`;
-    const number = document.createElement('span');
-    number.textContent = String(index + 1).padStart(2, '0');
-    number.setAttribute('aria-hidden', 'true');
-    const label = document.createElement('b');
-    label.textContent = heading.textContent?.trim() || `第 ${index + 1} 节`;
-    link.append(number, label);
-    container.append(link);
-    return link;
+  // Astro emits these anchors and heading IDs together when it renders the Markdown.
+  const sections = [...list.querySelectorAll('a')].flatMap(link => {
+    const heading = document.getElementById(link.getAttribute('href')!.slice(1));
+    if (!heading) return [];
+    const mobileLink = link.cloneNode(true) as HTMLAnchorElement;
+    directory.append(mobileLink);
+    return [{ heading, link, mobileLink }];
   });
-  const desktopLinks = makeLinks(inlineLinks);
-  const mobileLinks = makeLinks(directory);
-  inlineToc.hidden = false;
-  if (inlineDetails) inlineDetails.open = !mobile.matches;
-  toolbar.hidden = false;
+  if (!sections.length) return;
+  const mobile = matchMedia('(max-width: 760px)');
+  const siteMenu = document.getElementById('mobileNav');
+  contents.open = !mobile.matches;
   let current = -1;
+  let stops: number[] = [];
+  let end = 0;
+  let offset = 0;
+  let dirty = true;
   let frame = 0;
-  let dialogAnimation: Animation | undefined;
-  let closing = false;
-  let restoreFocus = true;
-  const readingOffset = () => (header?.getBoundingClientRect().height || 74) + (mobile.matches ? 82 : 40);
+
+  function mark(index: number, selected: boolean) {
+    if (index < 0) return;
+    const { link, mobileLink } = sections[index];
+    for (const anchor of [link, mobileLink]) {
+      if (selected) anchor.setAttribute('aria-current', 'location');
+      else anchor.removeAttribute('aria-current');
+    }
+  }
 
   const update = () => {
     frame = 0;
-    const offset = readingOffset();
-    let next = 0;
-    headings.forEach((heading, index) => { if (heading.getBoundingClientRect().top <= offset + 1) next = index; });
-    if (next !== current) {
-      current = next;
-      [desktopLinks, mobileLinks].forEach(links => links.forEach((link, index) => {
-        const selected = index === current;
-        link.classList.toggle('is-active', selected);
-        if (selected) link.setAttribute('aria-current', 'location');
-        else link.removeAttribute('aria-current');
-      }));
-      if (sectionLabel) sectionLabel.textContent = headings[current].textContent?.trim() || '';
-      if (sectionNumber) sectionNumber.textContent = String(current + 1).padStart(2, '0');
-      toggle.setAttribute('aria-label', `打开文章目录，当前章节：${sectionLabel?.textContent}`);
+    const reflow = dirty;
+    if (dirty) {
+      stops = sections.map(({ heading }) => scrollY + heading.getBoundingClientRect().top);
+      end = scrollY + article.getBoundingClientRect().bottom;
+      offset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) +
+        parseFloat(getComputedStyle(sections[0].heading).scrollMarginTop);
+      dirty = false;
     }
-    const visible = mobile.matches && headings[0].getBoundingClientRect().top <= offset + 1
-      && article.getBoundingClientRect().bottom > offset + 80 && !mobileNav?.classList.contains('is-open');
-    toolbar.classList.toggle('is-visible', visible);
-    toolbar.inert = !visible;
-    toolbar.setAttribute('aria-hidden', String(!visible));
+    const line = scrollY + offset + 1;
+    let next = 0;
+    while (next + 1 < stops.length && stops[next + 1] <= line) next++;
+    const changed = next !== current;
+    if (changed) {
+      mark(current, false);
+      current = next;
+      mark(current, true);
+      label.textContent = sections[current].link.textContent;
+      trigger.setAttribute('aria-label', `打开文章目录，当前章节：${label.textContent}`);
+    }
+    if ((changed || reflow) && contents.open && list.clientHeight) {
+      const active = sections[current].link;
+      const top = active.offsetTop;
+      const bottom = top + active.offsetHeight;
+      list.style.setProperty('--section-y', `${top}px`);
+      list.style.setProperty('--section-height', `${active.offsetHeight}px`);
+      list.setAttribute('data-marker', '');
+      // Scroll only the directory, never the document or a keyboard user's focused link.
+      if (!mobile.matches && !list.matches(':focus-within')) {
+        if (top < list.scrollTop) list.scrollTop = top;
+        else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight;
+      }
+    }
+    const reading = mobile.matches && line >= stops[0] && line < end && !siteMenu?.classList.contains('is-open');
+    header.classList.toggle('is-reading', reading);
+    trigger.hidden = !reading;
   };
-  const scheduleUpdate = () => { if (!frame) frame = requestAnimationFrame(update); };
+  const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+  const measure = () => { dirty = true; schedule(); };
 
-  const closeDialog = async (focusTrigger = true, animate = true) => {
-    if (!dialog.open || closing) return;
-    closing = true;
-    restoreFocus = focusTrigger;
+  let dialogAnimation: Animation | undefined;
+  let returnFocus = true;
+  const close = (focusTrigger: boolean) => {
+    returnFocus = focusTrigger;
     dialogAnimation?.cancel();
-    dialogAnimation = animate ? animateUi(dialog, [
-      { opacity: 1, transform: 'none' },
-      { opacity: 0, transform: 'translateY(-4px) scale(.98)' },
-    ], { duration: 140, easing: 'ease-in', fill: 'forwards' }) : undefined;
-    await dialogAnimation?.finished.catch(() => {});
-    dialog.close();
-    dialogAnimation?.cancel();
-    closing = false;
+    if (dialog.open) dialog.close();
   };
-  toggle.addEventListener('click', () => {
+  trigger.addEventListener('click', () => {
     if (dialog.open) return;
-    restoreFocus = true;
+    returnFocus = true;
     dialog.showModal();
     document.documentElement.classList.add('has-reading-dialog');
-    toggle.setAttribute('aria-expanded', 'true');
-    const activeLink = mobileLinks[current];
-    directory.scrollTop = Math.max(0, activeLink.offsetTop - directory.offsetTop - directory.clientHeight / 2 + activeLink.clientHeight / 2);
-    activeLink.focus({ preventScroll: true });
+    trigger.setAttribute('aria-expanded', 'true');
+    const link = sections[current].mobileLink;
+    directory.scrollTop += link.getBoundingClientRect().top - directory.getBoundingClientRect().top
+      - (directory.clientHeight - link.offsetHeight) / 2;
+    link.focus({ preventScroll: true });
     dialogAnimation = animateUi(dialog, [
-      { opacity: 0, transform: 'translateY(-6px) scale(.97)' },
-      { opacity: 1, transform: 'none' },
-    ], { duration: 200 });
+      { opacity: .5, translate: '0 -4px' }, { opacity: 1, translate: '0 0' },
+    ], { duration: 160 });
   });
-  document.querySelector('#articleReadingClose')?.addEventListener('click', () => { void closeDialog(); });
-  dialog.addEventListener('cancel', event => { event.preventDefault(); void closeDialog(); });
+  dialog.querySelector('#articleReadingClose')?.addEventListener('click', () => close(true));
   dialog.addEventListener('click', event => {
     if (event.target !== dialog) return;
-    const rect = dialog.getBoundingClientRect();
-    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) void closeDialog();
+    const bounds = dialog.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right ||
+        event.clientY < bounds.top || event.clientY > bounds.bottom) close(true);
   });
   dialog.addEventListener('close', () => {
     document.documentElement.classList.remove('has-reading-dialog');
-    toggle.setAttribute('aria-expanded', 'false');
-    if (restoreFocus && !toolbar.inert) toggle.focus({ preventScroll: true });
-    scheduleUpdate();
+    trigger.setAttribute('aria-expanded', 'false');
+    if (returnFocus && !trigger.hidden) trigger.focus({ preventScroll: true });
+    measure();
   });
-  mobileLinks.forEach((link, index) => link.addEventListener('click', async event => {
-    event.preventDefault();
-    if (closing) return;
-    await closeDialog(false);
-    if (location.hash !== link.hash) history.pushState(null, '', link.hash);
-    const heading = headings[index];
-    heading.tabIndex = -1;
-    heading.focus({ preventScroll: true });
-    scrollTo({ top: Math.max(0, scrollY + heading.getBoundingClientRect().top - readingOffset()), behavior: uiMotionEnabled() ? 'smooth' : 'instant' });
-    scheduleUpdate();
-  }));
+  for (const { heading, mobileLink } of sections) {
+    mobileLink.addEventListener('click', event => {
+      if (event.button || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+      close(false);
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
+      // The anchor itself handles the URL, scroll padding and browser history.
+    });
+  }
   mobile.addEventListener('change', () => {
-    if (inlineDetails) inlineDetails.open = !mobile.matches;
-    if (!mobile.matches) void closeDialog(false, false);
-    scheduleUpdate();
+    contents.open = !mobile.matches;
+    if (!mobile.matches && dialog.open) close(false);
+    measure();
   });
-  addEventListener('scroll', scheduleUpdate, { passive: true });
-  addEventListener('resize', scheduleUpdate);
-  addEventListener('hashchange', scheduleUpdate);
-  new ResizeObserver(scheduleUpdate).observe(article);
-  if (mobileNav) new MutationObserver(scheduleUpdate).observe(mobileNav, { attributes: true, attributeFilter: ['class'] });
+  contents.addEventListener('toggle', measure);
+  addEventListener('scroll', schedule, { passive: true });
+  addEventListener('hashchange', schedule);
+  addEventListener('resize', measure);
+  addEventListener('pageshow', measure);
+  const observer = new ResizeObserver(measure);
+  observer.observe(article.closest('.article-wrap') || article);
+  observer.observe(list);
+  if (siteMenu) new MutationObserver(schedule).observe(siteMenu, { attributes: true, attributeFilter: ['class'] });
   update();
 }
+
+initReadingDirectory();

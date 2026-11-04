@@ -19,24 +19,17 @@ const countFiles=async(directory:string):Promise<number>=>{
 };
 const uploads=await countFiles(resolve(workspaceRoot,'uploads')).catch(()=>0);
 ---
-<BaseLayout title="博客管理 · rain" description="rain 博客的文章、图片和友链管理入口。" bodyClass="admin-v2" noindex>
+<BaseLayout title="博客管理 · rain" description="rain 博客的文章、图片和友链管理入口。" noindex>
   <main id="main-content" class="admin-main">
     <header class="admin-hero">
-      <div class="admin-hero-copy v2-reveal">
+      <div class="admin-hero-copy">
         <p class="v2-kicker">rain</p>
-        <h1>博客<br /><em>内容管理</em></h1>
-        <p>在 GitHub 编辑文章、上传图片或修改友链。修改提交到 main 分支后，自动检查并部署到网站。</p>
-        <div class="admin-notice"><span>GitHub</span><p>下面的编辑链接需要登录 GitHub，并具有仓库写入权限。</p></div>
-      </div>
-      <div class="admin-console v2-reveal" aria-hidden="true">
-        <span>rain / 博客管理</span>
-        <strong>文章<br />图片<br />友链</strong>
-        <i></i><b>✓</b>
-        <small>GitHub<br />rain-lei / rain-lei</small>
+        <h1>博客管理</h1>
+        <p>使用有仓库写入权限的 GitHub 账号编辑。提交到 main 后自动构建并部署。</p>
       </div>
     </header>
 
-    <section class="admin-stats v2-reveal" aria-label="内容概览">
+    <section class="admin-stats" aria-label="内容概览">
       <div><strong>{String(published).padStart(2,'0')}</strong><span>已发布文章</span></div>
       <div><strong>{String(uploads).padStart(2,'0')}</strong><span>上传素材</span></div>
       <div><strong>{String(enabledLinks).padStart(2,'0')}</strong><span>启用友链</span></div>
@@ -44,40 +37,40 @@ const uploads=await countFiles(resolve(workspaceRoot,'uploads')).catch(()=>0);
     </section>
 
     <section class="admin-actions">
-      <div class="admin-section-head v2-reveal"><div><span>01</span><p class="v2-kicker">编辑入口</p><h2>文章与素材</h2></div><small>以下链接前往 GitHub</small></div>
+      <div class="admin-section-head"><h2>文章与素材</h2></div>
       <div class="admin-action-grid">
-        <article class="admin-action-card is-primary v2-reveal">
-          <span>01 / WRITE</span><strong>新建文章</strong><p>从 Markdown 模板开始，填写标题、摘要、分类、日期和正文。</p>
+        <article class="admin-action-card">
+          <strong>新建文章</strong><p>复制下方模板，填写文章信息和正文。</p>
           <div><a href="https://github.com/rain-lei/rain-lei/new/main/content/posts" target="_blank" rel="noopener noreferrer">开始写作 ↗</a><a href="https://github.com/rain-lei/rain-lei/tree/main/content/posts" target="_blank" rel="noopener noreferrer">文章目录</a></div>
         </article>
-        <article class="admin-action-card v2-reveal">
-          <span>02 / MEDIA</span><strong>上传图片</strong><p>将图片放到 <code>uploads/年份/主题/</code>，再通过站内绝对路径插入文章。</p>
+        <article class="admin-action-card">
+          <strong>上传图片</strong><p>将图片放到 <code>uploads/年份/主题/</code>，再通过站内绝对路径插入文章。</p>
           <div><a href="https://github.com/rain-lei/rain-lei/upload/main/uploads" target="_blank" rel="noopener noreferrer">上传素材 ↗</a><a href="https://github.com/rain-lei/rain-lei/tree/main/uploads" target="_blank" rel="noopener noreferrer">查看目录</a></div>
         </article>
-        <article class="admin-action-card v2-reveal">
-          <span>03 / FRIENDS</span><strong>维护友链</strong><p>编辑站点名称、地址、头像与说明；外部申请继续通过 Pull Request 审核。</p>
+        <article class="admin-action-card">
+          <strong>维护友链</strong><p>编辑站点名称、地址、头像与说明。友链申请通过 Pull Request 提交。</p>
           <div><a href="https://github.com/rain-lei/rain-lei/edit/main/friend-links.json" target="_blank" rel="noopener noreferrer">编辑友链 ↗</a><a href="https://github.com/rain-lei/rain-lei/blob/main/FRIEND_LINKS.md" target="_blank" rel="noopener noreferrer">申请规范</a></div>
         </article>
-        <article class="admin-action-card is-dark v2-reveal">
-          <span>04 / RELEASE</span><strong>发布与回滚</strong><p>查看校验和部署状态；需要时从工作流选择提交 SHA 回滚到已验证版本。</p>
+        <article class="admin-action-card">
+          <strong>发布与回滚</strong><p>查看部署记录，或指定提交 SHA 回滚。</p>
           <div><a href="https://github.com/rain-lei/rain-lei/actions/workflows/deploy.yml" target="_blank" rel="noopener noreferrer">部署记录 ↗</a><a href="https://github.com/rain-lei/rain-lei/actions/workflows/validate.yml" target="_blank" rel="noopener noreferrer">构建检查</a></div>
         </article>
       </div>
     </section>
 
     <section class="admin-pipeline">
-      <div class="admin-section-head v2-reveal"><div><span>02</span><p class="v2-kicker">发布流程</p><h2>修改后如何上线</h2></div><small>部署失败时自动恢复上一版本</small></div>
-      <ol class="pipeline-flow v2-reveal">
+      <div class="admin-section-head"><h2>发布流程</h2><small>健康检查失败时恢复上一版本</small></div>
+      <ol class="pipeline-flow">
         <li><span>01</span><strong>编辑文件</strong><small>Markdown / 图片 / JSON</small></li>
         <li><span>02</span><strong>提交 Git</strong><small>Commit 或 Pull Request</small></li>
-        <li><span>03</span><strong>自动校验</strong><small>类型、内容、构建、索引</small></li>
+        <li><span>03</span><strong>构建站点</strong><small>类型检查、页面、搜索索引</small></li>
         <li><span>04</span><strong>部署服务器</strong><small>健康检查与自动回滚</small></li>
       </ol>
     </section>
 
-    <section class="admin-template v2-reveal">
+    <section class="admin-template">
       <div><p class="v2-kicker">Markdown</p><h2>文章模板</h2><p>复制模板，填写文章信息和正文后，保存到文章目录。</p><div class="admin-template-links"><a href="https://github.com/rain-lei/rain-lei/blob/main/content/templates/post.md" target="_blank" rel="noopener noreferrer">在 GitHub 查看 ↗</a><a href="https://github.com/rain-lei/rain-lei/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">提交规范 ↗</a></div></div>
-      <div class="admin-template-code"><div><span>MARKDOWN</span><button id="copyPostTemplate" type="button">复制模板</button></div><pre><code id="postTemplateCode">{template.trim()}</code></pre></div>
+      <div class="admin-template-code"><div><span>Markdown</span><button id="copyPostTemplate" type="button">复制模板</button></div><pre><code id="postTemplateCode">{template.trim()}</code></pre></div>
     </section>
   </main>
   <script>

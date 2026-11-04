@@ -3,12 +3,11 @@ id: oureda-winter-wordle
 title: OurEDA Winter Wordle
 excerpt: OurEDA 25 级 Web 方向寒假作业。六次机会猜一个五字母单词，可以在页面里直接玩。
 category: entertainment
-illustration: wordle
 date: 2026-01-18
 updated: 2026-10-17
 status: published
-accent: green
 contentType: game
+illustration: wordle
 playUrl: https://rain-lei.github.io/oureda-25-web-winter/
 repository: https://github.com/rain-lei/oureda-25-web-winter/tree/website
 tech:

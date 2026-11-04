@@ -7,7 +7,6 @@ illustration: programmer
 date: 2026-08-20
 updated: 2026-10-17
 status: published
-accent: sunset
 ---
 
 下面是 2026 年 8 月 20 日整理的工具清单。配置项目时，先确认项目需要的语言和版本，再找对应的工具。

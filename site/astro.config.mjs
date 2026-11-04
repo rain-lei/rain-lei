@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://www.rainlei.xyz',
   output: 'static',
-  integrations: [sitemap()],
+  integrations: [sitemap({ filter: (page) => new URL(page).pathname !== '/admin/' })],
   markdown: { shikiConfig: { theme: 'github-dark' } },
   build: { format: 'directory' },
   vite: { build: { cssMinify: true } },

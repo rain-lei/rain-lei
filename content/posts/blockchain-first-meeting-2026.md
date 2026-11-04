@@ -6,7 +6,6 @@ category: study
 illustration: programmer
 date: 2026-10-17
 status: published
-accent: blue
 tech:
   - 区块链组
   - 例会

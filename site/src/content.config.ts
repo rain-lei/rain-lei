@@ -11,7 +11,6 @@ const posts = defineCollection({
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
     status: z.enum(['draft', 'published']).default('published'),
-    accent: z.enum(['sunset', 'blue', 'green', 'cream', 'purple', 'orange']).default('blue'),
     contentType: z.enum(['article', 'game']).default('article'),
     illustration: z.enum(['reading', 'programmer', 'snack', 'wordle']).optional(),
     playUrl: z.string().url().optional(),

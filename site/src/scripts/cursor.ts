@@ -1,10 +1,19 @@
 export function initCursor(motionAllowed:()=>boolean) {
   const finePointer=matchMedia('(hover:hover) and (pointer:fine)');
+  const start=(event:PointerEvent)=>{
+    if(event.pointerType!=='mouse'||!finePointer.matches||!motionAllowed())return;
+    window.removeEventListener('pointermove',start);
+    mountCursor(motionAllowed,finePointer);
+  };
+  window.addEventListener('pointermove',start,{passive:true});
+}
+
+function mountCursor(motionAllowed:()=>boolean,finePointer:MediaQueryList) {
   const backdrop=document.querySelector<HTMLElement>('.loopy-backdrop');
   if(!backdrop)return;
   const canvas=document.createElement('canvas');
   canvas.className='loopy-cursor';canvas.setAttribute('aria-hidden','true');document.body.append(canvas);
-  const context=canvas.getContext('2d');if(!context)return;
+  const context=canvas.getContext('2d');if(!context){canvas.remove();return;}
   const ctx:CanvasRenderingContext2D=context;
   ctx.lineJoin='round';ctx.lineCap='round';
   type Echo={x:number;y:number;born:number;tilt:number;size:number;drift:number};

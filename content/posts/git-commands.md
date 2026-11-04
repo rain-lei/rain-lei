@@ -7,7 +7,6 @@ illustration: programmer
 date: 2026-08-20
 updated: 2026-10-17
 status: published
-accent: orange
 ---
 
 `<文件名>`、`<仓库地址>` 等是占位符，使用时替换成实际值，不保留尖括号。各节列的是不同操作，按需要选择命令。
@@ -95,7 +94,7 @@ git stash pop
 
 在 `.gitignore` 中列出不需要提交的文件或目录，例如本地配置、依赖和构建结果：
 
-```gitignore
+```text
 .env
 *.pem
 data/

@@ -1,62 +1,46 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
 import { categoryLabels, formatDate, postSlug, sortPosts } from '../../lib/posts';
 const posts=sortPosts(await getCollection('posts'));
 const recent=posts.slice(0,4);
 const topics=['大学英语','奖励评审','书院课程','Playwright','Git','C 程序设计'];
 ---
-<BaseLayout title="全文搜索 · rain" description="搜索 rain 的全部公开文章。" active="search" bodyClass="search-v2">
+<BaseLayout title="全文搜索 · rain" description="搜索 rain 的全部公开文章。" active="search">
 <main id="main-content" class="search-main" data-pagefind-ignore>
-  <header class="search-hero search-page-heading v2-reveal">
+  <header>
     <div class="search-hero-copy">
-      <p class="v2-kicker">搜索 · {posts.length} 篇文章</p>
       <h1>搜索文章</h1>
       <div class="search-console" role="search">
-        <span class="search-console-mark" aria-hidden="true">⌕</span>
+        <Icon name="search" class="search-console-mark" />
         <input id="pagefindInput" type="search" aria-label="搜索文章" placeholder="搜索标题、正文或标签" autocomplete="off" />
-        <kbd>/</kbd>
+        <kbd aria-hidden="true">/</kbd>
         <button id="searchClear" type="button" aria-label="清空搜索" hidden>×</button>
       </div>
-      {topics.length>0&&<div class="search-topics" aria-label="常用搜索词"><span>常用</span>{topics.map(topic=><button type="button" data-search-topic={topic}>{topic}</button>)}</div>}
+      <div class="search-topics" aria-label="常用搜索词"><span>常用</span>{topics.map(topic=><button type="button" data-search-topic={topic}>{topic}</button>)}</div>
     </div>
   </header>
 
   <section class="search-workspace" aria-labelledby="searchStatus">
     <div class="search-status-line">
-      <div><span class="search-status-dot"></span><strong id="searchStatus" aria-live="polite">输入关键词搜索</strong></div>
+      <h2 id="searchStatus" aria-live="polite">最近发布</h2>
       <small id="searchCount">共 {posts.length} 篇文章</small>
     </div>
     <div class="search-idle" id="searchIdle">
-      <div class="search-idle-heading"><span>最近更新</span></div>
-      <div class="search-recent-grid">{recent.map((post,index)=><a href={`/articles/${postSlug(post)}/`}><span>{String(index+1).padStart(2,'0')}</span><small>{categoryLabels[post.data.category]} · {formatDate(post.data.date)}</small><strong>{post.data.title}</strong><b>↗</b></a>)}</div>
+      <div class="search-recent-grid">{recent.map(post=><a href={`/articles/${postSlug(post)}/`}><small>{categoryLabels[post.data.category]} · {formatDate(post.data.date)}</small><strong>{post.data.title}</strong><b>↗</b></a>)}</div>
     </div>
     <div class="search-results" id="pagefindResults" hidden></div>
+    <template id="searchResultTemplate">
+      <article class="search-result-card">
+        <a class="search-result-main">
+          <div class="search-result-content"><small></small><h3></h3><p></p></div>
+          <Icon name="arrow" />
+        </a>
+        <ul class="search-sections" aria-label="匹配章节" hidden></ul>
+      </article>
+    </template>
   </section>
 </main>
-<script>
-const input=document.getElementById('pagefindInput') as HTMLInputElement;
-const output=document.getElementById('pagefindResults') as HTMLElement;
-const idle=document.getElementById('searchIdle') as HTMLElement;
-const status=document.getElementById('searchStatus') as HTMLElement;
-const count=document.getElementById('searchCount') as HTMLElement;
-const clear=document.getElementById('searchClear') as HTMLButtonElement;
-const topicButtons=[...document.querySelectorAll<HTMLButtonElement>('[data-search-topic]')];
-let timer:number;let requestId=0;
-const escapeHtml=(value:unknown)=>String(value??'').replace(/[&<>"']/g,char=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[char]!));
-const safeExcerpt=(value:unknown)=>escapeHtml(value).replaceAll('&lt;mark&gt;','<mark>').replaceAll('&lt;/mark&gt;','</mark>');
-const setIdle=()=>{requestId++;clearTimeout(timer);output.hidden=true;output.innerHTML='';idle.hidden=false;status.textContent='输入关键词搜索';count.textContent='搜索标题、正文或标签';clear.hidden=true;history.replaceState(null,'',location.pathname);};
-const renderResults=(results:any[],query:string)=>{
-  idle.hidden=true;output.hidden=false;clear.hidden=false;
-  status.textContent=results.length?`“${query}”的搜索结果`:`没有找到“${query}”`;
-  count.textContent=`${results.length} 篇匹配内容`;
-  output.innerHTML=results.length?results.map((item,index)=>{const category=escapeHtml(item.meta.category||'文章');const date=escapeHtml(item.meta.date||'');const title=escapeHtml(item.meta.title||'未命名文章');const url=escapeHtml(item.url);const excerpt=safeExcerpt(item.excerpt||'');return `<a class="search-result-card" href="${url}"><span class="search-result-index">${String(index+1).padStart(2,'0')}</span><span class="search-result-content"><small>${category}${date?` · ${date}`:''}</small><strong>${title}</strong><p>${excerpt}</p><em>${url}</em></span><b>↗</b></a>`;}).join(''):'<div class="search-empty-state"><strong>没有找到匹配文章</strong><p>缩短关键词，或按分类浏览文章。</p><a href="/articles/">浏览文章 ↗</a></div>';
-};
-const search=async()=>{const query=input.value.trim();const current=++requestId;if(!query){setIdle();return;}clear.hidden=false;idle.hidden=true;output.hidden=false;output.innerHTML='<div class="search-loading"><i></i><span>正在搜索…</span></div>';status.textContent='正在搜索';count.textContent='请稍候';history.replaceState(null,'',`${location.pathname}?q=${encodeURIComponent(query)}`);try{const pagefind=await (new Function('return import("/pagefind/pagefind.js")'))();const response=await pagefind.search(query);const results=await Promise.all(response.results.slice(0,24).map((item:any)=>item.data()));if(current===requestId)renderResults(results,query);}catch{if(current===requestId){status.textContent='搜索索引暂时不可用';count.textContent='请刷新页面后重试';output.innerHTML='<div class="search-empty-state"><strong>索引暂时无法载入</strong><p>可以先从文章列表继续浏览。</p><a href="/articles/">浏览文章 ↗</a></div>';}}};
-input?.addEventListener('input',()=>{clearTimeout(timer);timer=window.setTimeout(search,180);});
-clear?.addEventListener('click',()=>{input.value='';setIdle();input.focus();});
-topicButtons.forEach(button=>button.addEventListener('click',()=>{input.value=button.dataset.searchTopic||'';search();input.focus();}));
-document.addEventListener('keydown',event=>{if(event.key==='/'&&!/input|textarea/i.test((event.target as HTMLElement)?.tagName||'')){event.preventDefault();input.focus();}if(event.key==='Escape'&&document.activeElement===input){input.value='';setIdle();}});
-const initial=new URLSearchParams(location.search).get('q');if(initial){input.value=initial;search();}
-</script>
+<script src="../../scripts/search.ts"></script>
 </BaseLayout>

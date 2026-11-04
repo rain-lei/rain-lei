@@ -4,16 +4,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import Loopy from '../components/Loopy.astro';
 import WordleTiles from '../components/WordleTiles.astro';
+import friendLinks from '../../../friend-links.json';
 import { categoryLabels, formatDate, postSlug, sortPosts } from '../lib/posts';
 const posts = sortPosts(await getCollection('posts'));
-const latest = posts.slice(0,3);
+const lastUpdated = (post:(typeof posts)[number]) => post.data.updated ?? post.data.date;
+const latest = [...posts].sort((a,b)=>lastUpdated(b).getTime()-lastUpdated(a).getTime()).slice(0,3);
+type FriendLink = { name:string; url:string; avatar?:string; description?:string; sort_order:number; enabled:boolean };
+const friends:FriendLink[] = friendLinks.links.filter(link=>link.enabled).sort((a,b)=>a.sort_order-b.sort_order||a.name.localeCompare(b.name,'zh-CN'));
+const avatarUrl = (link:typeof friends[number]) => {
+  const url = new URL(link.avatar || '/favicon.ico', link.url);
+  return url.origin === Astro.site?.origin ? url.pathname + url.search : url.href;
+};
 ---
-<BaseLayout active="home" bodyClass="home-v2">
+<BaseLayout active="home">
   <main id="main-content">
     <section class="home-hero">
       <div class="hero-copy">
-        <p class="hero-eyebrow">大连理工大学 · 软件工程</p>
-        <h1><span class="hero-name">rain</span> 的博客</h1>
+        <h1><span class="hero-name">rain<svg class="signature-stroke" viewBox="0 0 110 10" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M2 8 C31 8 81 5 108 2" pathLength="1" stroke-dasharray="1" />
+        </svg></span> 的博客</h1>
         <div class="hero-cta"><a class="v2-button is-primary" href="/articles/">浏览文章<Icon /></a><a class="v2-button" href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer">GitHub<Icon name="external" /></a></div>
       </div>
       <Loopy interactive />
@@ -22,13 +31,13 @@ const latest = posts.slice(0,3);
       <section class="home-latest">
         <div class="section-heading"><h2>最近更新</h2><a class="text-link" href="/articles/">全部文章<Icon name="external" /></a></div>
         <div class="home-post-list">
-          {latest.map((post,index)=><a class:list={['home-post', {'is-featured':index===0}]} href={`/articles/${postSlug(post)}/`}>
-            <div class="post-meta"><span>{categoryLabels[post.data.category]}</span><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time></div>
-            <h3>{post.data.title}</h3><p>{post.data.excerpt}</p><Icon class="post-arrow" />
+          {latest.map((post,index)=><a class:list={['home-post', {'is-featured':index===0}]} data-reveal href={`/articles/${postSlug(post)}/`}>
+            <div class="post-meta"><span>{categoryLabels[post.data.category]}</span><time datetime={lastUpdated(post).toISOString()}>{post.data.updated?'更新':'发布'} {formatDate(lastUpdated(post))}</time></div>
+            <h3><span class="post-title">{post.data.title}</span></h3><p>{post.data.excerpt}</p><Icon class="post-arrow" />
           </a>)}
         </div>
       </section>
-      <aside class="home-sidebar">
+      <aside class="home-sidebar" data-reveal>
         <div class="sidebar-card">
           <div class="section-heading"><h2>项目</h2><a class="text-link" href="/projects/" aria-label="全部项目"><Icon name="external" /></a></div>
           <a class="wordle-link" href="/articles/oureda-winter-wordle/"><strong>OurEDA Winter Wordle</strong><WordleTiles /><span>在线试玩<Icon name="external" /></span></a>
@@ -39,7 +48,7 @@ const latest = posts.slice(0,3);
     </div>
     <section class="home-friends" id="contact">
       <div class="section-heading"><h2>友情链接</h2><a class="text-link" href="https://github.com/rain-lei/rain-lei/blob/main/FRIEND_LINKS.md" target="_blank" rel="noopener noreferrer">申请友链<Icon name="external" /></a></div>
-      <div class="friend-links-grid" data-friend-links><a class="friend-link-card" href="https://github.com/rain-lei"><span class="friend-link-avatar has-image"><img src="/images/github-avatar.png" alt="" width="40" height="40" /></span><span class="friend-link-copy"><strong>rain-lei · GitHub</strong><small>代码和公开仓库</small></span><b>↗</b></a></div>
+      <div class="friend-links-grid">{friends.map(link=><a class="friend-link-card" data-reveal href={link.url} target="_blank" rel="noopener noreferrer" aria-label={`${link.name}（在新窗口打开）`}><span class="friend-link-avatar"><span class="friend-link-initial" aria-hidden="true">{link.name.trim().slice(0,1).toUpperCase()}</span><img src={avatarUrl(link)} alt="" width="40" height="40" loading="lazy" decoding="async" /></span><span class="friend-link-copy"><strong>{link.name}</strong><small>{link.description || new URL(link.url).hostname}</small></span><b aria-hidden="true">↗</b></a>)}</div>
     </section>
   </main>
 </BaseLayout>

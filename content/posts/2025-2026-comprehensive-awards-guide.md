@@ -5,7 +5,6 @@ category: study
 date: 2026-08-23
 updated: 2026-10-17
 status: published
-accent: blue
 ---
 
 > **适用对象**：大连理工大学求实书院 2025 级本科生，课程清单对应信息技术学域（二）与软件工程（创新班）。

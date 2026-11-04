@@ -6,7 +6,6 @@ category: study
 date: 2025-11-19
 updated: 2026-10-17
 status: published
-accent: green
 contentType: article
 tech:
   - C

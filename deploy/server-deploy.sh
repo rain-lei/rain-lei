@@ -35,9 +35,15 @@ release_dir="$RELEASE_ROOT/$commit_sha"
 image_tag="$APP_NAME:$short_sha"
 previous_sha="$(cat "$STATE_DIR/current-sha" 2>/dev/null || true)"
 
+container_ready() {
+  local health
+  health="$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "$APP_NAME")" || return 1
+  [[ "$health" == "healthy" || "$health" == "none" ]] && curl -fsS --max-time 5 "$HEALTH_URL" >/dev/null
+}
+
 if docker inspect "$APP_NAME" >/dev/null 2>&1; then
   current_image="$(docker inspect -f '{{.Config.Image}}' "$APP_NAME")"
-  if [[ "$current_image" == "$image_tag" ]] && curl -fsS --max-time 5 "$HEALTH_URL" >/dev/null; then
+  if [[ "$current_image" == "$image_tag" ]] && container_ready; then
     printf '%s\n' "$commit_sha" > "$STATE_DIR/current-sha"
     echo "Commit $short_sha is already healthy in production."
     exit 0
@@ -102,16 +108,17 @@ rollback_on_error() {
 }
 trap rollback_on_error ERR
 
-# 静态容器内部 Nginx 使用 80；宿主机端口保持 8080，兼容已有反向代理配置。
+# 容器内 Nginx 监听 80，宿主机反向代理连接 127.0.0.1:8080。
 docker run -d \
   --name "$APP_NAME" \
   --restart unless-stopped \
+  --log-driver json-file --log-opt max-size=10m --log-opt max-file=3 \
   -p 127.0.0.1:8080:80 \
   "$image_tag" >/dev/null
 
 healthy=0
 for attempt in $(seq 1 30); do
-  if curl -fsS --max-time 5 "$HEALTH_URL" >/dev/null; then
+  if container_ready; then
     healthy=1
     break
   fi

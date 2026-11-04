@@ -1,30 +1,22 @@
 import { initCursor } from './cursor';
-import { initHomeOpening } from './home-opening';
+import { initPageOpening } from './page-opening';
+import { animateUi, uiMotionEnabled as allowed } from './ui-motion';
 
 const body=document.body;
 const button=document.querySelector<HTMLButtonElement>('#motionToggle');
 const reduced=matchMedia('(prefers-reduced-motion:reduce)');
 const finePointer=matchMedia('(hover:hover) and (pointer:fine)');
-const allowed=()=>body.dataset.motion==='on'&&!reduced.matches&&!document.hidden;
 let preference=true;
 try { preference=localStorage.getItem('rain-motion')!=='off'; } catch {}
-const transient=new Set<Animation>();
-const animate=(element:Element,keyframes:Keyframe[],options:KeyframeAnimationOptions)=>{
-  if(!allowed())return;
-  const animation=element.animate(keyframes,options);transient.add(animation);
-  const forget=()=>transient.delete(animation);animation.addEventListener('finish',forget,{once:true});animation.addEventListener('cancel',forget,{once:true});
-  return animation;
-};
 const syncMotion=()=>{
   const enabled=preference&&!reduced.matches;body.dataset.motion=enabled?'on':'off';
   document.documentElement.style.scrollBehavior=enabled?'':'auto';
   if(button){button.disabled=reduced.matches;button.setAttribute('aria-pressed',String(enabled));const label=reduced.matches?'已跟随系统减少动态效果':enabled?'暂停动效':'开启动效';button.setAttribute('aria-label',label);button.title=label;}
-  if(!enabled){transient.forEach(a=>a.cancel());transient.clear();}
   document.dispatchEvent(new CustomEvent('loopy:motion',{detail:{enabled}}));
 };
 button?.addEventListener('click',()=>{preference=!preference;try{localStorage.setItem('rain-motion',preference?'on':'off');}catch{}syncMotion();});
 reduced.addEventListener('change',syncMotion);syncMotion();
-document.addEventListener('visibilitychange',()=>{body.toggleAttribute('data-tab-hidden',document.hidden);if(document.hidden)transient.forEach(a=>a.cancel());});
+document.addEventListener('visibilitychange',()=>body.toggleAttribute('data-tab-hidden',document.hidden));
 initCursor(allowed);
 const mobileTags=document.querySelector<HTMLDetailsElement>('.tag-details');
 if(mobileTags){
@@ -69,22 +61,20 @@ document.querySelectorAll<HTMLButtonElement>('.loopy-stage').forEach(stage=>{
   document.addEventListener('loopy:motion',()=>{if(!allowed())reset();});document.addEventListener('visibilitychange',()=>{if(document.hidden)reset();});
   stage.addEventListener('click',()=>{
     if(!allowed()||performance.now()-lastHello<900)return;lastHello=performance.now();
-    animate(greeting,[{transform:'none'},{transform:'translateY(2px) rotate(-3deg)',offset:.18},{transform:'translateY(-7px) rotate(3deg)',offset:.4},{transform:'rotate(-1deg)',offset:.7},{transform:'none'}],{duration:850,easing:'cubic-bezier(.4,0,.2,1)'});
-    stage.querySelectorAll('.hello-spark').forEach((spark,index)=>animate(spark,[{opacity:0,transform:'translateY(5px) scale(.4)'},{opacity:.7,transform:'scale(1)',offset:.35},{opacity:0,transform:'translateY(-13px) scale(.6)'}],{duration:700,delay:120+index*80,easing:'ease-out'}));
+    animateUi(greeting,[{transform:'none'},{transform:'translateY(2px) rotate(-3deg)',offset:.18},{transform:'translateY(-7px) rotate(3deg)',offset:.4},{transform:'rotate(-1deg)',offset:.7},{transform:'none'}],{duration:850,easing:'cubic-bezier(.4,0,.2,1)'});
+    stage.querySelectorAll('.hello-spark').forEach((spark,index)=>animateUi(spark,[{opacity:0,transform:'translateY(5px) scale(.4)'},{opacity:.7,transform:'scale(1)',offset:.35},{opacity:0,transform:'translateY(-13px) scale(.6)'}],{duration:700,delay:120+index*80,easing:'ease-out'}));
   });
 });
 
-initHomeOpening(allowed,animate);
-if(allowed()){
-  document.querySelectorAll('.page-heading').forEach((el,index)=>animate(el,[{opacity:0,translate:'0 9px'},{opacity:1,translate:'0 0'}],{duration:600,delay:Math.min(index*80,160),easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'}));
-}
+initPageOpening();
 
 // Show the cached GitHub avatar immediately; refresh it only after a successful load.
 const avatar=new Image();
 avatar.addEventListener('load',()=>document.querySelectorAll<HTMLImageElement>('[data-github-avatar]').forEach(image=>{image.src=avatar.src;}),{once:true});
 avatar.src='https://github.com/rain-lei.png?size=240';
 document.addEventListener('keydown',event=>{
-  if(event.key!=='/'||event.ctrlKey||event.metaKey||event.altKey||/input|textarea|select/i.test((event.target as HTMLElement)?.tagName||'')||(event.target as HTMLElement)?.isContentEditable)return;
-  const input=document.querySelector<HTMLInputElement>('#archiveSearch');
-  if(input){event.preventDefault();input.focus();}else if(!document.getElementById('pagefindInput')){event.preventDefault();location.assign('/search/');}
+  if(event.key!=='/'||event.isComposing||event.ctrlKey||event.metaKey||event.altKey||/input|textarea|select/i.test((event.target as HTMLElement)?.tagName||'')||(event.target as HTMLElement)?.isContentEditable)return;
+  const input=document.querySelector<HTMLInputElement>('#archiveSearch, #pagefindInput');
+  event.preventDefault();
+  if(input)input.focus();else location.assign('/search/');
 });

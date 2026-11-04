@@ -3,13 +3,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHeading from '../../components/PageHeading.astro';
 import Icon from '../../components/Icon.astro';
 ---
-<BaseLayout title="关于 · rain" description="rain，大连理工大学软件工程专业 2025 级学生。" active="about" bodyClass="about-v2">
+<BaseLayout title="关于 · rain" description="rain，大连理工大学软件工程专业 2025 级学生。" active="about">
   <main id="main-content" class="page-main about-main">
     <PageHeading title="关于" kicker="rain" description="大连理工大学 · 软件工程 · 2025 级" variant="snack" avatar />
     <div class="about-layout">
       <section class="about-contact surface-panel" aria-labelledby="contactHeading">
         <h2 id="contactHeading">联系方式</h2>
-        <p class="panel-description">可以通过邮箱或 GitHub 找到我。</p>
         <div class="contact-methods">
           <a class="contact-method" href="mailto:rain__lei@outlook.com"><span class="contact-method-icon" aria-hidden="true"><Icon name="mail" /></span><span class="contact-method-copy"><small>邮箱</small><strong>rain__lei@outlook.com</strong></span><Icon name="external" /></a>
           <a class="contact-method" href="https://github.com/rain-lei" target="_blank" rel="noopener noreferrer"><span class="contact-method-icon contact-monogram" aria-hidden="true">GH</span><span class="contact-method-copy"><small>GitHub</small><strong>rain-lei</strong></span><Icon name="external" /></a>

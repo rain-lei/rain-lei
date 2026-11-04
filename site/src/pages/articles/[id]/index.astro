@@ -12,32 +12,33 @@ export async function getStaticPaths(){
 }
 
 const { post, posts }=Astro.props as { post:CollectionEntry<'posts'>; posts:CollectionEntry<'posts'>[] };
-const { Content }=await render(post);
+const { Content, headings }=await render(post);
+const sections = headings.filter(heading => heading.depth === 2);
 const others=posts
   .filter(item=>postSlug(item)!==postSlug(post))
   .sort((a,b)=>Number(b.data.category===post.data.category)-Number(a.data.category===post.data.category))
   .slice(0,3);
 const contentLabel=post.data.contentType==='game'?'小游戏':categoryLabels[post.data.category];
 ---
-<BaseLayout title={`${post.data.title} · rain`} description={post.data.excerpt} active="articles" bodyClass="article-page article-v2" type="article" publishedTime={post.data.date} updatedTime={post.data.updated} tags={post.data.tech}>
-  <ArticleReading />
+<BaseLayout title={`${post.data.title} · rain`} description={post.data.excerpt} active="articles" bodyClass="article-page" type="article" publishedTime={post.data.date} updatedTime={post.data.updated} tags={post.data.tech}>
+  <Fragment slot="reading-tools">{sections.length > 1 && <ArticleReading />}</Fragment>
   <main id="main-content">
-    <article class="article-wrap">
+    <article class="article-wrap" data-pagefind-body>
       <div class="article-heading">
-        <a class="back-crumb" href="/articles/">← 文章列表</a>
-        <div class="article-meta">
+        <a class="back-crumb" href="/articles/" data-list-return data-pagefind-ignore>← <span>文章列表</span></a>
+        <div class="article-meta" data-pagefind-ignore>
           <span data-pagefind-meta="date">发布 {formatDate(post.data.date)}</span>
           {post.data.updated&&<span class="article-updated">更新 {formatDate(post.data.updated)}</span>}
           <span>{post.data.contentType==='game'?'在线试玩':estimateRead(post.body||'')}</span>
           <ViewCounter scope="page" />
           <span class="article-category" data-pagefind-meta="category">{contentLabel}</span>
         </div>
-        <h1>{post.data.title}</h1>
+        <h1 data-pagefind-meta="title">{post.data.title}</h1>
         <p class="article-deck">{post.data.excerpt}</p>
-        <div class="article-byline">
-          <img class="avatar" src="/images/github-avatar.png" data-github-avatar alt="rain 的 GitHub 头像" width="34" height="34" />
-          <span>rain<br /><small>大连理工大学 · 软件工程</small></span>
-        </div>
+        <a class="article-byline" href="/about/" aria-label="关于作者 rain" data-pagefind-ignore>
+          <img class="avatar" src="/images/github-avatar.png" data-github-avatar alt="" width="34" height="34" />
+          <span>rain</span>
+        </a>
       </div>
 
       {post.data.contentType==='game'&&post.data.playUrl&&
@@ -60,15 +61,22 @@ const contentLabel=post.data.contentType==='game'?'小游戏':categoryLabels[pos
             <button id="shareLink" type="button" aria-label="分享文章" aria-describedby="shareLinkStatus"><span aria-hidden="true">↗</span><b>分享文章</b></button>
             <span class="sr-only" id="shareLinkStatus" role="status" aria-live="polite"></span>
           </div>
-          <nav class="article-toc" id="articleToc" aria-label="本文目录" hidden><details id="articleTocDetails" open><summary>本文目录</summary><div id="articleTocLinks"></div></details></nav>
+          {sections.length > 1 && <nav class="article-toc" aria-label="本文目录">
+            <details id="articleTocDetails">
+              <summary>本文目录 <small>{sections.length} 节</small></summary>
+              <div id="articleTocLinks">
+                {sections.map(section => <a href={`#${section.slug}`}>{section.text}</a>)}
+              </div>
+            </details>
+          </nav>}
         </aside>
-        <div class="article-body markdown-body" data-pagefind-body>
+        <div class="article-body markdown-body">
           <Content />
-          {post.data.contentType==='game'&&<div class="article-end"><span>✳</span><p>游戏无法加载时，可以使用上方“全屏打开”。</p></div>}
+          {post.data.contentType==='game'&&<p class="article-end" data-pagefind-ignore>游戏无法加载时，可以使用上方“全屏打开”。</p>}
           <div class="article-tags">
-            <span>标签</span>
-            <a href="/articles/">{contentLabel}</a>
-            {post.data.tech.slice(0,2).map((item:string)=><a href={`/search/?q=${encodeURIComponent(item)}`}>{item}</a>)}
+            <span data-pagefind-ignore>标签</span>
+            <a href={`/articles/?category=${post.data.category}`}>{contentLabel}</a>
+            {post.data.tech.map((item:string)=><a href={`/search/?q=${encodeURIComponent(item)}`}>{item}</a>)}
           </div>
         </div>
       </div>
@@ -76,13 +84,26 @@ const contentLabel=post.data.contentType==='game'?'小游戏':categoryLabels[pos
 
     <section class="next-reads">
       <div class="section-heading">
-        <div><p class="eyebrow">其他文章</p><h2>继续阅读</h2></div>
-        <a class="text-link" href="/articles/">全部文章 <span>↗</span></a>
+        <h2>继续阅读</h2>
+        <a class="text-link" href="/articles/" data-list-return><span>全部文章</span> <span aria-hidden="true">→</span></a>
       </div>
-      <div class="mini-posts">{others.map((item,index)=><a class="mini-post" href={`/articles/${postSlug(item)}/`}><span class="mini-no">{String(index+1).padStart(2,'0')}</span><div><small>{item.data.contentType==='game'?'小游戏':categoryLabels[item.data.category]} · {formatDate(item.data.date)}</small><strong>{item.data.title}</strong></div><span>↗</span></a>)}</div>
+      <div class="mini-posts">{others.map(item=><a class="mini-post" href={`/articles/${postSlug(item)}/`}><div><small>{item.data.contentType==='game'?'小游戏':categoryLabels[item.data.category]} · {formatDate(item.data.date)}</small><strong>{item.data.title}</strong></div><span>↗</span></a>)}</div>
     </section>
   </main>
   <script>
+    // Keep article URLs shareable. Only a visit from this site's list or search changes the return link.
+    if (document.referrer) {
+      const from = new URL(document.referrer);
+      if (from.origin === location.origin && ['/articles/', '/search/'].includes(from.pathname)) {
+        const label = from.pathname === '/search/'
+          ? (from.searchParams.get('q') ? '搜索结果' : '搜索文章')
+          : (from.search ? '筛选结果' : '文章列表');
+        for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-list-return]')) {
+          link.href = from.pathname + from.search;
+          link.querySelector('span')!.textContent = label;
+        }
+      }
+    }
     const shareButton=document.getElementById('shareLink') as HTMLButtonElement|null;
     const shareStatus=document.getElementById('shareLinkStatus');
     const resetShare=()=>{if(!shareButton)return;shareButton.innerHTML='<span aria-hidden="true">↗</span><b>分享文章</b>';shareButton.setAttribute('aria-label','分享文章');};

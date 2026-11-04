@@ -7,7 +7,6 @@ illustration: programmer
 date: 2026-07-15
 updated: 2026-10-17
 status: published
-accent: blue
 contentType: article
 tech:
   - Playwright

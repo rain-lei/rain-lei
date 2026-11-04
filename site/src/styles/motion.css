@@ -1,0 +1,17 @@
+/* The title responds at the point of reading, including keyboard focus. */
+.post-title {
+  background:linear-gradient(currentColor,currentColor) 0 100% / 0 1px no-repeat;
+  padding-bottom:2px;
+  -webkit-box-decoration-break:clone;
+  box-decoration-break:clone;
+  transition:background-size .22s var(--ease),color .18s;
+}
+.home-post,.archive-item { transition:transform .24s var(--ease),box-shadow .24s,border-color .2s; }
+.post-arrow,.archive-item-arrow { transition:translate .24s var(--ease); }
+.post-arrow { transform:translateY(-50%); }
+.nav-indicator { transition-duration:.28s,.24s; }
+.home-post:focus-visible .post-title,.archive-item:focus-visible .post-title { background-size:100% 1px; color:var(--rose); }
+@media (hover:hover) and (pointer:fine) {
+  .home-post:hover .post-title,.archive-item:hover .post-title { background-size:100% 1px; color:var(--rose); }
+}
+[data-motion="on"] .home-post:active,[data-motion="on"] .archive-item:active { transform:translateY(0) scale(.997); transition-duration:.1s; }
