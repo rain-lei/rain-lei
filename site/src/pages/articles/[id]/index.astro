@@ -19,7 +19,17 @@ const others=posts
   .sort((a,b)=>Number(b.data.category===post.data.category)-Number(a.data.category===post.data.category))
   .slice(0,3);
 const contentLabel=post.data.contentType==='game'?'小游戏':categoryLabels[post.data.category];
+const htmlDocuments = import.meta.glob<string>('../../../../../content/documents/*.html', {
+  query: '?raw', import: 'default', eager: true,
+});
+const documentHtml = post.data.htmlDocument
+  ? htmlDocuments[`../../../../../content/documents/${post.data.htmlDocument}`]
+  : undefined;
+if (post.data.htmlDocument && !documentHtml) {
+  throw new Error(`Missing HTML document: ${post.data.htmlDocument}`);
+}
 ---
+{documentHtml ? <Fragment set:html={documentHtml} /> :
 <BaseLayout title={`${post.data.title} · rain`} description={post.data.excerpt} active="articles" bodyClass="article-page" type="article" publishedTime={post.data.date} updatedTime={post.data.updated} tags={post.data.tech}>
   <Fragment slot="reading-tools">{sections.length > 1 && <ArticleReading />}</Fragment>
   <main id="main-content">
@@ -122,3 +132,4 @@ const contentLabel=post.data.contentType==='game'?'小游戏':categoryLabels[pos
     });
   </script>
 </BaseLayout>
+}

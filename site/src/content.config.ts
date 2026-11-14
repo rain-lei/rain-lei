@@ -12,6 +12,7 @@ const posts = defineCollection({
     updated: z.coerce.date().optional(),
     status: z.enum(['draft', 'published']).default('published'),
     contentType: z.enum(['article', 'game']).default('article'),
+    htmlDocument: z.string().regex(/^[a-z0-9][a-z0-9-]*\.html$/).optional(),
     illustration: z.enum(['reading', 'programmer', 'snack', 'wordle']).optional(),
     playUrl: z.string().url().optional(),
     repository: z.string().url().optional(),
